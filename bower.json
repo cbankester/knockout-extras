@@ -1,0 +1,21 @@
+{
+  "name": "knockout-extras",
+  "main": "build/index.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/cbankester/knockout-extras",
+  "authors": [
+    "Christian Michael Paul Bankester <cbankester@immense.net>"
+  ],
+  "description": "A collection of Knockout.js utils for various tasks",
+  "keywords": [
+    "Knockout.js"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
