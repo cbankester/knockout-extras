@@ -1,12 +1,12 @@
 {
-  "name": "knockout-extras",
+  "name": "knockout-jsonapi-utils",
   "main": "build/index.js",
   "version": "0.1.0",
   "homepage": "https://github.com/cbankester/knockout-extras",
   "authors": [
     "Christian Michael Paul Bankester <cbankester@immense.net>"
   ],
-  "description": "A collection of Knockout.js utils for various tasks",
+  "description": "A collection of Knockout.js utils for various tasks related to JSON API standard",
   "keywords": [
     "Knockout.js"
   ],

@@ -1,5 +1,5 @@
-# knockout-extras
-A collection of Knockout.js utils for various tasks
+# Knockout.js JSON API Utils
+A collection of Knockout.js utils for various tasks related to JSON API standard
 
 ## Setup
 
