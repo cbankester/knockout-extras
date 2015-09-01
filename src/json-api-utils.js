@@ -89,84 +89,88 @@ export function parse_json_api_response(response, opts={}) {
     return _remap_with_included_records(response.data, opts);
 }
 
-export function create_relationship(vm, rel_name, rel_data, {get_included_record, client_defined_relationships}) {
+export function init_relationship(vm, rel_name, rel_data, {client_defined_relationships}) {
+  const client_defined_relationship = client_defined_relationships.find(r => {
+    return r.name === rel_name;
+  });
+  const obs = vm[rel_name] || (vm[rel_name] = (rel_data instanceof Array ? _arr([]) : _obs()));
+
+  if (client_defined_relationship && client_defined_relationship.allow_destroy)
+    vm[`non_deleted_${rel_name}`] = _com(() => obs().filter(obj => !obj.marked_for_deletion()));
+
+  return Promise.resolve({rel_name, rel_data, client_defined_relationship, obs});
+}
+export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_relationship, get_included_record}) {
   if (rel_data instanceof Array) {
-    let arr     = vm[rel_name] || (vm[rel_name] = _arr([])),
-        records = rel_data;
+    let records = rel_data;
 
     if (get_included_record)
       records = records.map(rec => _remap_with_included_records(rec, {get_included_record}));
 
-    if (client_defined_relationships) {
-      let relationship = client_defined_relationships.find(r => r.name === rel_name);
-      if (relationship) {
-        if (relationship.allow_destroy)
-          vm[`non_deleted_${rel_name}`] = _com(() => arr().filter(obj => !obj.marked_for_deletion()));
+    if (client_defined_relationship) {
+      if (client_defined_relationship.nested_attributes_accepted)
+        obs.extend({
+          nestable: rel_name,
+          initial_length: records.length,
+          watch_for_pending_changes: true
+        });
 
-        if (relationship.nested_attributes_accepted)
-          arr.extend({
-            nestable: rel_name,
-            initial_length: records.length,
-            watch_for_pending_changes: true
+      if (client_defined_relationship.class) {
+        const klass = client_defined_relationship.class;
+        records = records.map(r => new klass(vm, r));
+
+        if (client_defined_relationship.blank_value)
+          obs.extend({
+            pushable: [klass, vm, client_defined_relationship.blank_value]
           });
-
-        if (relationship.class) {
-          let klass = relationship.class;
-          records = records.map(r => new klass(vm, r));
-
-          if (relationship.blank_value)
-            arr.extend({
-              pushable: [relationship.class, vm, relationship.blank_value]
-            });
-        }
       }
     }
-    arr(records);
+    obs(records);
 
   } else if (rel_data) {
-    let obs      = vm[rel_name] || (vm[rel_name] = _obs()),
-        remapped = _remap_with_included_records(rel_data, {get_included_record}),
+    let remapped = _remap_with_included_records(rel_data, {get_included_record}),
         record;
 
-    if (client_defined_relationships) {
-      let relationship = client_defined_relationships.find(r => r.name === rel_name);
-      if (relationship) {
-        if (relationship.nested_attributes_accepted)
-          obs.extend({
-            nestable: rel_name,
-            watch_for_pending_changes: true
-          });
-        if (relationship.class) {
-          let klass = relationship.class;
-          record = new klass(vm, Object.assign({}, remapped));
-        }
+    if (client_defined_relationship) {
+      if (client_defined_relationship.nested_attributes_accepted)
+        obs.extend({
+          nestable: rel_name,
+          watch_for_pending_changes: true
+        });
+      if (client_defined_relationship.class) {
+        const klass = client_defined_relationship.class;
+        record = new klass(vm, Object.assign({}, remapped));
       }
     }
     obs(record || remapped);
 
   } else {
-    let obs = vm[rel_name] || (vm[rel_name] = _obs()),
-        record;
+    let record;
 
-    if (client_defined_relationships) {
-      let relationship = client_defined_relationships.find(r => r.name === rel_name);
+    if (client_defined_relationship) {
+      if (client_defined_relationship.nested_attributes_accepted)
+        obs.extend({
+          nestable: rel_name,
+          watch_for_pending_changes: true
+        })
+      if (client_defined_relationship.class) {
+        const klass       = client_defined_relationship.class,
+              blank_value = client_defined_relationship.blank_value || {};
 
-      if (relationship) {
-        if (relationship.nested_attributes_accepted)
-          obs.extend({
-            nestable: rel_name,
-            watch_for_pending_changes: true
-          })
-        if (relationship.class) {
-          let klass       = relationship.class,
-              blank_value = relationship.blank_value || {};
-
-          record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value))
-        }
+        record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value))
       }
     }
     obs(record || {});
   }
+  return Promise.resolve(obs());
+}
 
-  return vm[rel_name];
+export function create_relationship(vm, rel_name, rel_data, {get_included_record, client_defined_relationships}) {
+  return init_relationship(vm, rel_name, rel_data)
+  .then(({client_defined_relationship, obs}) => {
+    return build_relationship(vm, rel_name, rel_data, obs, {
+      get_included_record,
+      client_defined_relationship
+    });
+  });
 }

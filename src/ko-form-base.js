@@ -147,15 +147,21 @@ export default class KOFormBase {
     for (const key in server_defined_attributes)
       ko_extras.json_api_utils.create_observable(this, key, server_defined_attributes[key]);
 
-    for (const key in server_defined_relationships) {
-      const {data} = server_defined_relationships[key];
-      this.relationships.push(ko_extras.json_api_utils.create_relationship(this, key, data, {
-        get_included_record,
-        client_defined_relationships
-      }));
-    }
+    const relationship_names = Object.keys(server_defined_relationships)
 
-    return Promise.resolve();
+    return Promise.all(
+      relationship_names.map(key => {
+        return ko_extras.json_api_utils.init_relationship(this, key, server_defined_relationships[key].data);
+      })
+    ).then(relationship_params => Promise.all(
+      relationship_params.map(({rel_name, rel_data, obs, client_defined_relationship}) => {
+        this.relationships.push(obs);
+        return ko_extras.json_api_utils.build_relationship(this, rel_name, rel_data, obs, {
+          get_included_record,
+          client_defined_relationship
+        });
+      })
+    ));
   }
 
   finalizeInit() {

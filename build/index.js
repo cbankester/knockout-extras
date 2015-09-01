@@ -73,6 +73,8 @@
 	});
 	exports.create_observable = create_observable;
 	exports.parse_json_api_response = parse_json_api_response;
+	exports.init_relationship = init_relationship;
+	exports.build_relationship = build_relationship;
 	exports.create_relationship = create_relationship;
 	if (!Array.prototype.includes) {
 	  Array.prototype.includes = function (searchElement /*, fromIndex*/) {
@@ -179,99 +181,103 @@
 	  });else return _remap_with_included_records(response.data, opts);
 	}
 	
-	function create_relationship(vm, rel_name, rel_data, _ref3) {
-	  var get_included_record = _ref3.get_included_record;
+	function init_relationship(vm, rel_name, rel_data, _ref3) {
 	  var client_defined_relationships = _ref3.client_defined_relationships;
 	
-	  if (rel_data instanceof Array) {
-	    (function () {
-	      var arr = vm[rel_name] || (vm[rel_name] = _arr([])),
-	          records = rel_data;
+	  var client_defined_relationship = client_defined_relationships.find(function (r) {
+	    return r.name === rel_name;
+	  });
+	  var obs = vm[rel_name] || (vm[rel_name] = rel_data instanceof Array ? _arr([]) : _obs());
 	
-	      if (get_included_record) records = records.map(function (rec) {
-	        return _remap_with_included_records(rec, { get_included_record: get_included_record });
+	  if (client_defined_relationship && client_defined_relationship.allow_destroy) vm['non_deleted_' + rel_name] = _com(function () {
+	    return obs().filter(function (obj) {
+	      return !obj.marked_for_deletion();
+	    });
+	  });
+	
+	  return Promise.resolve({ rel_name: rel_name, rel_data: rel_data, client_defined_relationship: client_defined_relationship, obs: obs });
+	}
+	
+	function build_relationship(vm, rel_name, rel_data, obs, _ref4) {
+	  var client_defined_relationship = _ref4.client_defined_relationship;
+	  var get_included_record = _ref4.get_included_record;
+	
+	  if (rel_data instanceof Array) {
+	    var records = rel_data;
+	
+	    if (get_included_record) records = records.map(function (rec) {
+	      return _remap_with_included_records(rec, { get_included_record: get_included_record });
+	    });
+	
+	    if (client_defined_relationship) {
+	      if (client_defined_relationship.nested_attributes_accepted) obs.extend({
+	        nestable: rel_name,
+	        initial_length: records.length,
+	        watch_for_pending_changes: true
 	      });
 	
-	      if (client_defined_relationships) {
-	        var relationship = client_defined_relationships.find(function (r) {
-	          return r.name === rel_name;
-	        });
-	        if (relationship) {
-	          if (relationship.allow_destroy) vm['non_deleted_' + rel_name] = _com(function () {
-	            return arr().filter(function (obj) {
-	              return !obj.marked_for_deletion();
-	            });
+	      if (client_defined_relationship['class']) {
+	        (function () {
+	          var klass = client_defined_relationship['class'];
+	          records = records.map(function (r) {
+	            return new klass(vm, r);
 	          });
 	
-	          if (relationship.nested_attributes_accepted) arr.extend({
-	            nestable: rel_name,
-	            initial_length: records.length,
-	            watch_for_pending_changes: true
+	          if (client_defined_relationship.blank_value) obs.extend({
+	            pushable: [klass, vm, client_defined_relationship.blank_value]
 	          });
-	
-	          if (relationship['class']) {
-	            (function () {
-	              var klass = relationship['class'];
-	              records = records.map(function (r) {
-	                return new klass(vm, r);
-	              });
-	
-	              if (relationship.blank_value) arr.extend({
-	                pushable: [relationship['class'], vm, relationship.blank_value]
-	              });
-	            })();
-	          }
-	        }
+	        })();
 	      }
-	      arr(records);
-	    })();
+	    }
+	    obs(records);
 	  } else if (rel_data) {
-	    var obs = vm[rel_name] || (vm[rel_name] = _obs()),
-	        remapped = _remap_with_included_records(rel_data, { get_included_record: get_included_record }),
+	    var remapped = _remap_with_included_records(rel_data, { get_included_record: get_included_record }),
 	        record = undefined;
 	
-	    if (client_defined_relationships) {
-	      var relationship = client_defined_relationships.find(function (r) {
-	        return r.name === rel_name;
+	    if (client_defined_relationship) {
+	      if (client_defined_relationship.nested_attributes_accepted) obs.extend({
+	        nestable: rel_name,
+	        watch_for_pending_changes: true
 	      });
-	      if (relationship) {
-	        if (relationship.nested_attributes_accepted) obs.extend({
-	          nestable: rel_name,
-	          watch_for_pending_changes: true
-	        });
-	        if (relationship['class']) {
-	          var klass = relationship['class'];
-	          record = new klass(vm, Object.assign({}, remapped));
-	        }
+	      if (client_defined_relationship['class']) {
+	        var klass = client_defined_relationship['class'];
+	        record = new klass(vm, Object.assign({}, remapped));
 	      }
 	    }
 	    obs(record || remapped);
 	  } else {
-	    var obs = vm[rel_name] || (vm[rel_name] = _obs()),
-	        record = undefined;
+	    var record = undefined;
 	
-	    if (client_defined_relationships) {
-	      var relationship = client_defined_relationships.find(function (r) {
-	        return r.name === rel_name;
+	    if (client_defined_relationship) {
+	      if (client_defined_relationship.nested_attributes_accepted) obs.extend({
+	        nestable: rel_name,
+	        watch_for_pending_changes: true
 	      });
+	      if (client_defined_relationship['class']) {
+	        var klass = client_defined_relationship['class'],
+	            blank_value = client_defined_relationship.blank_value || {};
 	
-	      if (relationship) {
-	        if (relationship.nested_attributes_accepted) obs.extend({
-	          nestable: rel_name,
-	          watch_for_pending_changes: true
-	        });
-	        if (relationship['class']) {
-	          var klass = relationship['class'],
-	              blank_value = relationship.blank_value || {};
-	
-	          record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
-	        }
+	        record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
 	      }
 	    }
 	    obs(record || {});
 	  }
+	  return Promise.resolve(obs());
+	}
 	
-	  return vm[rel_name];
+	function create_relationship(vm, rel_name, rel_data, _ref5) {
+	  var get_included_record = _ref5.get_included_record;
+	  var client_defined_relationships = _ref5.client_defined_relationships;
+	
+	  return init_relationship(vm, rel_name, rel_data).then(function (_ref6) {
+	    var client_defined_relationship = _ref6.client_defined_relationship;
+	    var obs = _ref6.obs;
+	
+	    return build_relationship(vm, rel_name, rel_data, obs, {
+	      get_included_record: get_included_record,
+	      client_defined_relationship: client_defined_relationship
+	    });
+	  });
 	}
 
 /***/ },
@@ -455,6 +461,8 @@
 	  }, {
 	    key: "init",
 	    value: function init(response) {
+	      var _this2 = this;
+	
 	      var record = response.data,
 	          client_defined_relationships = this.options.relationships,
 	          server_defined_relationships = record.relationships || {},
@@ -470,58 +478,66 @@
 	
 	      for (var key in server_defined_attributes) {
 	        ko_extras.json_api_utils.create_observable(this, key, server_defined_attributes[key]);
-	      }for (var key in server_defined_relationships) {
-	        var data = server_defined_relationships[key].data;
+	      }var relationship_names = Object.keys(server_defined_relationships);
 	
-	        this.relationships.push(ko_extras.json_api_utils.create_relationship(this, key, data, {
-	          get_included_record: get_included_record,
-	          client_defined_relationships: client_defined_relationships
+	      return Promise.all(relationship_names.map(function (key) {
+	        return ko_extras.json_api_utils.init_relationship(_this2, key, server_defined_relationships[key].data);
+	      })).then(function (relationship_params) {
+	        return Promise.all(relationship_params.map(function (_ref3) {
+	          var rel_name = _ref3.rel_name;
+	          var rel_data = _ref3.rel_data;
+	          var obs = _ref3.obs;
+	          var client_defined_relationship = _ref3.client_defined_relationship;
+	
+	          _this2.relationships.push(obs);
+	          return ko_extras.json_api_utils.build_relationship(_this2, rel_name, rel_data, obs, {
+	            get_included_record: get_included_record,
+	            client_defined_relationship: client_defined_relationship
+	          });
 	        }));
-	      }
-	
-	      return Promise.resolve();
+	      });
 	    }
 	  }, {
 	    key: "finalizeInit",
 	    value: function finalizeInit() {
-	      var _this2 = this;
+	      var _this3 = this;
 	
 	      return new Promise(function (resolve) {
-	        if (!_this2.init_finalized) {
+	        if (!_this3.init_finalized) {
 	          (function () {
-	            var errorable = _this2.observables_list.filter(function (obs) {
+	            var errorable = _this3.observables_list.filter(function (obs) {
 	              return obs.hasError;
 	            }),
-	                observables_with_initial_values = _this2.observables_list.filter(function (obs) {
+	                observables_with_initial_values = _this3.observables_list.filter(function (obs) {
 	              return obs.initial_value || obs.initial_length;
 	            });
-	            _this2.errors = {};
+	            _this3.errors = {};
 	            errorable.forEach(function (obs) {
-	              if (obs.postable_name) _this2.errors[obs.postable_name] = _com(function () {
+	              if (obs.postable_name) _this3.errors[obs.postable_name] = _com(function () {
 	                return obs.hasError() ? obs.validationMessage() : null;
-	              });else if (obs.errorable_observables) _this2.errors[obs.errorable_name] = _com(function () {
+	              });else if (obs.errorable_observables) _this3.errors[obs.errorable_name] = _com(function () {
 	                return obs.hasError() ? obs.errors() : null;
 	              });
 	            });
-	            _this2.numErrors = _this2.numErrors || _com(function () {
+	            _this3.numErrors = _this3.numErrors || _com(function () {
 	              return errorable.reduce(function (total, obs) {
 	                return total + (obs.hasError() ? obs.numErrors ? obs.numErrors() : 1 : 0);
 	              }, 0);
 	            });
 	
-	            _this2.is_valid = _com(function () {
-	              var is_valid = _this2.numErrors() === 0;
+	            _this3.is_valid = _com(function () {
+	              var is_valid = _this3.numErrors() === 0;
 	              if (is_valid) {
-	                if (_this2.validation_messenger) {
-	                  _this2.validation_messenger.cancel();
-	                  delete _this2.validation_messenger;
+	                if (_this3.validation_messenger) {
+	                  _this3.validation_messenger.cancel();
+	                  delete _this3.validation_messenger;
 	                }
 	              }
 	              return is_valid;
 	            }).extend({ notify: 'always' });
 	
-	            _this2.no_changes_pending = _com(function () {
-	              var relationships_pendings = _this2.relationships.map(function (obs) {
+	            _this3.no_changes_pending = _com(function () {
+	              var relationships_pendings = _this3.relationships.map(function (obs) {
 	                var c = obs.no_changes_pending,
 	                    l = obs.initial_length;
 	
@@ -538,44 +554,44 @@
 	              });
 	            }).extend({ notify: 'always' });
 	
-	            _this2.changes_pending = _com(function () {
-	              return !_this2.no_changes_pending();
+	            _this3.changes_pending = _com(function () {
+	              return !_this3.no_changes_pending();
 	            }).extend({ notify: 'always' });
 	
-	            if (_this2.options.save_after_edit) {
+	            if (_this3.options.save_after_edit) {
 	              (function () {
-	                var reify_method = _this2.options.save_after_edit.reify_method;
+	                var reify_method = _this3.options.save_after_edit.reify_method;
 	                var should_save = _com(function () {
-	                  var changes_pending = _this2.changes_pending();
+	                  var changes_pending = _this3.changes_pending();
 	
-	                  var is_valid = _this2.is_valid();
+	                  var is_valid = _this3.is_valid();
 	
-	                  return changes_pending && (_this2.id || is_valid);
+	                  return changes_pending && (_this3.id || is_valid);
 	                }).extend({
 	                  rateLimit: {
 	                    method: 'notifyWhenChangesStop',
-	                    timeout: _this2.options.save_after_edit.rate_limit || 500
+	                    timeout: _this3.options.save_after_edit.rate_limit || 500
 	                  },
 	                  notify: 'always'
 	                });
 	
-	                _this2.saving_locked = false;
+	                _this3.saving_locked = false;
 	
 	                should_save.subscribe(function (should) {
-	                  if (should && !_this2.saving_locked) {
-	                    _this2.save().then(function (record) {
-	                      if (reify_method) _this2[reify_method](record);
+	                  if (should && !_this3.saving_locked) {
+	                    _this3.save().then(function (record) {
+	                      if (reify_method) _this3[reify_method](record);
 	                    })["catch"](function (err) {
-	                      if (typeof err === 'string') _this2.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
-	                        _this2.saving_locked = true;
-	                        _this2.error_message(err);
+	                      if (typeof err === 'string') _this3.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
+	                        _this3.saving_locked = true;
+	                        _this3.error_message(err);
 	                      }
 	                    });
 	                  }
 	                });
 	              })();
 	            }
-	            _this2.init_finalized = true;
+	            _this3.init_finalized = true;
 	          })();
 	        } else throw new Error("Cannot finalize init more than once");
 	        resolve();
@@ -604,14 +620,14 @@
 	  _createClass(KOFormBase, [{
 	    key: "saveAndReload",
 	    value: function saveAndReload() {
-	      var _this3 = this;
+	      var _this4 = this;
 	
 	      var action = this.id ? 'update' : 'create';
 	      this.save().then(function (record) {
 	        successNotice({ notice: "Record " + action + "d" });
-	        window.location = record && record.url ? record.url : _this3.url;
+	        window.location = record && record.url ? record.url : _this4.url;
 	      })["catch"](function (err) {
-	        if (typeof err === 'string') _this3.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
+	        if (typeof err === 'string') _this4.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
 	          console.log(err);
 	          errorNotice({ notice: err.message });
 	        }
@@ -620,7 +636,7 @@
 	  }, {
 	    key: "save",
 	    value: function save() {
-	      var _this4 = this;
+	      var _this5 = this;
 	
 	      this.attempted(true);
 	      if (this.numErrors() !== 0) return Promise.reject("There " + (this.numErrors() === 1 ? "is 1 error which prevents" : "are " + this.numErrors() + " errors which prevent") + " this form from being submitted.");
@@ -632,8 +648,8 @@
 	      return httpJSON[this.id ? 'patch' : 'post']({ url: this.url, data: { data: data } }).then(function (response) {
 	        var record = ko_extras.json_api_utils.parse_json_api_response(response);
 	        if (record) {
-	          _this4.id = record.id;
-	          _this4.url = record.url;
+	          _this5.id = record.id;
+	          _this5.url = record.url;
 	        }
 	        return Promise.resolve(record);
 	      })["catch"](function (xhr) {
@@ -670,10 +686,10 @@
 	  }, {
 	    key: "doneLoading",
 	    value: function doneLoading() {
-	      var _this5 = this;
+	      var _this6 = this;
 	
 	      if (this.loading()) return new Promise(function (resolve) {
-	        var s = _this5.loading.subscribe(function () {
+	        var s = _this6.loading.subscribe(function () {
 	          s.dispose();
 	          resolve();
 	        });
