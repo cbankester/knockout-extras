@@ -103,7 +103,11 @@ export function init_relationship(vm, rel_name, rel_data, client_defined_relatio
   const obs = vm[rel_name] || (vm[rel_name] = (rel_data instanceof Array ? _arr([]) : _obs()));
 
   if (client_defined_relationship && client_defined_relationship.allow_destroy)
-    vm[`non_deleted_${rel_name}`] = _com(() => obs().filter(obj => !obj.marked_for_deletion()));
+    vm[`non_deleted_${rel_name}`] = _com(() => {
+      return obs().filter(obj => {
+        return obj.loading ? (!obj.loading() && !obj.marked_for_deletion()) : !obj.marked_for_deletion();
+      });
+    });
 
   return Promise.resolve({rel_name, rel_data, client_defined_relationship, obs});
 }

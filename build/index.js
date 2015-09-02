@@ -219,7 +219,7 @@
 	
 	  if (client_defined_relationship && client_defined_relationship.allow_destroy) vm['non_deleted_' + rel_name] = _com(function () {
 	    return obs().filter(function (obj) {
-	      return !obj.marked_for_deletion();
+	      return obj.loading ? !obj.loading() && !obj.marked_for_deletion() : !obj.marked_for_deletion();
 	    });
 	  });
 	
