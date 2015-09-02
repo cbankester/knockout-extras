@@ -89,7 +89,7 @@ export function parse_json_api_response(response, opts={}) {
     return _remap_with_included_records(response.data, opts);
 }
 
-export function init_relationship(vm, rel_name, rel_data, {client_defined_relationships}={}) {
+export function init_relationship(vm, rel_name, rel_data, client_defined_relationships=[]) {
   const client_defined_relationship = client_defined_relationships.find(r => {
     return r.name === rel_name;
   });
@@ -165,8 +165,8 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
   return Promise.resolve(obs());
 }
 
-export function create_relationship(vm, rel_name, rel_data, {get_included_record, client_defined_relationships}) {
-  return init_relationship(vm, rel_name, rel_data)
+export function create_relationship(vm, rel_name, rel_data, {get_included_record, client_defined_relationships}={}) {
+  return init_relationship(vm, rel_name, rel_data, client_defined_relationships)
   .then(({client_defined_relationship, obs}) => {
     return build_relationship(vm, rel_name, rel_data, obs, {
       get_included_record,
