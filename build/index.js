@@ -304,7 +304,7 @@
 	    }
 	    obs(record || {});
 	  }
-	  return done().then(function () {
+	  return done.then(function () {
 	    return obs();
 	  });
 	}

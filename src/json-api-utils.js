@@ -179,7 +179,7 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
     }
     obs(record || {});
   }
-  return done().then(() => obs());
+  return done.then(() => obs());
 }
 
 export function create_relationships(vm, relationships_map, {get_included_record, client_defined_relationships}={}) {
