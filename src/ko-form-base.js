@@ -145,7 +145,13 @@ export default class KOFormBase {
     delete server_defined_attributes.url;
 
     for (const key in server_defined_attributes)
-      ko_extras.json_api_utils.create_observable(this, key, server_defined_attributes[key]);
+      this.observables_list.push(
+        ko_extras.json_api_utils.create_observable(
+          this,
+          key,
+          server_defined_attributes[key]
+        )
+      );
 
     const relationship_names = Object.keys(server_defined_relationships)
 

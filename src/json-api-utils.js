@@ -79,12 +79,10 @@ function _remap_with_included_records(record, {get_included_record, immybox, nes
 }
 
 export function create_observable(vm, attr_name, attr_val) {
-  vm[attr_name] = _obs().extend({
+  return vm[attr_name] = _obs().extend({
     postable: attr_name,
     initial_value: attr_val
   });
-  if (vm.observables_list) vm.observables_list.push(vm[attr_name]);
-  return vm[attr_name];
 }
 
 export function parse_json_api_response(response, opts={}) {

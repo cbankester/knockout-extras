@@ -191,12 +191,10 @@
 	}
 	
 	function create_observable(vm, attr_name, attr_val) {
-	  vm[attr_name] = _obs().extend({
+	  return vm[attr_name] = _obs().extend({
 	    postable: attr_name,
 	    initial_value: attr_val
 	  });
-	  if (vm.observables_list) vm.observables_list.push(vm[attr_name]);
-	  return vm[attr_name];
 	}
 	
 	function parse_json_api_response(response) {
@@ -526,7 +524,7 @@
 	      delete server_defined_attributes.url;
 	
 	      for (var key in server_defined_attributes) {
-	        ko_extras.json_api_utils.create_observable(this, key, server_defined_attributes[key]);
+	        this.observables_list.push(ko_extras.json_api_utils.create_observable(this, key, server_defined_attributes[key]));
 	      }var relationship_names = Object.keys(server_defined_relationships);
 	
 	      return Promise.all(relationship_names.map(function (key) {
