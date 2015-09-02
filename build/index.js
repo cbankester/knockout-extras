@@ -234,6 +234,7 @@
 	  var client_defined_relationship = _ref5.client_defined_relationship;
 	  var get_included_record = _ref5.get_included_record;
 	
+	  var done = Promise.resolve();
 	  if (rel_data instanceof Array) {
 	    var records = rel_data;
 	
@@ -251,9 +252,14 @@
 	      if (client_defined_relationship['class']) {
 	        (function () {
 	          var klass = client_defined_relationship['class'];
+	
 	          records = records.map(function (r) {
 	            return new klass(vm, r);
 	          });
+	
+	          if (klass.prototype.doneLoading) done = Promise.all(records.map(function (r) {
+	            return r.doneLoading();
+	          }));
 	
 	          if (client_defined_relationship.blank_value) obs.extend({
 	            pushable: [klass, vm, client_defined_relationship.blank_value]
@@ -274,6 +280,8 @@
 	      if (client_defined_relationship['class']) {
 	        var klass = client_defined_relationship['class'];
 	        record = new klass(vm, Object.assign({}, remapped));
+	
+	        if (klass.prototype.doneLoading) done = record.doneLoading();
 	      }
 	    }
 	    obs(record || remapped);
@@ -290,11 +298,15 @@
 	            blank_value = client_defined_relationship.blank_value || {};
 	
 	        record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
+	
+	        if (klass.prototype.doneLoading) done = record.doneLoading();
 	      }
 	    }
 	    obs(record || {});
 	  }
-	  return Promise.resolve(obs());
+	  return done().then(function () {
+	    return obs();
+	  });
 	}
 	
 	function create_relationships(vm, relationships_map) {
