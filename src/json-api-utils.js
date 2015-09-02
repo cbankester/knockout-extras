@@ -34,6 +34,15 @@ const _obs = ko.observable,
         return included.find(v => {
           return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
         });
+      },
+      _build_relationship = (vm, get_included_record) => ({rel_name, rel_data, client_defined_relationship, obs}) => {
+        return build_relationship(vm, rel_name, rel_data, obs, {
+          client_defined_relationship,
+          get_included_record
+        });
+      },
+      _init_relationship = (vm, client_defined_relationships) => ([rel_name, rel_data]) => {
+        return init_relationship(vm, rel_name, rel_data, client_defined_relationships);
       };
 
 function _remap_with_included_records(record, {get_included_record, immybox, nested_immybox_relationships}={}) {
@@ -165,12 +174,16 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
   return Promise.resolve(obs());
 }
 
+export function create_relationships(vm, relationships_map, {get_included_record, client_defined_relationships}={}) {
+  return Promise.all(
+    [...relationships_map].map(_init_relationship(vm, client_defined_relationships))
+  )
+  .then(resolutions => Promise.all(
+    resolutions.map(_build_relationship(vm, get_included_record))
+  ));
+}
+
 export function create_relationship(vm, rel_name, rel_data, {get_included_record, client_defined_relationships}={}) {
   return init_relationship(vm, rel_name, rel_data, client_defined_relationships)
-  .then(({client_defined_relationship, obs}) => {
-    return build_relationship(vm, rel_name, rel_data, obs, {
-      get_included_record,
-      client_defined_relationship
-    });
-  });
+  .then(_build_relationship(vm, get_included_record));
 }

@@ -71,11 +71,18 @@
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
 	exports.create_observable = create_observable;
 	exports.parse_json_api_response = parse_json_api_response;
 	exports.init_relationship = init_relationship;
 	exports.build_relationship = build_relationship;
+	exports.create_relationships = create_relationships;
 	exports.create_relationship = create_relationship;
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	
 	if (!Array.prototype.includes) {
 	  Array.prototype.includes = function (searchElement /*, fromIndex*/) {
 	    'use strict';
@@ -118,14 +125,37 @@
 	      return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
 	    });
 	  };
+	},
+	    _build_relationship = function _build_relationship(vm, get_included_record) {
+	  return function (_ref2) {
+	    var rel_name = _ref2.rel_name;
+	    var rel_data = _ref2.rel_data;
+	    var client_defined_relationship = _ref2.client_defined_relationship;
+	    var obs = _ref2.obs;
+	
+	    return build_relationship(vm, rel_name, rel_data, obs, {
+	      client_defined_relationship: client_defined_relationship,
+	      get_included_record: get_included_record
+	    });
+	  };
+	},
+	    _init_relationship = function _init_relationship(vm, client_defined_relationships) {
+	  return function (_ref3) {
+	    var _ref32 = _slicedToArray(_ref3, 2);
+	
+	    var rel_name = _ref32[0];
+	    var rel_data = _ref32[1];
+	
+	    return init_relationship(vm, rel_name, rel_data, client_defined_relationships);
+	  };
 	};
 	
 	function _remap_with_included_records(record) {
-	  var _ref2 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	  var _ref4 = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 	
-	  var get_included_record = _ref2.get_included_record;
-	  var immybox = _ref2.immybox;
-	  var nested_immybox_relationships = _ref2.nested_immybox_relationships;
+	  var get_included_record = _ref4.get_included_record;
+	  var immybox = _ref4.immybox;
+	  var nested_immybox_relationships = _ref4.nested_immybox_relationships;
 	
 	  var ret = get_included_record ? get_included_record(record) || record : record;
 	
@@ -199,10 +229,10 @@
 	}
 	
 	function build_relationship(vm, rel_name, rel_data, obs) {
-	  var _ref3 = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
+	  var _ref5 = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
 	
-	  var client_defined_relationship = _ref3.client_defined_relationship;
-	  var get_included_record = _ref3.get_included_record;
+	  var client_defined_relationship = _ref5.client_defined_relationship;
+	  var get_included_record = _ref5.get_included_record;
 	
 	  if (rel_data instanceof Array) {
 	    var records = rel_data;
@@ -267,21 +297,24 @@
 	  return Promise.resolve(obs());
 	}
 	
-	function create_relationship(vm, rel_name, rel_data) {
-	  var _ref4 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+	function create_relationships(vm, relationships_map) {
+	  var _ref6 = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 	
-	  var get_included_record = _ref4.get_included_record;
-	  var client_defined_relationships = _ref4.client_defined_relationships;
+	  var get_included_record = _ref6.get_included_record;
+	  var client_defined_relationships = _ref6.client_defined_relationships;
 	
-	  return init_relationship(vm, rel_name, rel_data, client_defined_relationships).then(function (_ref5) {
-	    var client_defined_relationship = _ref5.client_defined_relationship;
-	    var obs = _ref5.obs;
-	
-	    return build_relationship(vm, rel_name, rel_data, obs, {
-	      get_included_record: get_included_record,
-	      client_defined_relationship: client_defined_relationship
-	    });
+	  return Promise.all([].concat(_toConsumableArray(relationships_map)).map(_init_relationship(vm, client_defined_relationships))).then(function (resolutions) {
+	    return Promise.all(resolutions.map(_build_relationship(vm, get_included_record)));
 	  });
+	}
+	
+	function create_relationship(vm, rel_name, rel_data) {
+	  var _ref7 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+	
+	  var get_included_record = _ref7.get_included_record;
+	  var client_defined_relationships = _ref7.client_defined_relationships;
+	
+	  return init_relationship(vm, rel_name, rel_data, client_defined_relationships).then(_build_relationship(vm, get_included_record));
 	}
 
 /***/ },
