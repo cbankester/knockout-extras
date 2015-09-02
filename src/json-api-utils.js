@@ -110,6 +110,7 @@ export function init_relationship(vm, rel_name, rel_data, client_defined_relatio
   return Promise.resolve({rel_name, rel_data, client_defined_relationship, obs});
 }
 export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_relationship, get_included_record}={}) {
+  let done = Promise.resolve();
   if (rel_data instanceof Array) {
     let records = rel_data;
 
@@ -126,7 +127,10 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
 
       if (client_defined_relationship.class) {
         const klass = client_defined_relationship.class;
+
         records = records.map(r => new klass(vm, r));
+
+        if (klass.prototype.doneLoading) done = Promise.all(records.map(r => r.doneLoading()));
 
         if (client_defined_relationship.blank_value)
           obs.extend({
@@ -149,6 +153,8 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
       if (client_defined_relationship.class) {
         const klass = client_defined_relationship.class;
         record = new klass(vm, Object.assign({}, remapped));
+
+        if (klass.prototype.doneLoading) done = record.doneLoading();
       }
     }
     obs(record || remapped);
@@ -167,11 +173,13 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
               blank_value = client_defined_relationship.blank_value || {};
 
         record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value))
+
+        if (klass.prototype.doneLoading) done = record.doneLoading();
       }
     }
     obs(record || {});
   }
-  return Promise.resolve(obs());
+  return done().then(() => obs());
 }
 
 export function create_relationships(vm, relationships_map, {get_included_record, client_defined_relationships}={}) {
