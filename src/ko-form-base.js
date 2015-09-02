@@ -151,7 +151,7 @@ export default class KOFormBase {
 
     return Promise.all(
       relationship_names.map(key => {
-        return ko_extras.json_api_utils.init_relationship(this, key, server_defined_relationships[key].data);
+        return ko_extras.json_api_utils.init_relationship(this, key, server_defined_relationships[key].data, {client_defined_relationships});
       })
     ).then(relationship_params => Promise.all(
       relationship_params.map(({rel_name, rel_data, obs, client_defined_relationship}) => {

@@ -181,7 +181,9 @@
 	  });else return _remap_with_included_records(response.data, opts);
 	}
 	
-	function init_relationship(vm, rel_name, rel_data, _ref3) {
+	function init_relationship(vm, rel_name, rel_data) {
+	  var _ref3 = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+	
 	  var client_defined_relationships = _ref3.client_defined_relationships;
 	
 	  var client_defined_relationship = client_defined_relationships.find(function (r) {
@@ -198,7 +200,9 @@
 	  return Promise.resolve({ rel_name: rel_name, rel_data: rel_data, client_defined_relationship: client_defined_relationship, obs: obs });
 	}
 	
-	function build_relationship(vm, rel_name, rel_data, obs, _ref4) {
+	function build_relationship(vm, rel_name, rel_data, obs) {
+	  var _ref4 = arguments.length <= 4 || arguments[4] === undefined ? {} : arguments[4];
+	
 	  var client_defined_relationship = _ref4.client_defined_relationship;
 	  var get_included_record = _ref4.get_included_record;
 	
@@ -481,7 +485,7 @@
 	      }var relationship_names = Object.keys(server_defined_relationships);
 	
 	      return Promise.all(relationship_names.map(function (key) {
-	        return ko_extras.json_api_utils.init_relationship(_this2, key, server_defined_relationships[key].data);
+	        return ko_extras.json_api_utils.init_relationship(_this2, key, server_defined_relationships[key].data, { client_defined_relationships: client_defined_relationships });
 	      })).then(function (relationship_params) {
 	        return Promise.all(relationship_params.map(function (_ref3) {
 	          var rel_name = _ref3.rel_name;
