@@ -190,6 +190,16 @@
 	  return ret;
 	}
 	
+	function _encode_uri(url, obj) {
+	  if (Object.keys(obj).length === 0) return url;
+	  var str = "";
+	  for (var key in obj) {
+	    if (str !== "") str += "&";
+	    str += key + '=' + encodeURIComponent(obj[key]);
+	  }
+	  return url + '?' + str;
+	}
+	
 	function _base_request(resolve, reject) {
 	  var request = new XMLHttpRequest();
 	  request.onreadystatechange = function () {
@@ -453,16 +463,6 @@
 	      return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
 	    });
 	  };
-	};
-	
-	var _encode_uri = function _encode_uri(url, obj) {
-	  if (Object.keys(obj).length === 0) return url;
-	  var str = "";
-	  for (var key in obj) {
-	    if (str !== "") str += "&";
-	    str += key + "=" + encodeURIComponent(obj[key]);
-	  }
-	  return url + "?" + str;
 	};
 	
 	var RequestError = (function (_Error) {

@@ -7,16 +7,6 @@ const _obs = ko.observable,
         });
       };
 
-const _encode_uri = function _encode_uri(url, obj) {
-  if (Object.keys(obj).length === 0) return url;
-  let str = "";
-  for (let key in obj) {
-    if (str !== "") str += "&";
-    str += `${key}=${encodeURIComponent(obj[key])}`
-  }
-  return `${url}?${str}`
-};
-
 class RequestError extends Error {
   constructor(xhr) {
     let message, errors_from_server,

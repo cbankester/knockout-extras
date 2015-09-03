@@ -78,6 +78,16 @@ function _remap_with_included_records(record, {get_included_record, immybox, nes
   return ret;
 }
 
+function _encode_uri(url, obj) {
+  if (Object.keys(obj).length === 0) return url;
+  let str = "";
+  for (let key in obj) {
+    if (str !== "") str += "&";
+    str += `${key}=${encodeURIComponent(obj[key])}`
+  }
+  return `${url}?${str}`
+}
+
 function _base_request(resolve, reject) {
   let request = new XMLHttpRequest();
   request.onreadystatechange = function() {
