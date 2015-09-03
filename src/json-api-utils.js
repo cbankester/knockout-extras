@@ -78,6 +78,21 @@ function _remap_with_included_records(record, {get_included_record, immybox, nes
   return ret;
 }
 
+function _base_request(resolve, reject) {
+  let request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (this.readyState === 4) // done
+      if (this.status === 200)
+        resolve(JSON.parse(this.response || "null"));
+      else
+        reject(this);
+  };
+  request.onerror = function() {
+    reject(this);
+  };
+  return request;
+}
+
 export const httpJSON = {
   get(req) {
     if (req instanceof Array)

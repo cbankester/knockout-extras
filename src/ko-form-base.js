@@ -17,21 +17,6 @@ const _encode_uri = function _encode_uri(url, obj) {
   return `${url}?${str}`
 };
 
-const _base_request = function _base_request(resolve, reject) {
-  let request = new XMLHttpRequest();
-  request.onreadystatechange = function() {
-    if (this.readyState === 4) // done
-      if (this.status === 200)
-        resolve(JSON.parse(this.response || "null"));
-      else
-        reject(this);
-  };
-  request.onerror = function() {
-    reject(this);
-  };
-  return request;
-};
-
 class RequestError extends Error {
   constructor(xhr) {
     let message, errors_from_server,
