@@ -190,6 +190,86 @@
 	  return ret;
 	}
 	
+	var httpJSON = {
+	  get: function get(req) {
+	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
+	      return httpJSON.get(elem);
+	    }));
+	    if (typeof req === 'string') return httpJSON.get({ url: req });
+	    var url = req.url;
+	    var data = req.data;
+	
+	    return new Promise(function (resolve, reject) {
+	      var request = _base_request(resolve, reject);
+	      request.open('GET', _encode_uri(url, Object.assign({}, data)));
+	      request.setRequestHeader('Content-Type', 'application/json');
+	      request.setRequestHeader('Accept', 'application/json');
+	      if (document.querySelector('[name="csrf-token"]')) {
+	        var token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+	        if (token) request.setRequestHeader('X-CSRF-Token', token);
+	      }
+	      request.send();
+	    });
+	  },
+	  post: function post(req) {
+	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
+	      return httpJSON.post(elem);
+	    }));
+	    var url = req.url;
+	    var data = req.data;
+	
+	    return new Promise(function (resolve, reject) {
+	      var request = _base_request(resolve, reject);
+	      request.open('POST', url);
+	      request.setRequestHeader('Content-Type', 'application/json');
+	      request.setRequestHeader('Accept', 'application/json');
+	      if (document.querySelector('[name="csrf-token"]')) {
+	        var token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+	        if (token) request.setRequestHeader('X-CSRF-Token', token);
+	      }
+	      request.send(JSON.stringify(data));
+	    });
+	  },
+	  patch: function patch(req) {
+	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
+	      return httpJSON.patch(elem);
+	    }));
+	    var url = req.url;
+	    var data = req.data;
+	
+	    return new Promise(function (resolve, reject) {
+	      var request = _base_request(resolve, reject);
+	      request.open('PATCH', url);
+	      request.setRequestHeader('Content-Type', 'application/json');
+	      request.setRequestHeader('Accept', 'application/json');
+	      if (document.querySelector('[name="csrf-token"]')) {
+	        var token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+	        if (token) request.setRequestHeader('X-CSRF-Token', token);
+	      }
+	      request.send(JSON.stringify(data));
+	    });
+	  },
+	  'delete': function _delete(req) {
+	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
+	      return httpJSON.patch(elem);
+	    }));
+	    if (typeof req === 'string') return httpJSON['delete']({ url: req });
+	    var url = req.url;
+	
+	    return new Promise(function (resolve, reject) {
+	      var request = _base_request(resolve, reject);
+	      request.open('DELETE', _encode_uri(url, Object.assign({}, data)));
+	      if (document.querySelector('[name="csrf-token"]')) {
+	        var token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+	        if (token) request.setRequestHeader('X-CSRF-Token', token);
+	      }
+	      request.send();
+	    });
+	  }
+	};
+	
+	exports.httpJSON = httpJSON;
+	
 	function create_observable(vm, attr_name, attr_val) {
 	  return vm[attr_name] = _obs().extend({
 	    postable: attr_name,
@@ -385,66 +465,6 @@
 	  return request;
 	};
 	
-	var httpJSON = {
-	  get: function get(req) {
-	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
-	      return httpJSON.get(elem);
-	    }));
-	    var url = req.url;
-	    var data = req.data;
-	
-	    return new Promise(function (resolve, reject) {
-	      var request = _base_request(resolve, reject);
-	      request.open('GET', _encode_uri(url, Object.assign({}, data)));
-	      request.setRequestHeader('Content-Type', 'application/json');
-	      request.setRequestHeader('Accept', 'application/json');
-	      if (document.querySelector('[name="csrf-token"]')) {
-	        var token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-	        if (token) request.setRequestHeader('X-CSRF-Token', token);
-	      }
-	      request.send();
-	    });
-	  },
-	  post: function post(req) {
-	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
-	      return httpJSON.post(elem);
-	    }));
-	    var url = req.url;
-	    var data = req.data;
-	
-	    return new Promise(function (resolve, reject) {
-	      var request = _base_request(resolve, reject);
-	      request.open('POST', url);
-	      request.setRequestHeader('Content-Type', 'application/json');
-	      request.setRequestHeader('Accept', 'application/json');
-	      if (document.querySelector('[name="csrf-token"]')) {
-	        var token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-	        if (token) request.setRequestHeader('X-CSRF-Token', token);
-	      }
-	      request.send(JSON.stringify(data));
-	    });
-	  },
-	  patch: function patch(req) {
-	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
-	      return httpJSON.patch(elem);
-	    }));
-	    var url = req.url;
-	    var data = req.data;
-	
-	    return new Promise(function (resolve, reject) {
-	      var request = _base_request(resolve, reject);
-	      request.open('PATCH', url);
-	      request.setRequestHeader('Content-Type', 'application/json');
-	      request.setRequestHeader('Accept', 'application/json');
-	      if (document.querySelector('[name="csrf-token"]')) {
-	        var token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-	        if (token) request.setRequestHeader('X-CSRF-Token', token);
-	      }
-	      request.send(JSON.stringify(data));
-	    });
-	  }
-	};
-	
 	var RequestError = (function (_Error) {
 	  _inherits(RequestError, _Error);
 	
@@ -491,7 +511,7 @@
 	              data: Object.assign({}, req.request_opts)
 	            };
 	          })));
-	          httpJSON.get(requests).then(function (_ref2) {
+	          _this.httpJSON.get(requests).then(function (_ref2) {
 	            var _ref22 = _toArray(_ref2);
 	
 	            var main_response = _ref22[0];
@@ -660,7 +680,8 @@
 	      attempted: _obs(false),
 	      error_message: _obs(null),
 	      observables_list: [],
-	      relationships: []
+	      relationships: [],
+	      httpJSON: ko_extras.json_api_utils.httpJSON
 	    });
 	  }
 	
@@ -692,7 +713,7 @@
 	        type: this.type,
 	        attributes: this.serialize()
 	      };
-	      return httpJSON[this.id ? 'patch' : 'post']({ url: this.url, data: { data: data } }).then(function (response) {
+	      return this.httpJSON[this.id ? 'patch' : 'post']({ url: this.url, data: { data: data } }).then(function (response) {
 	        var record = ko_extras.json_api_utils.parse_json_api_response(response);
 	        if (record) {
 	          _this5.id = record.id;

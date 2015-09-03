@@ -32,57 +32,6 @@ const _base_request = function _base_request(resolve, reject) {
   return request;
 };
 
-const httpJSON = {
-  get(req) {
-    if (req instanceof Array)
-      return Promise.all(req.map(elem => httpJSON.get(elem)));
-    const {url, data} = req;
-    return new Promise((resolve, reject) => {
-      let request = _base_request(resolve, reject);
-      request.open('GET', _encode_uri(url, Object.assign({}, data)));
-      request.setRequestHeader('Content-Type', 'application/json');
-      request.setRequestHeader('Accept', 'application/json');
-      if (document.querySelector('[name="csrf-token"]')) {
-        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-        if (token) request.setRequestHeader('X-CSRF-Token', token);
-      }
-      request.send();
-    });
-  },
-  post(req) {
-    if (req instanceof Array)
-      return Promise.all(req.map(elem => httpJSON.post(elem)));
-    const {url, data} = req;
-    return new Promise((resolve, reject) => {
-      let request = _base_request(resolve, reject);
-      request.open('POST', url);
-      request.setRequestHeader('Content-Type', 'application/json');
-      request.setRequestHeader('Accept', 'application/json');
-      if (document.querySelector('[name="csrf-token"]')) {
-        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-        if (token) request.setRequestHeader('X-CSRF-Token', token);
-      }
-      request.send(JSON.stringify(data));
-    });
-  },
-  patch(req) {
-    if (req instanceof Array)
-      return Promise.all(req.map(elem => httpJSON.patch(elem)));
-    const {url, data} = req;
-    return new Promise((resolve, reject) => {
-      let request = _base_request(resolve, reject);
-      request.open('PATCH', url);
-      request.setRequestHeader('Content-Type', 'application/json');
-      request.setRequestHeader('Accept', 'application/json');
-      if (document.querySelector('[name="csrf-token"]')) {
-        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-        if (token) request.setRequestHeader('X-CSRF-Token', token);
-      }
-      request.send(JSON.stringify(data));
-    })
-  }
-};
-
 class RequestError extends Error {
   constructor(xhr) {
     let message, errors_from_server,
@@ -118,7 +67,7 @@ export default class KOFormBase {
                   };
                 })
               ];
-        httpJSON.get(requests)
+        this.httpJSON.get(requests)
         .then(([main_response, ...other_responses]) => {
           return this.init(main_response).then(() => Promise.all([
             this.handleOtherRequests(other_responses),
@@ -270,7 +219,8 @@ export default class KOFormBase {
       attempted:        _obs(false),
       error_message:    _obs(null),
       observables_list: [],
-      relationships:    []
+      relationships:    [],
+      httpJSON:         ko_extras.json_api_utils.httpJSON
     });
   }
 
@@ -300,7 +250,7 @@ export default class KOFormBase {
           type:       this.type,
           attributes: this.serialize()
         };
-    return httpJSON[this.id ? 'patch' : 'post']({url: this.url, data: {data}})
+    return this.httpJSON[this.id ? 'patch' : 'post']({url: this.url, data: {data}})
       .then(response => {
         let record = ko_extras.json_api_utils.parse_json_api_response(response);
         if (record) {

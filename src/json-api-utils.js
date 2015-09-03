@@ -78,6 +78,75 @@ function _remap_with_included_records(record, {get_included_record, immybox, nes
   return ret;
 }
 
+export const httpJSON = {
+  get(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.get(elem)));
+    if (typeof req === 'string')
+      return httpJSON.get({url: req});
+    const {url, data} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('GET', _encode_uri(url, Object.assign({}, data)));
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.setRequestHeader('Accept', 'application/json');
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send();
+    });
+  },
+  post(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.post(elem)));
+    const {url, data} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('POST', url);
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.setRequestHeader('Accept', 'application/json');
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send(JSON.stringify(data));
+    });
+  },
+  patch(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.patch(elem)));
+    const {url, data} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('PATCH', url);
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.setRequestHeader('Accept', 'application/json');
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send(JSON.stringify(data));
+    });
+  },
+  delete(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.patch(elem)));
+    if (typeof req === 'string')
+      return httpJSON.delete({url: req});
+    const {url} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('DELETE', _encode_uri(url, Object.assign({}, data)));
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send();
+    });
+  }
+};
+
 export function create_observable(vm, attr_name, attr_val) {
   return vm[attr_name] = _obs().extend({
     postable: attr_name,
