@@ -11,7 +11,15 @@ class RequestError extends Error {
   constructor(xhr) {
     let message, errors_from_server,
         name = "RequestError",
-        json = JSON.parse(xhr.responseText || "null");
+        json, responseText;
+
+    try {
+      json = JSON.parse(xhr.responseText || "null");
+    } catch (e) {
+      json = null;
+    } finally {
+      if (xhr.responseText) responseText = xhr.responseText;
+    }
 
     if (json && json.errors) {
       errors_from_server = json.errors;
@@ -23,6 +31,7 @@ class RequestError extends Error {
     this.name    = name;
     this.status  = xhr.status
     if (errors_from_server) this.errors_from_server = errors_from_server;
+    if (responseText) this.responseText = responseText;
   }
 }
 
@@ -43,6 +52,7 @@ export default class KOFormBase {
                 })
               ];
         this.httpJSON.get(requests)
+        .catch(xhr => Promise.reject(new RequestError(xhr)))
         .then(([main_response, ...other_responses]) => {
           return this.init(main_response).then(() => Promise.all([
             this.handleOtherRequests(other_responses),

@@ -474,7 +474,16 @@
 	    var message = undefined,
 	        errors_from_server = undefined,
 	        name = "RequestError",
-	        json = JSON.parse(xhr.responseText || "null");
+	        json = undefined,
+	        responseText = undefined;
+	
+	    try {
+	      json = JSON.parse(xhr.responseText || "null");
+	    } catch (e) {
+	      json = null;
+	    } finally {
+	      if (xhr.responseText) responseText = xhr.responseText;
+	    }
 	
 	    if (json && json.errors) {
 	      errors_from_server = json.errors;
@@ -486,6 +495,7 @@
 	    this.name = name;
 	    this.status = xhr.status;
 	    if (errors_from_server) this.errors_from_server = errors_from_server;
+	    if (responseText) this.responseText = responseText;
 	  }
 	
 	  return RequestError;
@@ -511,7 +521,9 @@
 	              data: Object.assign({}, req.request_opts)
 	            };
 	          })));
-	          _this.httpJSON.get(requests).then(function (_ref2) {
+	          _this.httpJSON.get(requests)["catch"](function (xhr) {
+	            return Promise.reject(new RequestError(xhr));
+	          }).then(function (_ref2) {
 	            var _ref22 = _toArray(_ref2);
 	
 	            var main_response = _ref22[0];
