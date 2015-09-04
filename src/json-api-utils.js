@@ -92,8 +92,12 @@ function _base_request(resolve, reject) {
   let request = new XMLHttpRequest();
   request.onreadystatechange = function() {
     if (this.readyState === 4) // done
-      if (this.status === 200)
-        resolve(JSON.parse(this.response || "null"));
+      if (this.status >= 200 && this.status < 400)
+        try {
+          resolve(JSON.parse(this.response || "null"));
+        } catch (e) {
+          resolve(null);
+        }
       else
         reject(this);
   };
