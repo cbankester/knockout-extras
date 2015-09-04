@@ -277,6 +277,7 @@
 	    }));
 	    if (typeof req === 'string') return httpJSON['delete']({ url: req });
 	    var url = req.url;
+	    var data = req.data;
 	
 	    return new Promise(function (resolve, reject) {
 	      var request = _base_request(resolve, reject);

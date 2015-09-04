@@ -159,7 +159,7 @@ export const httpJSON = {
       return Promise.all(req.map(elem => httpJSON.patch(elem)));
     if (typeof req === 'string')
       return httpJSON.delete({url: req});
-    const {url} = req;
+    const {url, data} = req;
     return new Promise((resolve, reject) => {
       let request = _base_request(resolve, reject);
       request.open('DELETE', _encode_uri(url, Object.assign({}, data)));
