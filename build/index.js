@@ -50,11 +50,13 @@
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj['default'] = obj; return newObj; } }
 	
-	var _jsonApiUtils = __webpack_require__(1);
+	__webpack_require__(1);
+	
+	var _jsonApiUtils = __webpack_require__(2);
 	
 	var json_api_utils = _interopRequireWildcard(_jsonApiUtils);
 	
-	var _koFormBase = __webpack_require__(2);
+	var _koFormBase = __webpack_require__(3);
 	
 	var _koFormBase2 = _interopRequireDefault(_koFormBase);
 	
@@ -67,21 +69,6 @@
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
-	
-	exports.create_observable = create_observable;
-	exports.parse_json_api_response = parse_json_api_response;
-	exports.init_relationship = init_relationship;
-	exports.build_relationship = build_relationship;
-	exports.create_relationships = create_relationships;
-	exports.create_relationship = create_relationship;
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
 	if (!Array.prototype.includes) {
 	  Array.prototype.includes = function (searchElement /*, fromIndex*/) {
@@ -112,6 +99,66 @@
 	    return false;
 	  };
 	}
+	
+	if (!Object.assign) {
+	  Object.defineProperty(Object, 'assign', {
+	    enumerable: false,
+	    configurable: true,
+	    writable: true,
+	    value: function value(target) {
+	      'use strict';
+	      if (target === undefined || target === null) {
+	        throw new TypeError('Cannot convert first argument to object');
+	      }
+	
+	      var to = Object(target);
+	      for (var i = 1; i < arguments.length; i++) {
+	        var nextSource = arguments[i];
+	        if (nextSource === undefined || nextSource === null) {
+	          continue;
+	        }
+	        nextSource = Object(nextSource);
+	
+	        var keysArray = Object.keys(Object(nextSource));
+	        for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+	          var nextKey = keysArray[nextIndex];
+	          var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+	          if (desc !== undefined && desc.enumerable) {
+	            to[nextKey] = nextSource[nextKey];
+	          }
+	        }
+	      }
+	      return to;
+	    }
+	  });
+	}
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+	
+	var _get = function get(_x7, _x8, _x9) { var _again = true; _function: while (_again) { var object = _x7, property = _x8, receiver = _x9; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x7 = parent; _x8 = property; _x9 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	exports.create_observable = create_observable;
+	exports.parse_json_api_response = parse_json_api_response;
+	exports.init_relationship = init_relationship;
+	exports.build_relationship = build_relationship;
+	exports.create_relationships = create_relationships;
+	exports.create_relationship = create_relationship;
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _obs = ko.observable,
 	    _arr = ko.observableArray,
@@ -216,6 +263,43 @@
 	  return request;
 	}
 	
+	var RequestError = (function (_Error) {
+	  _inherits(RequestError, _Error);
+	
+	  function RequestError(xhr) {
+	    _classCallCheck(this, RequestError);
+	
+	    var message = undefined,
+	        errors_from_server = undefined,
+	        name = "RequestError",
+	        json = undefined,
+	        responseText = undefined;
+	
+	    try {
+	      json = JSON.parse(xhr.responseText || "null");
+	    } catch (e) {
+	      json = null;
+	    } finally {
+	      if (xhr.responseText) responseText = xhr.responseText;
+	    }
+	
+	    if (json && json.errors) {
+	      errors_from_server = json.errors;
+	      if (json.errors.length === 1) message = json.errors[0].title;
+	    }
+	    if (!message) message = xhr.statusText || "An error occurred while sending the request";
+	    _get(Object.getPrototypeOf(RequestError.prototype), 'constructor', this).call(this, message);
+	    this.message = message;
+	    this.name = name;
+	    this.status = xhr.status;
+	    if (errors_from_server) this.errors_from_server = errors_from_server;
+	    if (responseText) this.responseText = responseText;
+	  }
+	
+	  return RequestError;
+	})(Error);
+	
+	exports.RequestError = RequestError;
 	var httpJSON = {
 	  get: function get(req) {
 	    if (req instanceof Array) return Promise.all(req.map(function (elem) {
@@ -435,7 +519,7 @@
 	}
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -444,17 +528,15 @@
 	  value: true
 	});
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
 	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var _obs = ko.observable,
 	    _arr = ko.observableArray,
@@ -470,222 +552,200 @@
 	  };
 	};
 	
-	var RequestError = (function (_Error) {
-	  _inherits(RequestError, _Error);
+	function _initKOFormVMFromJsonApiResponse(vm, response) {
+	  var record = response.data,
+	      client_defined_relationships = vm.options.relationships,
+	      server_defined_relationships = record.relationships || {},
+	      server_defined_attributes = record.attributes || {},
+	      get_included_record = response.included ? _get_included(response.included) : undefined;
 	
-	  function RequestError(xhr) {
-	    _classCallCheck(this, RequestError);
+	  vm.id = record.id;
+	  if (vm.id) vm.id = Number.parseInt(vm.id, 10);
+	  vm.type = record.type;
 	
-	    var message = undefined,
-	        errors_from_server = undefined,
-	        name = "RequestError",
-	        json = undefined,
-	        responseText = undefined;
+	  vm.url = server_defined_attributes.url;
+	  delete server_defined_attributes.url;
 	
-	    try {
-	      json = JSON.parse(xhr.responseText || "null");
-	    } catch (e) {
-	      json = null;
-	    } finally {
-	      if (xhr.responseText) responseText = xhr.responseText;
-	    }
+	  for (var key in server_defined_attributes) {
+	    vm.observables_list.push(ko_extras.json_api_utils.create_observable(vm, key, server_defined_attributes[key]));
+	  }var relationship_names = Object.keys(server_defined_relationships);
 	
-	    if (json && json.errors) {
-	      errors_from_server = json.errors;
-	      if (json.errors.length === 1) message = json.errors[0].title;
-	    }
-	    if (!message) message = xhr.statusText || "An error occurred while sending the request";
-	    _get(Object.getPrototypeOf(RequestError.prototype), "constructor", this).call(this, message);
-	    this.message = message;
-	    this.name = name;
-	    this.status = xhr.status;
-	    if (errors_from_server) this.errors_from_server = errors_from_server;
-	    if (responseText) this.responseText = responseText;
-	  }
+	  return Promise.all(relationship_names.map(function (key) {
+	    return ko_extras.json_api_utils.init_relationship(vm, key, server_defined_relationships[key].data, client_defined_relationships);
+	  })).then(function (relationship_params) {
+	    return Promise.all(relationship_params.map(function (_ref2) {
+	      var rel_name = _ref2.rel_name;
+	      var rel_data = _ref2.rel_data;
+	      var obs = _ref2.obs;
+	      var client_defined_relationship = _ref2.client_defined_relationship;
 	
-	  return RequestError;
-	})(Error);
+	      vm.relationships.push(obs);
+	      return json_api_utils.build_relationship(vm, rel_name, rel_data, obs, {
+	        get_included_record: get_included_record,
+	        client_defined_relationship: client_defined_relationship
+	      });
+	    }));
+	  });
+	}
+	
+	function _initNestedVMs(vm, vm_map) {
+	  return vm_map && Promise.all([].concat(_toConsumableArray(vm_map)).map(function (_ref3) {
+	    var _ref32 = _slicedToArray(_ref3, 2);
+	
+	    var nested_vm_name = _ref32[0];
+	    var nested_vm = _ref32[1];
+	
+	    vm[nested_vm_name] = nested_vm;
+	    return nested_vm.doneLoading();
+	  })) || Promise.resolve();
+	}
+	
+	function _sendRequests(requests) {
+	  return ko_extras.json_api_utils.httpJSON.get(requests)["catch"](function (xhr) {
+	    throw new ko_extras.json_api_utils.RequestError(xhr);
+	  });
+	}
 	
 	var KOFormBase = (function () {
 	  _createClass(KOFormBase, [{
-	    key: "beginInit",
-	    value: function beginInit(opts) {
+	    key: "init",
+	    value: function init(opts) {
 	      var _this = this;
 	
-	      return new Promise(function (resolve, reject) {
-	        if (!_this.init_begun && !_this.init_finalized) {
-	          _this.options = opts;
-	          var url = opts.url;
-	          var request_opts = opts.request_opts;
-	          var other_requests = opts.other_requests;
+	      if (this.init_begun || this.init_finalized) throw new Error("Cannot init more than once");
 	
-	          if (!url) throw new Error("Please provide a URL");
-	          var requests = [{ url: url, data: Object.assign({}, request_opts) }].concat(_toConsumableArray((other_requests || []).map(function (req) {
-	            return typeof req === 'string' ? { url: req, data: {} } : {
-	              url: req.url,
-	              data: Object.assign({}, req.request_opts)
-	            };
-	          })));
-	          _this.httpJSON.get(requests)["catch"](function (xhr) {
-	            return Promise.reject(new RequestError(xhr));
-	          }).then(function (_ref2) {
-	            var _ref22 = _toArray(_ref2);
+	      if (!opts.url) throw new Error("Please provide a URL");
+	      this.init_begun = true;
 	
-	            var main_response = _ref22[0];
+	      var _options = this.options = opts;
 	
-	            var other_responses = _ref22.slice(1);
+	      var url = _options.url;
+	      var request_opts = _options.request_opts;
+	      var other_requests = _options.other_requests;
 	
-	            return _this.init(main_response).then(function () {
-	              return Promise.all([_this.handleOtherRequests(other_responses), Promise.resolve()]);
-	            });
-	          }).then(resolve)["catch"](reject);
-	        } else throw new Error("Cannot begin init more than once");
-	      });
-	    }
-	  }, {
-	    key: "init",
-	    value: function init(response) {
-	      var _this2 = this;
+	      var requests = [{ url: url, data: Object.assign({}, request_opts) }].concat(_toConsumableArray((other_requests || []).map(function (req) {
+	        return typeof req === 'string' ? { url: req, data: {} } : {
+	          url: req.url,
+	          data: Object.assign({}, req.request_opts)
+	        };
+	      })));
+	      return Promise.all([_sendRequests(requests), _initNestedVMs(this, opts.nested_vms)]).then(function (_ref4) {
+	        var _ref42 = _slicedToArray(_ref4, 1);
 	
-	      var record = response.data,
-	          client_defined_relationships = this.options.relationships,
-	          server_defined_relationships = record.relationships || {},
-	          server_defined_attributes = record.attributes || {},
-	          get_included_record = response.included ? _get_included(response.included) : undefined;
+	        var _ref42$0 = _toArray(_ref42[0]);
 	
-	      this.id = record.id;
-	      if (this.id) this.id = Number.parseInt(this.id, 10);
-	      this.type = record.type;
+	        var main_response = _ref42$0[0];
 	
-	      this.url = server_defined_attributes.url;
-	      delete server_defined_attributes.url;
+	        var other_responses = _ref42$0.slice(1);
 	
-	      for (var key in server_defined_attributes) {
-	        this.observables_list.push(ko_extras.json_api_utils.create_observable(this, key, server_defined_attributes[key]));
-	      }var relationship_names = Object.keys(server_defined_relationships);
-	
-	      return Promise.all(relationship_names.map(function (key) {
-	        return ko_extras.json_api_utils.init_relationship(_this2, key, server_defined_relationships[key].data, client_defined_relationships);
-	      })).then(function (relationship_params) {
-	        return Promise.all(relationship_params.map(function (_ref3) {
-	          var rel_name = _ref3.rel_name;
-	          var rel_data = _ref3.rel_data;
-	          var obs = _ref3.obs;
-	          var client_defined_relationship = _ref3.client_defined_relationship;
-	
-	          _this2.relationships.push(obs);
-	          return ko_extras.json_api_utils.build_relationship(_this2, rel_name, rel_data, obs, {
-	            get_included_record: get_included_record,
-	            client_defined_relationship: client_defined_relationship
-	          });
-	        }));
-	      });
-	    }
-	  }, {
-	    key: "finalizeInit",
-	    value: function finalizeInit() {
-	      var _this3 = this;
-	
-	      return new Promise(function (resolve) {
-	        if (!_this3.init_finalized) {
-	          (function () {
-	            var errorable = _this3.observables_list.filter(function (obs) {
-	              return obs.hasError;
-	            }),
-	                observables_with_initial_values = _this3.observables_list.filter(function (obs) {
-	              return obs.initial_value || obs.initial_length;
-	            });
-	            _this3.errors = {};
-	            errorable.forEach(function (obs) {
-	              if (obs.postable_name) _this3.errors[obs.postable_name] = _com(function () {
-	                return obs.hasError() ? obs.validationMessage() : null;
-	              });else if (obs.errorable_observables) _this3.errors[obs.errorable_name] = _com(function () {
-	                return obs.hasError() ? obs.errors() : null;
-	              });
-	            });
-	            _this3.numErrors = _this3.numErrors || _com(function () {
-	              return errorable.reduce(function (total, obs) {
-	                return total + (obs.hasError() ? obs.numErrors ? obs.numErrors() : 1 : 0);
-	              }, 0);
-	            });
-	
-	            _this3.is_valid = _com(function () {
-	              var is_valid = _this3.numErrors() === 0;
-	              if (is_valid) {
-	                if (_this3.validation_messenger) {
-	                  _this3.validation_messenger.cancel();
-	                  delete _this3.validation_messenger;
-	                }
-	              }
-	              return is_valid;
-	            }).extend({ notify: 'always' });
-	
-	            _this3.no_changes_pending = _com(function () {
-	              var relationships_pendings = _this3.relationships.map(function (obs) {
-	                var c = obs.no_changes_pending,
-	                    l = obs.initial_length;
-	
-	                return (c ? c() : true) && (l ? l() === obs().length : true);
-	              }),
-	                  observable_value_pairs = observables_with_initial_values.map(function (obs) {
-	                return obs.initial_value ? obs() === obs.initial_value() : obs().length === obs.initial_length();
-	              });
-	
-	              return relationships_pendings.every(function (p) {
-	                return p;
-	              }) && observable_value_pairs.every(function (p) {
-	                return p;
-	              });
-	            }).extend({ notify: 'always' });
-	
-	            _this3.changes_pending = _com(function () {
-	              return !_this3.no_changes_pending();
-	            }).extend({ notify: 'always' });
-	
-	            if (_this3.options.save_after_edit) {
-	              (function () {
-	                var reify_method = _this3.options.save_after_edit.reify_method;
-	                var should_save = _com(function () {
-	                  var changes_pending = _this3.changes_pending();
-	
-	                  var is_valid = _this3.is_valid();
-	
-	                  return changes_pending && (_this3.id || is_valid);
-	                }).extend({
-	                  rateLimit: {
-	                    method: 'notifyWhenChangesStop',
-	                    timeout: _this3.options.save_after_edit.rate_limit || 500
-	                  },
-	                  notify: 'always'
-	                });
-	
-	                _this3.saving_locked = false;
-	
-	                should_save.subscribe(function (should) {
-	                  if (should && !_this3.saving_locked) {
-	                    _this3.save().then(function (record) {
-	                      if (reify_method) _this3[reify_method](record);
-	                    })["catch"](function (err) {
-	                      if (typeof err === 'string') _this3.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
-	                        _this3.saving_locked = true;
-	                        _this3.error_message(err);
-	                      }
-	                    });
-	                  }
-	                });
-	              })();
-	            }
-	            _this3.init_finalized = true;
-	          })();
-	        } else throw new Error("Cannot finalize init more than once");
-	        resolve();
+	        return _initKOFormVMFromJsonApiResponse(_this, main_response).then(function () {
+	          return Promise.all([_this.handleOtherRequests(other_responses), _this.finalizeInit()]);
+	        });
+	      }).then(function () {
+	        return delete _this.init_begun;
 	      });
 	    }
 	  }, {
 	    key: "handleOtherRequests",
 	    value: function handleOtherRequests(responses) {
 	      // Overload this method to handle responses
-	      return Promise.resolve();
+	    }
+	  }, {
+	    key: "finalizeInit",
+	    value: function finalizeInit() {
+	      var _this2 = this;
+	
+	      if (this.init_finalizing || this.init_finalized) throw new Error("Cannot finalize init more than once");
+	
+	      this.init_finalizing = true;
+	      var errorable = this.observables_list.filter(function (obs) {
+	        return obs.hasError;
+	      }),
+	          observables_with_initial_values = this.observables_list.filter(function (obs) {
+	        return obs.initial_value || obs.initial_length;
+	      });
+	      this.errors = {};
+	      errorable.forEach(function (obs) {
+	        if (obs.postable_name) _this2.errors[obs.postable_name] = _com(function () {
+	          return obs.hasError() ? obs.validationMessage() : null;
+	        });else if (obs.errorable_observables) _this2.errors[obs.errorable_name] = _com(function () {
+	          return obs.hasError() ? obs.errors() : null;
+	        });
+	      });
+	      this.numErrors = this.numErrors || _com(function () {
+	        return errorable.reduce(function (total, obs) {
+	          return total + (obs.hasError() ? obs.numErrors ? obs.numErrors() : 1 : 0);
+	        }, 0);
+	      });
+	
+	      this.is_valid = _com(function () {
+	        var is_valid = _this2.numErrors() === 0;
+	        if (is_valid) {
+	          if (_this2.validation_messenger) {
+	            _this2.validation_messenger.cancel();
+	            delete _this2.validation_messenger;
+	          }
+	        }
+	        return is_valid;
+	      }).extend({ notify: 'always' });
+	
+	      this.no_changes_pending = _com(function () {
+	        var relationships_pendings = _this2.relationships.map(function (obs) {
+	          var c = obs.no_changes_pending,
+	              l = obs.initial_length;
+	
+	          return (c ? c() : true) && (l ? l() === obs().length : true);
+	        }),
+	            observable_value_pairs = observables_with_initial_values.map(function (obs) {
+	          return obs.initial_value ? obs() === obs.initial_value() : obs().length === obs.initial_length();
+	        });
+	
+	        return relationships_pendings.every(function (p) {
+	          return p;
+	        }) && observable_value_pairs.every(function (p) {
+	          return p;
+	        });
+	      }).extend({ notify: 'always' });
+	
+	      this.changes_pending = _com(function () {
+	        return !_this2.no_changes_pending();
+	      }).extend({ notify: 'always' });
+	
+	      if (this.options.save_after_edit) {
+	        (function () {
+	          var reify_method = _this2.options.save_after_edit.reify_method;
+	          var should_save = _com(function () {
+	            var changes_pending = _this2.changes_pending();
+	
+	            var is_valid = _this2.is_valid();
+	
+	            return changes_pending && (_this2.id || is_valid);
+	          }).extend({
+	            rateLimit: {
+	              method: 'notifyWhenChangesStop',
+	              timeout: _this2.options.save_after_edit.rate_limit || 500
+	            },
+	            notify: 'always'
+	          });
+	
+	          _this2.saving_locked = false;
+	
+	          should_save.subscribe(function (should) {
+	            if (should && !_this2.saving_locked) {
+	              _this2.save().then(function (record) {
+	                if (reify_method) _this2[reify_method](record);
+	              })["catch"](function (err) {
+	                if (typeof err === 'string') _this2.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
+	                  _this2.saving_locked = true;
+	                  _this2.error_message(err);
+	                }
+	              });
+	            }
+	          });
+	        })();
+	      }
+	      delete this.init_finalizing;
+	      this.init_finalized = true;
 	    }
 	  }]);
 	
@@ -697,22 +757,21 @@
 	      attempted: _obs(false),
 	      error_message: _obs(null),
 	      observables_list: [],
-	      relationships: [],
-	      httpJSON: ko_extras.json_api_utils.httpJSON
+	      relationships: []
 	    });
 	  }
 	
 	  _createClass(KOFormBase, [{
 	    key: "saveAndReload",
 	    value: function saveAndReload() {
-	      var _this4 = this;
+	      var _this3 = this;
 	
 	      var action = this.id ? 'update' : 'create';
 	      this.save().then(function (record) {
 	        successNotice({ notice: "Record " + action + "d" });
-	        window.location = record && record.url ? record.url : _this4.url;
+	        window.location = record && record.url ? record.url : _this3.url;
 	      })["catch"](function (err) {
-	        if (typeof err === 'string') _this4.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
+	        if (typeof err === 'string') _this3.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
 	          console.log(err);
 	          errorNotice({ notice: err.message });
 	        }
@@ -721,24 +780,35 @@
 	  }, {
 	    key: "save",
 	    value: function save() {
-	      var _this5 = this;
+	      var _this4 = this;
 	
-	      this.attempted(true);
-	      if (this.numErrors() !== 0) return Promise.reject("There " + (this.numErrors() === 1 ? "is 1 error which prevents" : "are " + this.numErrors() + " errors which prevent") + " this form from being submitted.");
-	      var data = {
-	        id: this.id,
-	        type: this.type,
-	        attributes: this.serialize()
-	      };
-	      return this.httpJSON[this.id ? 'patch' : 'post']({ url: this.url, data: { data: data } }).then(function (response) {
-	        var record = ko_extras.json_api_utils.parse_json_api_response(response);
-	        if (record) {
-	          _this5.id = record.id;
-	          _this5.url = record.url;
+	      return new Promise(function (resolve, reject) {
+	        _this4.attempted(true);
+	        var numErrors = _this4.numErrors();
+	        if (numErrors) {
+	          reject("There " + (numErrors === 1 ? "is 1 error which prevents" : "are " + numErrors + " errors which prevent") + " this form from being submitted.");
+	          return;
 	        }
-	        return Promise.resolve(record);
-	      })["catch"](function (xhr) {
-	        return Promise.reject(new RequestError(xhr));
+	
+	        ko_extras.json_api_utils.httpJSON[_this4.id ? 'patch' : 'post']({
+	          url: _this4.url,
+	          data: {
+	            data: {
+	              id: _this4.id,
+	              type: _this4.type,
+	              attributes: _this4.serialize()
+	            }
+	          }
+	        }).then(function (response) {
+	          var record = ko_extras.json_api_utils.parse_json_api_response(response);
+	          if (record) {
+	            _this4.id = record.id;
+	            _this4.url = record.url;
+	          }
+	          resolve(record);
+	        })["catch"](function (xhr) {
+	          return reject(new ko_extras.json_api_utils.RequestError(xhr));
+	        });
 	      });
 	    }
 	  }, {
@@ -771,14 +841,22 @@
 	  }, {
 	    key: "doneLoading",
 	    value: function doneLoading() {
-	      var _this6 = this;
+	      var _this5 = this;
 	
-	      if (this.loading()) return new Promise(function (resolve) {
-	        var s = _this6.loading.subscribe(function () {
-	          s.dispose();
+	      return this.loading() && new Promise(function (resolve, reject) {
+	        var e = undefined,
+	            l = undefined;
+	        e = _this5.error_message.subscribe(function (err) {
+	          l.dispose();
+	          e.dispose();
+	          reject(err);
+	        });
+	        l = _this5.loading.subscribe(function () {
+	          l.dispose();
+	          e.dispose();
 	          resolve();
 	        });
-	      });else return Promise.resolve();
+	      }) || Promise.resolve();
 	    }
 	  }]);
 	

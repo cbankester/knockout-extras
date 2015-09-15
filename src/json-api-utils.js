@@ -1,32 +1,3 @@
-if (!Array.prototype.includes) {
-  Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
-    'use strict';
-    var O = Object(this);
-    var len = parseInt(O.length) || 0;
-    if (len === 0) {
-      return false;
-    }
-    var n = parseInt(arguments[1]) || 0;
-    var k;
-    if (n >= 0) {
-      k = n;
-    } else {
-      k = len + n;
-      if (k < 0) {k = 0;}
-    }
-    var currentElement;
-    while (k < len) {
-      currentElement = O[k];
-      if (searchElement === currentElement ||
-         (searchElement !== searchElement && currentElement !== currentElement)) {
-        return true;
-      }
-      k++;
-    }
-    return false;
-  };
-}
-
 const _obs = ko.observable,
       _arr = ko.observableArray,
       _com = ko.computed,
@@ -105,6 +76,34 @@ function _base_request(resolve, reject) {
     reject(this);
   };
   return request;
+}
+
+export class RequestError extends Error {
+  constructor(xhr) {
+    let message, errors_from_server,
+        name = "RequestError",
+        json, responseText;
+
+    try {
+      json = JSON.parse(xhr.responseText || "null");
+    } catch (e) {
+      json = null;
+    } finally {
+      if (xhr.responseText) responseText = xhr.responseText;
+    }
+
+    if (json && json.errors) {
+      errors_from_server = json.errors;
+      if (json.errors.length === 1) message = json.errors[0].title;
+    }
+    if (!message) message = xhr.statusText || "An error occurred while sending the request";
+    super(message);
+    this.message = message;
+    this.name    = name;
+    this.status  = xhr.status
+    if (errors_from_server) this.errors_from_server = errors_from_server;
+    if (responseText) this.responseText = responseText;
+  }
 }
 
 export const httpJSON = {
