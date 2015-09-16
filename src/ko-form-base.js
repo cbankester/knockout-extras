@@ -18,7 +18,7 @@ function _initKOFormVMFromJsonApiResponse(vm, response) {
   if (vm.id) vm.id = Number.parseInt(vm.id, 10);
   vm.type = record.type;
 
-  vm.url = server_defined_attributes.url;
+  vm._url = vm.url = server_defined_attributes.url;
   delete server_defined_attributes.url;
 
   for (const key in server_defined_attributes)
@@ -266,6 +266,8 @@ export default class KOFormBase {
   }
 
   unsetObservables() {
+    delete this.id;
+    this.url = this._url;
     this.observables_list.forEach(obs => obs('push' in obs ? [] : undefined));
     this.attempted(false);
   }

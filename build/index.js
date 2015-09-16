@@ -563,7 +563,7 @@
 	  if (vm.id) vm.id = Number.parseInt(vm.id, 10);
 	  vm.type = record.type;
 	
-	  vm.url = server_defined_attributes.url;
+	  vm._url = vm.url = server_defined_attributes.url;
 	  delete server_defined_attributes.url;
 	
 	  for (var key in server_defined_attributes) {
@@ -833,6 +833,8 @@
 	  }, {
 	    key: "unsetObservables",
 	    value: function unsetObservables() {
+	      delete this.id;
+	      this.url = this._url;
 	      this.observables_list.forEach(function (obs) {
 	        return obs('push' in obs ? [] : undefined);
 	      });
