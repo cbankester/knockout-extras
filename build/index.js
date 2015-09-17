@@ -596,6 +596,7 @@
 	    var nested_vm = _ref32[1];
 	
 	    vm[nested_vm_name] = nested_vm;
+	    nested_vm.error_message.subscribe(vm.error_message);
 	    return nested_vm.doneLoading();
 	  })) || Promise.resolve();
 	}
@@ -856,7 +857,7 @@
 	        l = _this5.loading.subscribe(function () {
 	          l.dispose();
 	          e.dispose();
-	          resolve();
+	          if (_this5.error_message()) reject(_this5.error_message());else resolve();
 	        });
 	      }) || Promise.resolve();
 	    }

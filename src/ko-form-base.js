@@ -46,6 +46,7 @@ function _initKOFormVMFromJsonApiResponse(vm, response) {
 function _initNestedVMs(vm, vm_map) {
   return vm_map && Promise.all([...vm_map].map(([nested_vm_name, nested_vm]) => {
     vm[nested_vm_name] = nested_vm;
+    nested_vm.error_message.subscribe(vm.error_message);
     return nested_vm.doneLoading();
   })) || Promise.resolve();
 }
@@ -283,7 +284,8 @@ export default class KOFormBase {
       l = this.loading.subscribe(() => {
         l.dispose();
         e.dispose();
-        resolve();
+        if (this.error_message()) reject(this.error_message());
+        else resolve();
       });
     }) || Promise.resolve();
   }
