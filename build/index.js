@@ -640,7 +640,7 @@
 	        var other_responses = _ref42$0.slice(1);
 	
 	        return _initKOFormVMFromJsonApiResponse(_this, main_response).then(function () {
-	          return Promise.all([_this.handleOtherRequests(other_responses), _this.finalizeInit()]);
+	          return Promise.all([other_responses.length && _this.handleOtherRequests(other_responses) || Promise.resolve(), _this.finalizeInit()]);
 	        });
 	      }).then(function () {
 	        return delete _this.init_begun;

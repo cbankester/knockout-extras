@@ -86,7 +86,7 @@ export default class KOFormBase {
     .then(([[main_response, ...other_responses]]) => {
       return _initKOFormVMFromJsonApiResponse(this, main_response)
         .then(() => Promise.all([
-          this.handleOtherRequests(other_responses),
+          other_responses.length && this.handleOtherRequests(other_responses) || Promise.resolve(),
           this.finalizeInit()
         ]));
     })
