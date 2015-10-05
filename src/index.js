@@ -1,3 +1,4 @@
+import './polyfills';
 import * as json_api_utils from './json-api-utils';
 import KOFormBase from './ko-form-base';
 

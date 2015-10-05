@@ -1,32 +1,3 @@
-if (!Array.prototype.includes) {
-  Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
-    'use strict';
-    var O = Object(this);
-    var len = parseInt(O.length) || 0;
-    if (len === 0) {
-      return false;
-    }
-    var n = parseInt(arguments[1]) || 0;
-    var k;
-    if (n >= 0) {
-      k = n;
-    } else {
-      k = len + n;
-      if (k < 0) {k = 0;}
-    }
-    var currentElement;
-    while (k < len) {
-      currentElement = O[k];
-      if (searchElement === currentElement ||
-         (searchElement !== searchElement && currentElement !== currentElement)) {
-        return true;
-      }
-      k++;
-    }
-    return false;
-  };
-}
-
 const _obs = ko.observable,
       _arr = ko.observableArray,
       _com = ko.computed,
@@ -34,6 +5,15 @@ const _obs = ko.observable,
         return included.find(v => {
           return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
         });
+      },
+      _build_relationship = (vm, get_included_record) => ({rel_name, rel_data, client_defined_relationship, obs}) => {
+        return build_relationship(vm, rel_name, rel_data, obs, {
+          client_defined_relationship,
+          get_included_record
+        });
+      },
+      _init_relationship = (vm, client_defined_relationships) => ([rel_name, rel_data]) => {
+        return init_relationship(vm, rel_name, rel_data, client_defined_relationships);
       };
 
 function _remap_with_included_records(record, {get_included_record, immybox, nested_immybox_relationships}={}) {
@@ -69,13 +49,137 @@ function _remap_with_included_records(record, {get_included_record, immybox, nes
   return ret;
 }
 
+function _encode_uri(url, obj) {
+  if (Object.keys(obj).length === 0) return url;
+  let str = "";
+  for (let key in obj) {
+    if (str !== "") str += "&";
+    str += `${key}=${encodeURIComponent(obj[key])}`
+  }
+  return `${url}?${str}`
+}
+
+function _base_request(resolve, reject) {
+  let request = new XMLHttpRequest();
+  request.onreadystatechange = function() {
+    if (this.readyState === 4) // done
+      if (this.status >= 200 && this.status < 400)
+        try {
+          resolve(JSON.parse(this.response || "null"));
+        } catch (e) {
+          resolve(null);
+        }
+      else
+        reject(this);
+  };
+  request.onerror = function() {
+    reject(this);
+  };
+  return request;
+}
+
+export class RequestError extends Error {
+  constructor(xhr) {
+    let message, errors_from_server,
+        name = "RequestError",
+        json, responseText;
+
+    try {
+      json = JSON.parse(xhr.responseText || "null");
+    } catch (e) {
+      json = null;
+    } finally {
+      if (xhr.responseText) responseText = xhr.responseText;
+    }
+
+    if (json && json.errors) {
+      errors_from_server = json.errors;
+      if (json.errors.length === 1) message = json.errors[0].title;
+    }
+    if (!message) message = xhr.statusText || "An error occurred while sending the request";
+    super(message);
+    this.message = message;
+    this.name    = name;
+    this.status  = xhr.status
+    if (errors_from_server) this.errors_from_server = errors_from_server;
+    if (responseText) this.responseText = responseText;
+  }
+}
+
+export const httpJSON = {
+  get(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.get(elem)));
+    if (typeof req === 'string')
+      return httpJSON.get({url: req});
+    const {url, data} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('GET', _encode_uri(url, Object.assign({}, data)));
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.setRequestHeader('Accept', 'application/json');
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send();
+    });
+  },
+  post(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.post(elem)));
+    const {url, data} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('POST', url);
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.setRequestHeader('Accept', 'application/json');
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send(JSON.stringify(data));
+    });
+  },
+  patch(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.patch(elem)));
+    const {url, data} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('PATCH', url);
+      request.setRequestHeader('Content-Type', 'application/json');
+      request.setRequestHeader('Accept', 'application/json');
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send(JSON.stringify(data));
+    });
+  },
+  delete(req) {
+    if (req instanceof Array)
+      return Promise.all(req.map(elem => httpJSON.patch(elem)));
+    if (typeof req === 'string')
+      return httpJSON.delete({url: req});
+    const {url, data} = req;
+    return new Promise((resolve, reject) => {
+      let request = _base_request(resolve, reject);
+      request.open('DELETE', _encode_uri(url, Object.assign({}, data)));
+      if (document.querySelector('[name="csrf-token"]')) {
+        const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+        if (token) request.setRequestHeader('X-CSRF-Token', token);
+      }
+      request.send();
+    });
+  }
+};
+
 export function create_observable(vm, attr_name, attr_val) {
-  vm[attr_name] = _obs().extend({
+  return vm[attr_name] = _obs().extend({
     postable: attr_name,
     initial_value: attr_val
   });
-  if (vm.observables_list) vm.observables_list.push(vm[attr_name]);
-  return vm[attr_name];
 }
 
 export function parse_json_api_response(response, opts={}) {
@@ -89,84 +193,104 @@ export function parse_json_api_response(response, opts={}) {
     return _remap_with_included_records(response.data, opts);
 }
 
-export function create_relationship(vm, rel_name, rel_data, {get_included_record, client_defined_relationships}) {
+export function init_relationship(vm, rel_name, rel_data, client_defined_relationships=[]) {
+  const client_defined_relationship = client_defined_relationships.find(r => {
+    return r.name === rel_name;
+  });
+  const obs = vm[rel_name] || (vm[rel_name] = (rel_data instanceof Array ? _arr([]) : _obs()));
+
+  if (client_defined_relationship && client_defined_relationship.allow_destroy)
+    vm[`non_deleted_${rel_name}`] = _com(() => {
+      return obs().filter(obj => {
+        return obj.loading ? (!obj.loading() && !obj.marked_for_deletion()) : !obj.marked_for_deletion();
+      });
+    });
+
+  return Promise.resolve({rel_name, rel_data, client_defined_relationship, obs});
+}
+export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_relationship, get_included_record}={}) {
+  let done = Promise.resolve();
   if (rel_data instanceof Array) {
-    let arr     = vm[rel_name] || (vm[rel_name] = _arr([])),
-        records = rel_data;
+    let records = rel_data;
 
     if (get_included_record)
       records = records.map(rec => _remap_with_included_records(rec, {get_included_record}));
 
-    if (client_defined_relationships) {
-      let relationship = client_defined_relationships.find(r => r.name === rel_name);
-      if (relationship) {
-        if (relationship.allow_destroy)
-          vm[`non_deleted_${rel_name}`] = _com(() => arr().filter(obj => !obj.marked_for_deletion()));
+    if (client_defined_relationship) {
+      if (client_defined_relationship.nested_attributes_accepted)
+        obs.extend({
+          nestable: rel_name,
+          initial_length: records.length,
+          watch_for_pending_changes: true
+        });
 
-        if (relationship.nested_attributes_accepted)
-          arr.extend({
-            nestable: rel_name,
-            initial_length: records.length,
-            watch_for_pending_changes: true
+      if (client_defined_relationship.class) {
+        const klass = client_defined_relationship.class;
+
+        records = records.map(r => new klass(vm, r));
+
+        if (klass.prototype.doneLoading) done = Promise.all(records.map(r => r.doneLoading()));
+
+        if (client_defined_relationship.blank_value)
+          obs.extend({
+            pushable: [klass, vm, client_defined_relationship.blank_value]
           });
-
-        if (relationship.class) {
-          let klass = relationship.class;
-          records = records.map(r => new klass(vm, r));
-
-          if (relationship.blank_value)
-            arr.extend({
-              pushable: [relationship.class, vm, relationship.blank_value]
-            });
-        }
       }
     }
-    arr(records);
+    obs(records);
 
   } else if (rel_data) {
-    let obs      = vm[rel_name] || (vm[rel_name] = _obs()),
-        remapped = _remap_with_included_records(rel_data, {get_included_record}),
+    let remapped = _remap_with_included_records(rel_data, {get_included_record}),
         record;
 
-    if (client_defined_relationships) {
-      let relationship = client_defined_relationships.find(r => r.name === rel_name);
-      if (relationship) {
-        if (relationship.nested_attributes_accepted)
-          obs.extend({
-            nestable: rel_name,
-            watch_for_pending_changes: true
-          });
-        if (relationship.class) {
-          let klass = relationship.class;
-          record = new klass(vm, Object.assign({}, remapped));
-        }
+    if (client_defined_relationship) {
+      if (client_defined_relationship.nested_attributes_accepted)
+        obs.extend({
+          nestable: rel_name,
+          watch_for_pending_changes: true
+        });
+      if (client_defined_relationship.class) {
+        const klass = client_defined_relationship.class;
+        record = new klass(vm, Object.assign({}, remapped));
+
+        if (klass.prototype.doneLoading) done = record.doneLoading();
       }
     }
     obs(record || remapped);
 
   } else {
-    let obs = vm[rel_name] || (vm[rel_name] = _obs()),
-        record;
+    let record;
 
-    if (client_defined_relationships) {
-      let relationship = client_defined_relationships.find(r => r.name === rel_name);
+    if (client_defined_relationship) {
+      if (client_defined_relationship.nested_attributes_accepted)
+        obs.extend({
+          nestable: rel_name,
+          watch_for_pending_changes: true
+        })
+      if (client_defined_relationship.class) {
+        const klass       = client_defined_relationship.class,
+              blank_value = client_defined_relationship.blank_value || {};
 
-      if (relationship) {
-        if (relationship.nested_attributes_accepted)
-          obs.extend({
-            nestable: rel_name,
-            watch_for_pending_changes: true
-          })
-        if (relationship.class) {
-          let klass       = relationship.class,
-              blank_value = relationship.blank_value || {};
+        record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value))
 
-          record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value))
-        }
+        if (klass.prototype.doneLoading) done = record.doneLoading();
       }
     }
     obs(record || {});
   }
+  return done.then(() => obs());
+}
 
-  return vm[rel_name];
+export function create_relationships(vm, relationships_map, {get_included_record, client_defined_relationships}={}) {
+  return Promise.all(
+    [...relationships_map].map(_init_relationship(vm, client_defined_relationships))
+  )
+  .then(resolutions => Promise.all(
+    resolutions.map(_build_relationship(vm, get_included_record))
+  ));
+}
+
+export function create_relationship(vm, rel_name, rel_data, {get_included_record, client_defined_relationships}={}) {
+  return init_relationship(vm, rel_name, rel_data, client_defined_relationships)
+  .then(_build_relationship(vm, get_included_record));
 }

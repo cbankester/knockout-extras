@@ -1,7 +1,7 @@
 {
   "name": "knockout-jsonapi-utils",
   "main": "build/index.js",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "homepage": "https://github.com/cbankester/knockout-extras",
   "authors": [
     "Christian Michael Paul Bankester <cbankester@immense.net>"
