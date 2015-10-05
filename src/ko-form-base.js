@@ -168,9 +168,7 @@ export default class KOFormBase {
       should_save.subscribe(should => {
         if (should && !this.saving_locked) {
           this.save()
-          .then(record => {
-            if (reify_method) this[reify_method](record);
-          })
+          .then(record => reify_method && this[reify_method](record))
           .catch(err => {
             if (typeof err === 'string')
               this.validation_messenger = errorNotice({notice: err, id: 'validation'});

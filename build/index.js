@@ -734,7 +734,7 @@
 	          should_save.subscribe(function (should) {
 	            if (should && !_this2.saving_locked) {
 	              _this2.save().then(function (record) {
-	                if (reify_method) _this2[reify_method](record);
+	                return reify_method && _this2[reify_method](record);
 	              })["catch"](function (err) {
 	                if (typeof err === 'string') _this2.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
 	                  _this2.saving_locked = true;
