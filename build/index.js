@@ -522,26 +522,28 @@
 /* 3 */
 /***/ function(module, exports) {
 
-	"use strict";
+	/*eslint no-unused-vars: 0, no-console: 0 */
+	/*global ko, ko_extras, json_api_utils, errorNotice, successNotice, _serialize */
+	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
+	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
 	
-	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
 	function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _obs = ko.observable,
-	    _arr = ko.observableArray,
-	    _com = ko.computed,
-	    _get_included = function _get_included(included) {
+	var _obs = ko.observable;
+	var _arr = ko.observableArray;
+	var _com = ko.computed;
+	var _get_included = function _get_included(included) {
 	  return function (_ref) {
 	    var id = _ref.id;
 	    var type = _ref.type;
@@ -553,11 +555,12 @@
 	};
 	
 	function _initKOFormVMFromJsonApiResponse(vm, response) {
-	  var record = response.data,
-	      client_defined_relationships = vm.options.relationships,
-	      server_defined_relationships = record.relationships || {},
-	      server_defined_attributes = record.attributes || {},
-	      get_included_record = response.included ? _get_included(response.included) : undefined;
+	  var record = response.data;
+	  var client_defined_relationships = vm.options.relationships;
+	  var server_defined_relationships = record.relationships || {};
+	  var server_defined_attributes = record.attributes || {};
+	  var get_included_record = response.included && _get_included(response.included) || null;
+	  var observable_attributes_blacklist = vm.options.observable_attributes_blacklist || [];
 	
 	  vm.id = record.id;
 	  if (vm.id) vm.id = Number.parseInt(vm.id, 10);
@@ -567,7 +570,7 @@
 	  delete server_defined_attributes.url;
 	
 	  for (var key in server_defined_attributes) {
-	    vm.observables_list.push(ko_extras.json_api_utils.create_observable(vm, key, server_defined_attributes[key]));
+	    if (observable_attributes_blacklist.includes(key)) vm[key] = server_defined_attributes[key];else vm.observables_list.push(ko_extras.json_api_utils.create_observable(vm, key, server_defined_attributes[key]));
 	  }var relationship_names = Object.keys(server_defined_relationships);
 	
 	  return Promise.all(relationship_names.map(function (key) {
@@ -602,20 +605,20 @@
 	}
 	
 	function _sendRequests(requests) {
-	  return ko_extras.json_api_utils.httpJSON.get(requests)["catch"](function (xhr) {
+	  return ko_extras.json_api_utils.httpJSON.get(requests)['catch'](function (xhr) {
 	    throw new ko_extras.json_api_utils.RequestError(xhr);
 	  });
 	}
 	
 	var KOFormBase = (function () {
 	  _createClass(KOFormBase, [{
-	    key: "init",
+	    key: 'init',
 	    value: function init(opts) {
 	      var _this = this;
 	
-	      if (this.init_begun || this.init_finalized) throw new Error("Cannot init more than once");
+	      if (this.init_begun || this.init_finalized) throw new Error('Cannot init more than once');
 	
-	      if (!opts.url) throw new Error("Please provide a URL");
+	      if (!opts.url) throw new Error('Please provide a URL');
 	      this.init_begun = true;
 	
 	      var _options = this.options = opts;
@@ -647,16 +650,16 @@
 	      });
 	    }
 	  }, {
-	    key: "handleOtherRequests",
+	    key: 'handleOtherRequests',
 	    value: function handleOtherRequests(responses) {
 	      // Overload this method to handle responses
 	    }
 	  }, {
-	    key: "finalizeInit",
+	    key: 'finalizeInit',
 	    value: function finalizeInit() {
 	      var _this2 = this;
 	
-	      if (this.init_finalizing || this.init_finalized) throw new Error("Cannot finalize init more than once");
+	      if (this.init_finalizing || this.init_finalized) throw new Error('Cannot finalize init more than once');
 	
 	      this.init_finalizing = true;
 	      var errorable = this.observables_list.filter(function (obs) {
@@ -668,9 +671,9 @@
 	      this.errors = {};
 	      errorable.forEach(function (obs) {
 	        if (obs.postable_name) _this2.errors[obs.postable_name] = _com(function () {
-	          return obs.hasError() ? obs.validationMessage() : null;
+	          return obs.hasError() && obs.validationMessage() || null;
 	        });else if (obs.errorable_observables) _this2.errors[obs.errorable_name] = _com(function () {
-	          return obs.hasError() ? obs.errors() : null;
+	          return obs.hasError() && obs.errors() || null;
 	        });
 	      });
 	      this.numErrors = this.numErrors || _com(function () {
@@ -692,12 +695,13 @@
 	
 	      this.no_changes_pending = _com(function () {
 	        var relationships_pendings = _this2.relationships.map(function (obs) {
-	          var c = obs.no_changes_pending,
-	              l = obs.initial_length;
+	          var c = obs.no_changes_pending;
+	          var l = obs.initial_length;
 	
 	          return (c ? c() : true) && (l ? l() === obs().length : true);
-	        }),
-	            observable_value_pairs = observables_with_initial_values.map(function (obs) {
+	        });
+	
+	        var observable_value_pairs = observables_with_initial_values.map(function (obs) {
 	          return obs.initial_value ? obs() === obs.initial_value() : obs().length === obs.initial_length();
 	        });
 	
@@ -735,7 +739,7 @@
 	            if (should && !_this2.saving_locked) {
 	              _this2.save().then(function (record) {
 	                return reify_method && _this2[reify_method](record);
-	              })["catch"](function (err) {
+	              })['catch'](function (err) {
 	                if (typeof err === 'string') _this2.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
 	                  _this2.saving_locked = true;
 	                  _this2.error_message(err);
@@ -763,15 +767,15 @@
 	  }
 	
 	  _createClass(KOFormBase, [{
-	    key: "saveAndReload",
+	    key: 'saveAndReload',
 	    value: function saveAndReload() {
 	      var _this3 = this;
 	
 	      var action = this.id ? 'update' : 'create';
 	      this.save().then(function (record) {
-	        successNotice({ notice: "Record " + action + "d" });
+	        successNotice({ notice: 'Record ' + action + 'd' });
 	        window.location = record && record.url ? record.url : _this3.url;
-	      })["catch"](function (err) {
+	      })['catch'](function (err) {
 	        if (typeof err === 'string') _this3.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
 	          console.log(err);
 	          errorNotice({ notice: err.message });
@@ -779,7 +783,7 @@
 	      });
 	    }
 	  }, {
-	    key: "save",
+	    key: 'save',
 	    value: function save() {
 	      var _this4 = this;
 	
@@ -787,7 +791,7 @@
 	        _this4.attempted(true);
 	        var numErrors = _this4.numErrors();
 	        if (numErrors) {
-	          reject("There " + (numErrors === 1 ? "is 1 error which prevents" : "are " + numErrors + " errors which prevent") + " this form from being submitted.");
+	          reject('There ' + (numErrors === 1 ? 'is 1 error which prevents' : 'are ' + numErrors + ' errors which prevent') + ' this form from being submitted.');
 	          return;
 	        }
 	
@@ -807,32 +811,32 @@
 	            _this4.url = record.url;
 	          }
 	          resolve(record);
-	        })["catch"](function (xhr) {
+	        })['catch'](function (xhr) {
 	          return reject(new ko_extras.json_api_utils.RequestError(xhr));
 	        });
 	      });
 	    }
 	  }, {
-	    key: "serialize",
+	    key: 'serialize',
 	    value: function serialize() {
 	      var json = {};
 	      this.observables_list.forEach(function (obs) {
-	        var pname = obs.postable_name,
-	            nname = obs.nestable_name,
-	            val = obs();
+	        var pname = obs.postable_name;
+	        var nname = obs.nestable_name;
+	        var val = obs();
 	
 	        if (pname) json[pname] = val instanceof Date ? val.toISOString() : val;else if (nname) json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
 	      });
 	
 	      this.relationships.forEach(function (obs) {
-	        var nname = obs.nestable_name,
-	            val = obs();
+	        var nname = obs.nestable_name;
+	        var val = obs();
 	        if (nname) json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
 	      });
 	      return json;
 	    }
 	  }, {
-	    key: "unsetObservables",
+	    key: 'unsetObservables',
 	    value: function unsetObservables() {
 	      delete this.id;
 	      this.url = this._url;
@@ -842,7 +846,7 @@
 	      this.attempted(false);
 	    }
 	  }, {
-	    key: "doneLoading",
+	    key: 'doneLoading',
 	    value: function doneLoading() {
 	      var _this5 = this;
 	
@@ -866,8 +870,8 @@
 	  return KOFormBase;
 	})();
 	
-	exports["default"] = KOFormBase;
-	module.exports = exports["default"];
+	exports['default'] = KOFormBase;
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

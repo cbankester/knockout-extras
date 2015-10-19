@@ -1,18 +1,21 @@
-const _obs           = ko.observable,
-      _arr           = ko.observableArray,
-      _com           = ko.computed,
-      _get_included  = included => ({id, type}) => {
-        return included.find(v => {
-          return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
-        });
-      };
+/*eslint no-unused-vars: 0, no-console: 0 */
+/*global ko, ko_extras, json_api_utils, errorNotice, successNotice, _serialize */
+const _obs = ko.observable;
+const _arr = ko.observableArray;
+const _com = ko.computed;
+const _get_included  = included => ({id, type}) => {
+  return included.find(v => {
+    return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
+  });
+};
 
 function _initKOFormVMFromJsonApiResponse(vm, response) {
-  const record = response.data,
-        client_defined_relationships = vm.options.relationships,
-        server_defined_relationships = record.relationships || {},
-        server_defined_attributes    = record.attributes || {},
-        get_included_record          = response.included ? _get_included(response.included) : undefined;
+  const record = response.data;
+  const client_defined_relationships = vm.options.relationships;
+  const server_defined_relationships = record.relationships || {};
+  const server_defined_attributes = record.attributes || {};
+  const get_included_record = response.included && _get_included(response.included) || null;
+  const observable_attributes_blacklist = vm.options.observable_attributes_blacklist || [];
 
   vm.id = record.id;
   if (vm.id) vm.id = Number.parseInt(vm.id, 10);
@@ -22,11 +25,14 @@ function _initKOFormVMFromJsonApiResponse(vm, response) {
   delete server_defined_attributes.url;
 
   for (const key in server_defined_attributes)
-    vm.observables_list.push(
-      ko_extras.json_api_utils.create_observable(vm, key, server_defined_attributes[key])
-    );
+    if (observable_attributes_blacklist.includes(key))
+      vm[key] = server_defined_attributes[key];
+    else
+      vm.observables_list.push(
+        ko_extras.json_api_utils.create_observable(vm, key, server_defined_attributes[key])
+      );
 
-  const relationship_names = Object.keys(server_defined_relationships)
+  const relationship_names = Object.keys(server_defined_relationships);
 
   return Promise.all(
     relationship_names.map(key => {
@@ -65,20 +71,20 @@ export default class KOFormBase {
 
   init(opts) {
     if (this.init_begun || this.init_finalized)
-      throw new Error("Cannot init more than once");
+      throw new Error('Cannot init more than once');
 
-    if (!opts.url) throw new Error("Please provide a URL");
+    if (!opts.url) throw new Error('Please provide a URL');
     this.init_begun = true;
     const {url, request_opts, other_requests} = this.options = opts;
     const requests = [
-            {url, data: Object.assign({}, request_opts)},
-            ...(other_requests || []).map(req => {
-              return typeof req === 'string' ? {url: req, data: {}} : {
-                url: req.url,
-                data: Object.assign({}, req.request_opts)
-              };
-            })
-          ];
+      {url, data: Object.assign({}, request_opts)},
+      ...(other_requests || []).map(req => {
+        return typeof req === 'string' ? {url: req, data: {}} : {
+          url: req.url,
+          data: Object.assign({}, req.request_opts)
+        };
+      })
+    ];
     return Promise.all([
       _sendRequests(requests),
       _initNestedVMs(this, opts.nested_vms)
@@ -99,22 +105,22 @@ export default class KOFormBase {
 
   finalizeInit() {
     if (this.init_finalizing || this.init_finalized)
-      throw new Error("Cannot finalize init more than once");
+      throw new Error('Cannot finalize init more than once');
 
     this.init_finalizing = true;
     const errorable = this.observables_list.filter(obs => obs.hasError),
-          observables_with_initial_values = this.observables_list.filter(obs => {
-            return obs.initial_value || obs.initial_length;
-          });
+      observables_with_initial_values = this.observables_list.filter(obs => {
+        return obs.initial_value || obs.initial_length;
+      });
     this.errors = {};
     errorable.forEach(obs => {
       if (obs.postable_name)
         this.errors[obs.postable_name] = _com(() => {
-          return obs.hasError() ? obs.validationMessage() : null
+          return obs.hasError() && obs.validationMessage() || null;
         });
       else if (obs.errorable_observables)
         this.errors[obs.errorable_name] = _com(() => {
-          return obs.hasError() ? obs.errors() : null
+          return obs.hasError() && obs.errors() || null;
         });
     });
     this.numErrors = this.numErrors || _com(() => {
@@ -136,14 +142,15 @@ export default class KOFormBase {
 
     this.no_changes_pending = _com(() => {
       const relationships_pendings = this.relationships.map(obs => {
-              const c = obs.no_changes_pending,
-                    l = obs.initial_length;
+        const c = obs.no_changes_pending;
+        const l = obs.initial_length;
 
-              return (c ? c() : true) && (l ? l() === obs().length : true);
-            }),
-            observable_value_pairs = observables_with_initial_values.map(obs => {
-              return obs.initial_value ? obs() === obs.initial_value() : obs().length === obs.initial_length();
-            });
+        return (c ? c() : true) && (l ? l() === obs().length : true);
+      });
+
+      const observable_value_pairs = observables_with_initial_values.map(obs => {
+        return obs.initial_value ? obs() === obs.initial_value() : obs().length === obs.initial_length();
+      });
 
       return relationships_pendings.every(p => p) && observable_value_pairs.every(p => p);
     }).extend({notify: 'always'});
@@ -216,7 +223,7 @@ export default class KOFormBase {
       this.attempted(true);
       const numErrors = this.numErrors();
       if (numErrors) {
-        reject(`There ${numErrors === 1 ? "is 1 error which prevents" : `are ${numErrors} errors which prevent`} this form from being submitted.`);
+        reject(`There ${numErrors === 1 ? 'is 1 error which prevents' : `are ${numErrors} errors which prevent`} this form from being submitted.`);
         return;
       }
 
@@ -245,9 +252,9 @@ export default class KOFormBase {
   serialize() {
     let json = {};
     this.observables_list.forEach(obs => {
-      let pname = obs.postable_name,
-          nname = obs.nestable_name,
-          val   = obs();
+      let pname = obs.postable_name;
+      let nname = obs.nestable_name;
+      let val   = obs();
 
       if (pname)
         json[pname] = val instanceof Date ? val.toISOString() : val;
@@ -256,8 +263,8 @@ export default class KOFormBase {
     });
 
     this.relationships.forEach(obs => {
-      let nname = obs.nestable_name,
-          val   = obs();
+      let nname = obs.nestable_name;
+      let val   = obs();
       if (nname)
         json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
     });
@@ -275,7 +282,7 @@ export default class KOFormBase {
     return this.loading() && new Promise((resolve, reject) => {
       let e, l;
       e = this.error_message.subscribe(err => {
-        l.dispose()
+        l.dispose();
         e.dispose();
         reject(err);
       });
