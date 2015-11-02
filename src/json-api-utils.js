@@ -233,7 +233,13 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
 
         if (client_defined_relationship.blank_value)
           obs.extend({
-            pushable: [klass, vm, client_defined_relationship.blank_value]
+            pushable: {
+              klass,
+              this_arg: vm,
+              args: [
+                client_defined_relationship.blank_value
+              ]
+            }
           });
       }
     }

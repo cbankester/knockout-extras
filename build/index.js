@@ -451,7 +451,11 @@
 	          }));
 	
 	          if (client_defined_relationship.blank_value) obs.extend({
-	            pushable: [klass, vm, client_defined_relationship.blank_value]
+	            pushable: {
+	              klass: klass,
+	              this_arg: vm,
+	              args: [client_defined_relationship.blank_value]
+	            }
 	          });
 	        })();
 	      }
