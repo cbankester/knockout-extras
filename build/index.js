@@ -57,6 +57,41 @@
     };
 
     babelHelpers;
+    // The includes() method determines whether an array includes a certain element,
+    // returning true or false as appropriate.
+    //
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+    if (!Array.prototype.includes) {
+      Array.prototype.includes = function (searchElement /*, fromIndex*/) {
+        'use strict';
+
+        var O = Object(this);
+        var len = parseInt(O.length) || 0;
+        if (len === 0) {
+          return false;
+        }
+        var n = parseInt(arguments[1]) || 0;
+        var k;
+        if (n >= 0) {
+          k = n;
+        } else {
+          k = len + n;
+          if (k < 0) {
+            k = 0;
+          }
+        }
+        var currentElement;
+        while (k < len) {
+          currentElement = O[k];
+          if (searchElement === currentElement || searchElement !== searchElement && currentElement !== currentElement) {
+            return true;
+          }
+          k++;
+        }
+        return false;
+      };
+    }
+
     function _get_included(included) {
       return ({ id, type }) => included.find(v => {
         return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
