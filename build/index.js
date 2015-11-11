@@ -2695,6 +2695,16 @@
         get: function () {
           return KOFormBase;
         }
+      }, {
+        key: 'Fraction',
+        get: function () {
+          return fraction;
+        }
+      }, {
+        key: 'humanizeDuration',
+        get: function () {
+          return humanizeDuration;
+        }
       }]);
       return KnockoutJsonApiUtils;
     })();
