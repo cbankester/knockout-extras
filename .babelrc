@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "transform-es2015-classes",
+    "external-helpers-2"
+  ],
+  "ignore": [
+    "node_modules/**/*"
+  ]
+}

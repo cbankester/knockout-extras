@@ -1,13 +1,14 @@
+import {observable, observableArray, computed} from 'ko';
+
+import * as json_api_utils from './json-api-utils';
+
 /*eslint no-unused-vars: 0, no-console: 0 */
-/*global ko, ko_extras, json_api_utils, errorNotice, successNotice, _serialize */
-const _obs = ko.observable;
-const _arr = ko.observableArray;
-const _com = ko.computed;
-const _get_included  = included => ({id, type}) => {
-  return included.find(v => {
-    return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
-  });
-};
+
+function _get_included(included){
+  return ({id, type}) => included.find(v => (
+    Number.parseInt(v.id, 10) === Number.parseInt(id, 10)
+  ) && v.type === type);
+}
 
 function _initKOFormVMFromJsonApiResponse(vm, response) {
   const record = response.data;
@@ -18,26 +19,33 @@ function _initKOFormVMFromJsonApiResponse(vm, response) {
   const observable_attributes_blacklist = vm.options.observable_attributes_blacklist || [];
 
   vm.id = record.id;
-  if (vm.id) vm.id = Number.parseInt(vm.id, 10);
+  vm.id && (vm.id = Number.parseInt(vm.id, 10));
   vm.type = record.type;
 
   vm._url = vm.url = server_defined_attributes.url;
   delete server_defined_attributes.url;
 
-  for (const key in server_defined_attributes)
-    if (observable_attributes_blacklist.includes(key))
-      vm[key] = server_defined_attributes[key];
-    else
-      vm.observables_list.push(
-        ko_extras.json_api_utils.create_observable(vm, key, server_defined_attributes[key])
-      );
-
   const relationship_names = Object.keys(server_defined_relationships);
 
+  relationship_names.forEach(relationship_name => {
+    if (observable_attributes_blacklist.includes(relationship_name)) {
+      vm[relationship_name] = server_defined_attributes[relationship_name];
+    } else {
+      vm.observables_list.push(json_api_utils.create_observable(
+        vm,
+        relationship_name,
+        server_defined_attributes[relationship_name]
+      ));
+    }
+  });
+
   return Promise.all(
-    relationship_names.map(key => {
-      return ko_extras.json_api_utils.init_relationship(vm, key, server_defined_relationships[key].data, client_defined_relationships);
-    })
+    relationship_names.map(key => json_api_utils.init_relationship(
+      vm,
+      key,
+      server_defined_relationships[key].data,
+      client_defined_relationships
+    ))
   ).then(relationship_params => Promise.all(
     relationship_params.map(({rel_name, rel_data, obs, client_defined_relationship}) => {
       vm.relationships.push(obs);
@@ -63,7 +71,7 @@ function _sendRequests(requests) {
     .httpJSON
     .get(requests)
     .catch(xhr => {
-      throw new ko_extras.json_api_utils.RequestError(xhr);
+      throw new json_api_utils.RequestError(xhr);
     });
 }
 
@@ -115,21 +123,21 @@ export default class KOFormBase {
     this.errors = {};
     errorable.forEach(obs => {
       if (obs.postable_name)
-        this.errors[obs.postable_name] = _com(() => {
+        this.errors[obs.postable_name] = computed(() => {
           return obs.hasError() && obs.validationMessage() || null;
         });
       else if (obs.errorable_observables)
-        this.errors[obs.errorable_name] = _com(() => {
+        this.errors[obs.errorable_name] = computed(() => {
           return obs.hasError() && obs.errors() || null;
         });
     });
-    this.numErrors = this.numErrors || _com(() => {
+    this.numErrors = this.numErrors || computed(() => {
       return errorable.reduce(((total, obs) => {
         return total + (obs.hasError() ? (obs.numErrors ? obs.numErrors() : 1) : 0);
       }), 0);
     });
 
-    this.is_valid = _com(() => {
+    this.is_valid = computed(() => {
       let is_valid = this.numErrors() === 0;
       if (is_valid) {
         if (this.validation_messenger) {
@@ -140,7 +148,7 @@ export default class KOFormBase {
       return is_valid;
     }).extend({notify: 'always'});
 
-    this.no_changes_pending = _com(() => {
+    this.no_changes_pending = computed(() => {
       const relationships_pendings = this.relationships.map(obs => {
         const c = obs.no_changes_pending;
         const l = obs.initial_length;
@@ -155,11 +163,11 @@ export default class KOFormBase {
       return relationships_pendings.every(p => p) && observable_value_pairs.every(p => p);
     }).extend({notify: 'always'});
 
-    this.changes_pending = _com(() => !this.no_changes_pending()).extend({notify: 'always'});
+    this.changes_pending = computed(() => !this.no_changes_pending()).extend({notify: 'always'});
 
     if (this.options.save_after_edit) {
       const reify_method = this.options.save_after_edit.reify_method;
-      const should_save = _com(() => {
+      const should_save = computed(() => {
         const [changes_pending, is_valid] = [this.changes_pending(), this.is_valid()];
         return changes_pending && (this.id || is_valid);
       }).extend({
@@ -193,9 +201,9 @@ export default class KOFormBase {
 
   constructor() {
     Object.assign(this, {
-      loading:          _obs(true),
-      attempted:        _obs(false),
-      error_message:    _obs(null),
+      loading:          observable(true),
+      attempted:        observable(false),
+      error_message:    observable(null),
       observables_list: [],
       relationships:    []
     });
@@ -227,7 +235,7 @@ export default class KOFormBase {
         return;
       }
 
-      ko_extras.json_api_utils.httpJSON[this.id ? 'patch' : 'post']({
+      json_api_utils.httpJSON[this.id ? 'patch' : 'post']({
         url: this.url,
         data: {
           data: {
@@ -238,14 +246,14 @@ export default class KOFormBase {
         }
       })
       .then(response => {
-        const record = ko_extras.json_api_utils.parse_json_api_response(response);
+        const record = json_api_utils.parse_json_api_response(response);
         if (record) {
           this.id  = record.id;
           this.url = record.url;
         }
         resolve(record);
       })
-      .catch(xhr => reject(new ko_extras.json_api_utils.RequestError(xhr)));
+      .catch(xhr => reject(new json_api_utils.RequestError(xhr)));
     });
   }
 

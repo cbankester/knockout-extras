@@ -1,36 +1,49 @@
-const _obs = ko.observable,
-      _arr = ko.observableArray,
-      _com = ko.computed,
-      _get_included = included => ({id, type}) => {
-        return included.find(v => {
-          return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
-        });
-      },
-      _build_relationship = (vm, get_included_record) => ({rel_name, rel_data, client_defined_relationship, obs}) => {
-        return build_relationship(vm, rel_name, rel_data, obs, {
-          client_defined_relationship,
-          get_included_record
-        });
-      },
-      _init_relationship = (vm, client_defined_relationships) => ([rel_name, rel_data]) => {
-        return init_relationship(vm, rel_name, rel_data, client_defined_relationships);
-      };
+import {observable, observableArray, computed} from 'ko';
+
+function _get_included(included){
+  return ({id, type}) => included.find(v => {
+    return (
+      Number.parseInt(v.id, 10) === Number.parseInt(id, 10)
+    ) && v.type === type;
+  });
+}
+
+function _build_relationship(vm, get_included_record){
+  return ({rel_name, rel_data, client_defined_relationship, obs}) => {
+    return build_relationship(vm, rel_name, rel_data, obs, {
+      client_defined_relationship,
+      get_included_record
+    });
+  };
+}
+
+function _init_relationship(vm, client_defined_relationships){
+  return ([rel_name, rel_data]) => init_relationship(
+    vm,
+    rel_name,
+    rel_data,
+    client_defined_relationships
+  );
+}
 
 function _remap_with_included_records(record, {get_included_record, immybox, nested_immybox_relationships}={}) {
   let ret = get_included_record ? (get_included_record(record) || record) : record;
 
-  Object.assign(ret, ret.attributes, {id: Number.parseInt(ret.id, 10), type: ret.type});
+  Object.assign(ret, ret.attributes, {
+    id: Number.parseInt(ret.id, 10),
+    type: ret.type
+  });
 
   if (ret.relationships) {
     let {relationships} = ret;
-    for (const relationship_name in relationships) {
-      let relationship = relationships[relationship_name],
-          {data}       = relationship,
-          opts         = {
-            get_included_record,
-            nested_immybox_relationships,
-            immybox: (nested_immybox_relationships || []).includes(relationship_name)
-          };
+    for (let relationship_name in relationships) {
+      let relationship = relationships[relationship_name];
+      let {data} = relationship;
+      let opts = {
+        get_included_record,
+        nested_immybox_relationships,
+        immybox: (nested_immybox_relationships || []).includes(relationship_name)
+      };
       if (data instanceof Array)
         ret[relationship_name] = data.map(item => _remap_with_included_records(item, opts));
       else if (data)
@@ -51,12 +64,12 @@ function _remap_with_included_records(record, {get_included_record, immybox, nes
 
 function _encode_uri(url, obj) {
   if (Object.keys(obj).length === 0) return url;
-  let str = "";
+  let str = '';
   for (let key in obj) {
-    if (str !== "") str += "&";
-    str += `${key}=${encodeURIComponent(obj[key])}`
+    if (str !== '') str += '&';
+    str += `${key}=${encodeURIComponent(obj[key])}`;
   }
-  return `${url}?${str}`
+  return `${url}?${str}`;
 }
 
 function _base_request(resolve, reject) {
@@ -65,7 +78,7 @@ function _base_request(resolve, reject) {
     if (this.readyState === 4) // done
       if (this.status >= 200 && this.status < 400)
         try {
-          resolve(JSON.parse(this.response || "null"));
+          resolve(JSON.parse(this.response || 'null'));
         } catch (e) {
           resolve(null);
         }
@@ -80,12 +93,11 @@ function _base_request(resolve, reject) {
 
 export class RequestError extends Error {
   constructor(xhr) {
-    let message, errors_from_server,
-        name = "RequestError",
-        json, responseText;
+    let message, errors_from_server, json, responseText;
+    let name = 'RequestError';
 
     try {
-      json = JSON.parse(xhr.responseText || "null");
+      json = JSON.parse(xhr.responseText || 'null');
     } catch (e) {
       json = null;
     } finally {
@@ -96,11 +108,11 @@ export class RequestError extends Error {
       errors_from_server = json.errors;
       if (json.errors.length === 1) message = json.errors[0].title;
     }
-    if (!message) message = xhr.statusText || "An error occurred while sending the request";
+    if (!message) message = xhr.statusText || 'An error occurred while sending the request';
     super(message);
     this.message = message;
     this.name    = name;
-    this.status  = xhr.status
+    this.status  = xhr.status;
     if (errors_from_server) this.errors_from_server = errors_from_server;
     if (responseText) this.responseText = responseText;
   }
@@ -176,7 +188,7 @@ export const httpJSON = {
 };
 
 export function create_observable(vm, attr_name, attr_val) {
-  return vm[attr_name] = _obs().extend({
+  return vm[attr_name] = observable().extend({
     postable: attr_name,
     initial_value: attr_val
   });
@@ -197,10 +209,10 @@ export function init_relationship(vm, rel_name, rel_data, client_defined_relatio
   const client_defined_relationship = client_defined_relationships.find(r => {
     return r.name === rel_name;
   });
-  const obs = vm[rel_name] || (vm[rel_name] = (rel_data instanceof Array ? _arr([]) : _obs()));
+  const obs = vm[rel_name] || (vm[rel_name] = (rel_data instanceof Array ? observableArray([]) : observable()));
 
   if (client_defined_relationship && client_defined_relationship.allow_destroy)
-    vm[`non_deleted_${rel_name}`] = _com(() => {
+    vm[`non_deleted_${rel_name}`] = computed(() => {
       return obs().filter(obj => {
         return obj.loading ? (!obj.loading() && !obj.marked_for_deletion()) : !obj.marked_for_deletion();
       });
@@ -246,8 +258,8 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
     obs(records);
 
   } else if (rel_data) {
-    let remapped = _remap_with_included_records(rel_data, {get_included_record}),
-        record;
+    let remapped = _remap_with_included_records(rel_data, {get_included_record});
+    let record;
 
     if (client_defined_relationship) {
       if (client_defined_relationship.nested_attributes_accepted)
@@ -272,12 +284,12 @@ export function build_relationship(vm, rel_name, rel_data, obs, {client_defined_
         obs.extend({
           nestable: rel_name,
           watch_for_pending_changes: true
-        })
+        });
       if (client_defined_relationship.class) {
-        const klass       = client_defined_relationship.class,
-              blank_value = client_defined_relationship.blank_value || {};
+        const klass = client_defined_relationship.class;
+        const blank_value = client_defined_relationship.blank_value || {};
 
-        record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value))
+        record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
 
         if (klass.prototype.doneLoading) done = record.doneLoading();
       }

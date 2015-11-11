@@ -38,5 +38,13 @@
     "browser": true,
     "jquery": true
   },
+  "globals": {
+    "ko": true,
+    "ko_extras": true,
+    "json_api_utils": true,
+    "errorNotice": true,
+    "successNotice": true,
+    "_serialize": true
+  },
   "extends": "eslint:recommended"
 }
