@@ -25,19 +25,21 @@ function _initKOFormVMFromJsonApiResponse(vm, response) {
   vm._url = vm.url = server_defined_attributes.url;
   delete server_defined_attributes.url;
 
-  const relationship_names = Object.keys(server_defined_relationships);
+  const attribute_names = Object.keys(server_defined_attributes);
 
-  relationship_names.forEach(relationship_name => {
-    if (observable_attributes_blacklist.includes(relationship_name)) {
-      vm[relationship_name] = server_defined_attributes[relationship_name];
+  attribute_names.forEach(attribute_name => {
+    if (observable_attributes_blacklist.includes(attribute_name)) {
+      vm[attribute_name] = server_defined_attributes[attribute_name];
     } else {
       vm.observables_list.push(json_api_utils.create_observable(
         vm,
-        relationship_name,
-        server_defined_attributes[relationship_name]
+        attribute_name,
+        server_defined_attributes[attribute_name]
       ));
     }
   });
+
+  const relationship_names = Object.keys(server_defined_relationships);
 
   return Promise.all(
     relationship_names.map(key => json_api_utils.init_relationship(
@@ -66,8 +68,7 @@ function _initNestedVMs(vm, vm_map) {
 }
 
 function _sendRequests(requests) {
-  return ko_extras
-    .json_api_utils
+  return json_api_utils
     .httpJSON
     .get(requests)
     .catch(xhr => {
@@ -116,10 +117,10 @@ export default class KOFormBase {
       throw new Error('Cannot finalize init more than once');
 
     this.init_finalizing = true;
-    const errorable = this.observables_list.filter(obs => obs.hasError),
-      observables_with_initial_values = this.observables_list.filter(obs => {
-        return obs.initial_value || obs.initial_length;
-      });
+    const errorable = this.observables_list.filter(obs => obs.hasError);
+    const observables_with_initial_values = this.observables_list.filter(obs => {
+      return obs.initial_value || obs.initial_length;
+    });
     this.errors = {};
     errorable.forEach(obs => {
       if (obs.postable_name)
@@ -262,7 +263,7 @@ export default class KOFormBase {
     this.observables_list.forEach(obs => {
       let pname = obs.postable_name;
       let nname = obs.nestable_name;
-      let val   = obs();
+      let val = obs();
 
       if (pname)
         json[pname] = val instanceof Date ? val.toISOString() : val;
@@ -297,8 +298,7 @@ export default class KOFormBase {
       l = this.loading.subscribe(() => {
         l.dispose();
         e.dispose();
-        if (this.error_message()) reject(this.error_message());
-        else resolve();
+        this.error_message() ? reject(this.error_message()) : resolve();
       });
     }) || Promise.resolve();
   }

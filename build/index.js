@@ -133,7 +133,7 @@
         }
       }
 
-      if (immybox) Object.assign(ret, {
+      immybox && Object.assign(ret, {
         value: ret[immybox.value || 'id'],
         text: ret[immybox.text || 'name']
       });
@@ -2029,11 +2029,11 @@
         }
       }
 
-      const computed = computed(() => ko$1.unwrap(uniq_in).map(obj => ko$1.unwrap(obj[attribute_name])));
+      const mapped_array = ko$1.computed(() => ko$1.unwrap(uniq_in).map(obj => ko$1.unwrap(obj[attribute_name])));
 
-      const computed_subscriber = computed.subscribe(validate);
+      const computed_subscriber = mapped_array.subscribe(validate);
 
-      target.disposables.push(computed, computed_subscriber);
+      target.disposables.push(mapped_array, computed_subscriber);
 
       return target;
     });
@@ -2461,15 +2461,17 @@
       vm._url = vm.url = server_defined_attributes.url;
       delete server_defined_attributes.url;
 
-      const relationship_names = Object.keys(server_defined_relationships);
+      const attribute_names = Object.keys(server_defined_attributes);
 
-      relationship_names.forEach(relationship_name => {
-        if (observable_attributes_blacklist.includes(relationship_name)) {
-          vm[relationship_name] = server_defined_attributes[relationship_name];
+      attribute_names.forEach(attribute_name => {
+        if (observable_attributes_blacklist.includes(attribute_name)) {
+          vm[attribute_name] = server_defined_attributes[attribute_name];
         } else {
-          vm.observables_list.push(create_observable(vm, relationship_name, server_defined_attributes[relationship_name]));
+          vm.observables_list.push(create_observable(vm, attribute_name, server_defined_attributes[attribute_name]));
         }
       });
+
+      const relationship_names = Object.keys(server_defined_relationships);
 
       return Promise.all(relationship_names.map(key => init_relationship(vm, key, server_defined_relationships[key].data, client_defined_relationships))).then(relationship_params => Promise.all(relationship_params.map(({ rel_name, rel_data, obs, client_defined_relationship }) => {
         vm.relationships.push(obs);
@@ -2489,7 +2491,7 @@
     }
 
     function _sendRequests(requests) {
-      return ko_extras.json_api_utils.httpJSON.get(requests).catch(xhr => {
+      return httpJSON.get(requests).catch(xhr => {
         throw new RequestError(xhr);
       });
     }
@@ -2524,8 +2526,8 @@
           if (this.init_finalizing || this.init_finalized) throw new Error('Cannot finalize init more than once');
 
           this.init_finalizing = true;
-          const errorable = this.observables_list.filter(obs => obs.hasError),
-                observables_with_initial_values = this.observables_list.filter(obs => {
+          const errorable = this.observables_list.filter(obs => obs.hasError);
+          const observables_with_initial_values = this.observables_list.filter(obs => {
             return obs.initial_value || obs.initial_length;
           });
           this.errors = {};
@@ -2697,7 +2699,7 @@
             l = this.loading.subscribe(() => {
               l.dispose();
               e.dispose();
-              if (this.error_message()) reject(this.error_message());else resolve();
+              this.error_message() ? reject(this.error_message()) : resolve();
             });
           }) || Promise.resolve();
         }

@@ -479,11 +479,11 @@ setupExtender('unique', (target, opts) => {
     }
   }
 
-  const computed = computed(() => unwrap(uniq_in).map(obj => unwrap(obj[attribute_name])));
+  const mapped_array = computed(() => unwrap(uniq_in).map(obj => unwrap(obj[attribute_name])));
 
-  const computed_subscriber = computed.subscribe(validate);
+  const computed_subscriber = mapped_array.subscribe(validate);
 
-  target.disposables.push(computed, computed_subscriber);
+  target.disposables.push(mapped_array, computed_subscriber);
 
   return target;
 });

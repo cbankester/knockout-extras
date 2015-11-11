@@ -53,11 +53,10 @@ function _remap_with_included_records(record, {get_included_record, immybox, nes
     }
   }
 
-  if (immybox)
-    Object.assign(ret, {
-      value: ret[immybox.value || 'id'],
-      text: ret[immybox.text || 'name']
-    });
+  immybox && Object.assign(ret, {
+    value: ret[immybox.value || 'id'],
+    text: ret[immybox.text || 'name']
+  });
 
   return ret;
 }

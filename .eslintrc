@@ -40,7 +40,6 @@
   },
   "globals": {
     "ko": true,
-    "ko_extras": true,
     "json_api_utils": true,
     "errorNotice": true,
     "successNotice": true,
