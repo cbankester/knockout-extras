@@ -1,6 +1,6 @@
 {
   "name": "knockout-jsonapi-utils",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "A collection of Knockout.js utils for various tasks related to JSON API standard",
   "main": "build/index.js",
   "jsnext:main": "src/index.js",
