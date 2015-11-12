@@ -250,7 +250,7 @@
           request.send(JSON.stringify(data));
         });
       },
-      delete(req) {
+      'delete': req => {
         if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.patch(elem)));
         if (typeof req === 'string') return httpJSON.delete({ url: req });
         const { url, data } = req;
