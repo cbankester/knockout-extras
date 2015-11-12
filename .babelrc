@@ -1,6 +1,7 @@
 {
-  "presets": [
-    "es2015-rollup"
+  "plugins": [
+    "transform-es2015-classes",
+    "external-helpers-2"
   ],
   "ignore": [
     "node_modules/**/*"
