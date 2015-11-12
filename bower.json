@@ -1,7 +1,7 @@
 {
   "name": "knockout-jsonapi-utils",
   "main": "build/index.js",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "homepage": "https://github.com/cmbankester/knockout-jsonapi-utils",
   "authors": [
     "Christian Michael Paul Bankester <cbankester@immense.net>"
@@ -16,6 +16,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "demo"
   ]
 }
