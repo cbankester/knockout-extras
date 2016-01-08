@@ -1,20 +1,18 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ko'), require('moment')) :
     typeof define === 'function' && define.amd ? define(['ko', 'moment'], factory) :
-    global.KnockoutJsonApiUtils = factory(global.ko,global.moment);
+    (global.KnockoutJsonApiUtils = factory(global.ko,global.moment));
 }(this, function (ko$1,moment) { 'use strict';
 
     moment = 'default' in moment ? moment['default'] : moment;
 
-    var babelHelpers = {};
-
-    babelHelpers.classCallCheck = function (instance, Constructor) {
+    var babelHelpers_classCallCheck = function (instance, Constructor) {
       if (!(instance instanceof Constructor)) {
         throw new TypeError("Cannot call a class as a function");
       }
     };
 
-    babelHelpers.createClass = (function () {
+    var babelHelpers_createClass = function () {
       function defineProperties(target, props) {
         for (var i = 0; i < props.length; i++) {
           var descriptor = props[i];
@@ -30,9 +28,9 @@
         if (staticProps) defineProperties(Constructor, staticProps);
         return Constructor;
       };
-    })();
+    }();
 
-    babelHelpers.inherits = function (subClass, superClass) {
+    var babelHelpers_inherits = function (subClass, superClass) {
       if (typeof superClass !== "function" && superClass !== null) {
         throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
       }
@@ -48,7 +46,7 @@
       if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     };
 
-    babelHelpers.possibleConstructorReturn = function (self, call) {
+    var babelHelpers_possibleConstructorReturn = function (self, call) {
       if (!self) {
         throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
       }
@@ -56,333 +54,455 @@
       return call && (typeof call === "object" || typeof call === "function") ? call : self;
     };
 
-    babelHelpers;
-    // The includes() method determines whether an array includes a certain element,
-    // returning true or false as appropriate.
-    //
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
-    if (!Array.prototype.includes) {
-      Array.prototype.includes = function (searchElement /*, fromIndex*/) {
-        'use strict';
+    var humanizeDuration = (function (module) {
+    var exports = module.exports;
+    // HumanizeDuration.js - http://git.io/j0HgmQ
 
-        var O = Object(this);
-        var len = parseInt(O.length) || 0;
-        if (len === 0) {
-          return false;
+    (function(global) {
+      var languages = {
+        ar: {
+          y: function(c) { return c === 1 ? "سنة" : "سنوات"; },
+          mo: function(c) { return c === 1 ? "شهر" : "أشهر"; },
+          w: function(c) { return c === 1 ? "أسبوع" : "أسابيع"; },
+          d: function(c) { return c === 1 ? "يوم" : "أيام"; },
+          h: function(c) { return c === 1 ? "ساعة" : "ساعات"; },
+          m: function(c) { return c === 1 ? "دقيقة" : "دقائق"; },
+          s: function(c) { return c === 1 ? "ثانية" : "ثواني"; },
+          ms: function(c) { return c === 1 ? "جزء من الثانية" : "أجزاء من الثانية"; },
+          decimal: ","
+        },
+        ca: {
+          y: function(c) { return "any" + (c !== 1 ? "s" : ""); },
+          mo: function(c) { return "mes" + (c !== 1 ? "os" : ""); },
+          w: function(c) { return "setman" + (c !== 1 ? "es" : "a"); },
+          d: function(c) { return "di" + (c !== 1 ? "es" : "a"); },
+          h: function(c) { return "hor" + (c !== 1 ? "es" : "a"); },
+          m: function(c) { return "minut" + (c !== 1 ? "s" : ""); },
+          s: function(c) { return "segon" + (c !== 1 ? "s" : ""); },
+          ms: function(c) { return "milisegon" + (c !== 1 ? "s" : ""); },
+          decimal: ","
+        },
+        cs: {
+          y: function(c) { return ["rok", "roku", "roky", "let"][getCzechForm(c)]; },
+          mo: function(c) { return ["měsíc", "měsíce", "měsíce", "měsíců"][getCzechForm(c)]; },
+          w: function(c) { return ["týden", "týdne", "týdny", "týdnů"][getCzechForm(c)]; },
+          d: function(c) { return ["den", "dne", "dny", "dní"][getCzechForm(c)]; },
+          h: function(c) { return ["hodina", "hodiny", "hodiny", "hodin"][getCzechForm(c)]; },
+          m: function(c) { return ["minuta", "minuty", "minuty", "minut"][getCzechForm(c)]; },
+          s: function(c) { return ["sekunda", "sekundy", "sekundy", "sekund"][getCzechForm(c)]; },
+          ms: function(c) { return ["milisekunda", "milisekundy", "milisekundy", "milisekund"][getCzechForm(c)]; },
+          decimal: ","
+        },
+        da: {
+          y: "år",
+          mo: function(c) { return "måned" + (c !== 1 ? "er" : ""); },
+          w: function(c) { return "uge" + (c !== 1 ? "r" : ""); },
+          d: function(c) { return "dag" + (c !== 1 ? "e" : ""); },
+          h: function(c) { return "time" + (c !== 1 ? "r" : ""); },
+          m: function(c) { return "minut" + (c !== 1 ? "ter" : ""); },
+          s: function(c) { return "sekund" + (c !== 1 ? "er" : ""); },
+          ms: function(c) { return "millisekund" + (c !== 1 ? "er" : ""); },
+          decimal: ","
+        },
+        de: {
+          y: function(c) { return "Jahr" + (c !== 1 ? "e" : ""); },
+          mo: function(c) { return "Monat" + (c !== 1 ? "e" : ""); },
+          w: function(c) { return "Woche" + (c !== 1 ? "n" : ""); },
+          d: function(c) { return "Tag" + (c !== 1 ? "e" : ""); },
+          h: function(c) { return "Stunde" + (c !== 1 ? "n" : ""); },
+          m: function(c) { return "Minute" + (c !== 1 ? "n" : ""); },
+          s: function(c) { return "Sekunde" + (c !== 1 ? "n" : ""); },
+          ms: function(c) { return "Millisekunde" + (c !== 1 ? "n" : ""); },
+          decimal: ","
+        },
+        en: {
+          y: function(c) { return "year" + (c !== 1 ? "s" : ""); },
+          mo: function(c) { return "month" + (c !== 1 ? "s" : ""); },
+          w: function(c) { return "week" + (c !== 1 ? "s" : ""); },
+          d: function(c) { return "day" + (c !== 1 ? "s" : ""); },
+          h: function(c) { return "hour" + (c !== 1 ? "s" : ""); },
+          m: function(c) { return "minute" + (c !== 1 ? "s" : ""); },
+          s: function(c) { return "second" + (c !== 1 ? "s" : ""); },
+          ms: function(c) { return "millisecond" + (c !== 1 ? "s" : ""); },
+          decimal: "."
+        },
+        es: {
+          y: function(c) { return "año" + (c !== 1 ? "s" : ""); },
+          mo: function(c) { return "mes" + (c !== 1 ? "es" : ""); },
+          w: function(c) { return "semana" + (c !== 1 ? "s" : ""); },
+          d: function(c) { return "día" + (c !== 1 ? "s" : ""); },
+          h: function(c) { return "hora" + (c !== 1 ? "s" : ""); },
+          m: function(c) { return "minuto" + (c !== 1 ? "s" : ""); },
+          s: function(c) { return "segundo" + (c !== 1 ? "s" : ""); },
+          ms: function(c) { return "milisegundo" + (c !== 1 ? "s" : ""); },
+          decimal: ","
+        },
+        fr: {
+          y: function(c) { return "an" + (c !== 1 ? "s" : ""); },
+          mo: "mois",
+          w: function(c) { return "semaine" + (c !== 1 ? "s" : ""); },
+          d: function(c) { return "jour" + (c !== 1 ? "s" : ""); },
+          h: function(c) { return "heure" + (c !== 1 ? "s" : ""); },
+          m: function(c) { return "minute" + (c !== 1 ? "s" : ""); },
+          s: function(c) { return "seconde" + (c !== 1 ? "s" : ""); },
+          ms: function(c) { return "milliseconde" + (c !== 1 ? "s" : ""); },
+          decimal: ","
+        },
+        gr: {
+          y: function(c) { return c === 1 ? "χρόνος" : "χρόνια"; },
+          mo: function(c) { return c === 1 ? "μήνας" : "μήνες"; },
+          w: function(c) { return c === 1 ? "εβδομάδα" : "εβδομάδες"; },
+          d: function(c) { return c === 1 ? "μέρα" : "μέρες"; },
+          h: function(c) { return c === 1 ? "ώρα" : "ώρες"; },
+          m: function(c) { return c === 1 ? "λεπτό" : "λεπτά"; },
+          s: function(c) { return c === 1 ? "δευτερόλεπτο" : "δευτερόλεπτα"; },
+          ms: function(c) { return c === 1 ? "χιλιοστό του δευτερολέπτου" : "χιλιοστά του δευτερολέπτου"; },
+          decimal: ","
+        },
+        hu: {
+          y: "év",
+          mo: "hónap",
+          w: "hét",
+          d: "nap",
+          h: "óra",
+          m: "perc",
+          s: "másodperc",
+          ms: "ezredmásodperc",
+          decimal: ","
+        },
+        it: {
+          y: function(c) { return "ann" + (c !== 1 ? "i" : "o"); },
+          mo: function(c) { return "mes" + (c !== 1 ? "i" : "e"); },
+          w: function(c) { return "settiman" + (c !== 1 ? "e" : "a"); },
+          d: function(c) { return "giorn" + (c !== 1 ? "i" : "o"); },
+          h: function(c) { return "or" + (c !== 1 ? "e" : "a"); },
+          m: function(c) { return "minut" + (c !== 1 ? "i" : "o"); },
+          s: function(c) { return "second" + (c !== 1 ? "i" : "o"); },
+          ms: function(c) { return "millisecond" + (c !== 1 ? "i" : "o"); },
+          decimal: ","
+        },
+        ja: {
+          y: "年",
+          mo: "月",
+          w: "週",
+          d: "日",
+          h: "時間",
+          m: "分",
+          s: "秒",
+          ms: "ミリ秒",
+          decimal: "."
+        },
+        ko: {
+          y: "년",
+          mo: "개월",
+          w: "주일",
+          d: "일",
+          h: "시간",
+          m: "분",
+          s: "초",
+          ms: "밀리 초",
+          decimal: "."
+        },
+        nl: {
+          y: "jaar",
+          mo: function(c) { return c === 1 ? "maand" : "maanden"; },
+          w: function(c) { return c === 1 ? "week" : "weken"; },
+          d: function(c) { return c === 1 ? "dag" : "dagen"; },
+          h: "uur",
+          m: function(c) { return c === 1 ? "minuut" : "minuten"; },
+          s: function(c) { return c === 1 ? "seconde" : "seconden"; },
+          ms: function(c) { return c === 1 ? "milliseconde" : "milliseconden"; },
+          decimal: ","
+        },
+        no: {
+          y: "år",
+          mo: function(c) { return "måned" + (c !== 1 ? "er" : ""); },
+          w: function(c) { return "uke" + (c !== 1 ? "r" : ""); },
+          d: function(c) { return "dag" + (c !== 1 ? "er" : ""); },
+          h: function(c) { return "time" + (c !== 1 ? "r" : ""); },
+          m: function(c) { return "minutt" + (c !== 1 ? "er" : ""); },
+          s: function(c) { return "sekund" + (c !== 1 ? "er" : ""); },
+          ms: function(c) { return "millisekund" + (c !== 1 ? "er" : ""); },
+          decimal: ","
+        },
+        pl: {
+          y: function(c) { return ["rok", "roku", "lata", "lat"][getPolishForm(c)]; },
+          mo: function(c) { return ["miesiąc", "miesiąca", "miesiące", "miesięcy"][getPolishForm(c)]; },
+          w: function(c) { return ["tydzień", "tygodnia", "tygodnie", "tygodni"][getPolishForm(c)]; },
+          d: function(c) { return ["dzień", "dnia", "dni", "dni"][getPolishForm(c)]; },
+          h: function(c) { return ["godzina", "godziny", "godziny", "godzin"][getPolishForm(c)]; },
+          m: function(c) { return ["minuta", "minuty", "minuty", "minut"][getPolishForm(c)]; },
+          s: function(c) { return ["sekunda", "sekundy", "sekundy", "sekund"][getPolishForm(c)]; },
+          ms: function(c) { return ["milisekunda", "milisekundy", "milisekundy", "milisekund"][getPolishForm(c)]; },
+          decimal: ","
+        },
+        pt: {
+          y: function(c) { return "ano" + (c !== 1 ? "s" : ""); },
+          mo: function(c) { return c !== 1 ? "meses" : "mês"; },
+          w: function(c) { return "semana" + (c !== 1 ? "s" : ""); },
+          d: function(c) { return "dia" + (c !== 1 ? "s" : ""); },
+          h: function(c) { return "hora" + (c !== 1 ? "s" : ""); },
+          m: function(c) { return "minuto" + (c !== 1 ? "s" : ""); },
+          s: function(c) { return "segundo" + (c !== 1 ? "s" : ""); },
+          ms: function(c) { return "milissegundo" + (c !== 1 ? "s" : ""); },
+          decimal: ","
+        },
+        ru: {
+          y: function(c) { return ["лет", "год", "года"][getSlavicForm(c)]; },
+          mo: function(c) { return ["месяцев", "месяц", "месяца"][getSlavicForm(c)]; },
+          w: function(c) { return ["недель", "неделя", "недели"][getSlavicForm(c)]; },
+          d: function(c) { return ["дней", "день", "дня"][getSlavicForm(c)]; },
+          h: function(c) { return ["часов", "час", "часа"][getSlavicForm(c)]; },
+          m: function(c) { return ["минут", "минута", "минуты"][getSlavicForm(c)]; },
+          s: function(c) { return ["секунд", "секунда", "секунды"][getSlavicForm(c)]; },
+          ms: function(c) { return ["миллисекунд", "миллисекунда", "миллисекунды"][getSlavicForm(c)]; },
+          decimal: ","
+        },
+        uk: {
+          y: function(c) { return ["років", "рік", "роки"][getSlavicForm(c)]; },
+          mo: function(c) { return ["місяців", "місяць", "місяці"][getSlavicForm(c)]; },
+          w: function(c) { return ["неділь", "неділя", "неділі"][getSlavicForm(c)]; },
+          d: function(c) { return ["днів", "день", "дні"][getSlavicForm(c)]; },
+          h: function(c) { return ["годин", "година", "години"][getSlavicForm(c)]; },
+          m: function(c) { return ["хвилин", "хвилина", "хвилини"][getSlavicForm(c)]; },
+          s: function(c) { return ["секунд", "секунда", "секунди"][getSlavicForm(c)]; },
+          ms: function(c) { return ["мілісекунд", "мілісекунда", "мілісекунди"][getSlavicForm(c)]; },
+          decimal: ","
+        },
+        sv: {
+          y: "år",
+          mo: function(c) { return "månad" + (c !== 1 ? "er" : ""); },
+          w: function(c) { return "veck" + (c !== 1 ? "or" : "a"); },
+          d: function(c) { return "dag" + (c !== 1 ? "ar" : ""); },
+          h: function(c) { return "timm" + (c !== 1 ? "ar" : "e"); },
+          m: function(c) { return "minut" + (c !== 1 ? "er" : ""); },
+          s: function(c) { return "sekund" + (c !== 1 ? "er" : ""); },
+          ms: function(c) { return "millisekund" + (c !== 1 ? "er" : ""); },
+          decimal: ","
+        },
+        tr: {
+          y: "yıl",
+          mo: "ay",
+          w: "hafta",
+          d: "gün",
+          h: "saat",
+          m: "dakika",
+          s: "saniye",
+          ms: "milisaniye",
+          decimal: ","
+        },
+        zh_CN: {
+          y: "年",
+          mo: "个月",
+          w: "周",
+          d: "天",
+          h: "小时",
+          m: "分钟",
+          s: "秒",
+          ms: "毫秒",
+          decimal: "."
+        },
+        zh_TW: {
+          y: "年",
+          mo: "個月",
+          w: "周",
+          d: "天",
+          h: "小時",
+          m: "分鐘",
+          s: "秒",
+          ms: "毫秒",
+          decimal: "."
         }
-        var n = parseInt(arguments[1]) || 0;
-        var k;
-        if (n >= 0) {
-          k = n;
+      };
+
+      // You can create a humanizer, which returns a function with defaults
+      // parameters.
+      function humanizer(passedOptions) {
+        var result = function humanizer(ms, humanizerOptions) {
+          var options = extend({}, result, humanizerOptions || {});
+          return doHumanization(ms, options);
+        };
+
+        return extend(result, {
+          language: "en",
+          delimiter: ", ",
+          spacer: " ",
+          units: ["y", "mo", "w", "d", "h", "m", "s"],
+          languages: {},
+          round: false,
+          unitMeasures: {
+            y: 31557600000,
+            mo: 2629800000,
+            w: 604800000,
+            d: 86400000,
+            h: 3600000,
+            m: 60000,
+            s: 1000,
+            ms: 1
+          }
+        }, passedOptions);
+      }
+
+      // The main function is just a wrapper around a default humanizer.
+      var defaultHumanizer = humanizer({});
+      function humanizeDuration() {
+        return defaultHumanizer.apply(defaultHumanizer, arguments);
+      }
+
+      // doHumanization does the bulk of the work.
+      function doHumanization(ms, options) {
+
+        // Make sure we have a positive number.
+        // Has the nice sideffect of turning Number objects into primitives.
+        ms = Math.abs(ms);
+
+        var dictionary = options.languages[options.language] || languages[options.language];
+        if (!dictionary) {
+          throw new Error("No language " + dictionary + ".");
+        }
+
+        var result = [];
+
+        // Start at the top and keep removing units, bit by bit.
+        var unitName, unitMS, unitCount;
+        for (var i = 0, len = options.units.length; i < len; i++) {
+
+          unitName = options.units[i];
+          unitMS = options.unitMeasures[unitName];
+
+          // What's the number of full units we can fit?
+          if (i + 1 === len) {
+            unitCount = ms / unitMS;
+            if (options.round) {
+              unitCount = Math.round(unitCount);
+            }
+          } else {
+            unitCount = Math.floor(ms / unitMS);
+          }
+
+          // Add the string.
+          if (unitCount) {
+            result.push(render(unitCount, unitName, dictionary, options));
+          }
+
+          // Do we have enough units?
+          if (options.largest && options.largest <= result.length) {
+            break;
+          }
+
+          // Remove what we just figured out.
+          ms -= unitCount * unitMS;
+
+        }
+
+        if (result.length) {
+          return result.join(options.delimiter);
         } else {
-          k = len + n;
-          if (k < 0) {
-            k = 0;
+          return render(0, options.units[options.units.length - 1], dictionary, options);
+        }
+
+      }
+
+      function render(count, type, dictionary, options) {
+        var decimal;
+        if (options.decimal === void 0) {
+          decimal = dictionary.decimal;
+        } else {
+          decimal = options.decimal;
+        }
+
+        var countStr = count.toString().replace(".", decimal);
+
+        var dictionaryValue = dictionary[type];
+        var word;
+        if (typeof dictionaryValue === "function") {
+          word = dictionaryValue(count);
+        } else {
+          word = dictionaryValue;
+        }
+
+        return countStr + options.spacer + word;
+      }
+
+      function extend(destination) {
+        var source;
+        for (var i = 1; i < arguments.length; i++) {
+          source = arguments[i];
+          for (var prop in source) {
+            if (source.hasOwnProperty(prop)) {
+              destination[prop] = source[prop];
+            }
           }
         }
-        var currentElement;
-        while (k < len) {
-          currentElement = O[k];
-          if (searchElement === currentElement || searchElement !== searchElement && currentElement !== currentElement) {
-            return true;
-          }
-          k++;
-        }
-        return false;
-      };
-    }
+        return destination;
+      }
 
-    function _get_included(included) {
-      return ({ id, type }) => included.find(v => {
-        return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
-      });
-    }
-
-    function _build_relationship(vm, get_included_record) {
-      return ({ rel_name, rel_data, client_defined_relationship, obs }) => {
-        return build_relationship(vm, rel_name, rel_data, obs, {
-          client_defined_relationship,
-          get_included_record
-        });
-      };
-    }
-
-    function _init_relationship(vm, client_defined_relationships) {
-      return ([rel_name, rel_data]) => init_relationship(vm, rel_name, rel_data, client_defined_relationships);
-    }
-
-    function _remap_with_included_records(record, { get_included_record, immybox, nested_immybox_relationships } = {}) {
-      let ret = get_included_record ? get_included_record(record) || record : record;
-
-      Object.assign(ret, ret.attributes, {
-        id: Number.parseInt(ret.id, 10),
-        type: ret.type
-      });
-
-      if (ret.relationships) {
-        let { relationships } = ret;
-        for (let relationship_name in relationships) {
-          let relationship = relationships[relationship_name];
-          let { data } = relationship;
-          let opts = {
-            get_included_record,
-            nested_immybox_relationships,
-            immybox: (nested_immybox_relationships || []).includes(relationship_name)
-          };
-          if (data instanceof Array) ret[relationship_name] = data.map(item => _remap_with_included_records(item, opts));else if (data) ret[relationship_name] = _remap_with_included_records(data, opts);else ret[relationship_name] = null;
+      // Internal helper function for Czech language.
+      function getCzechForm(c) {
+        if (c === 1) {
+          return 0;
+        } else if (Math.floor(c) !== c) {
+          return 1;
+        } else if (c % 10 >= 2 && c % 10 <= 4 && c % 100 < 10) {
+          return 2;
+        } else {
+          return 3;
         }
       }
 
-      immybox && Object.assign(ret, {
-        value: ret[immybox.value || 'id'],
-        text: ret[immybox.text || 'name']
-      });
-
-      return ret;
-    }
-
-    function _encode_uri(url, obj) {
-      if (Object.keys(obj).length === 0) return url;
-      let str = '';
-      for (let key in obj) {
-        if (str !== '') str += '&';
-        str += `${ key }=${ encodeURIComponent(obj[key]) }`;
-      }
-      return `${ url }?${ str }`;
-    }
-
-    function _base_request(resolve, reject) {
-      let request = new XMLHttpRequest();
-      request.onreadystatechange = function () {
-        if (this.readyState === 4) // done
-          if (this.status >= 200 && this.status < 400) try {
-            resolve(JSON.parse(this.response || 'null'));
-          } catch (e) {
-            resolve(null);
-          } else reject(this);
-      };
-      request.onerror = function () {
-        reject(this);
-      };
-      return request;
-    }
-
-    let RequestError = (function (_Error) {
-      babelHelpers.inherits(RequestError, _Error);
-
-      function RequestError(xhr) {
-        babelHelpers.classCallCheck(this, RequestError);
-
-        let message, errors_from_server, json, responseText;
-        let name = 'RequestError';
-
-        try {
-          json = JSON.parse(xhr.responseText || 'null');
-        } catch (e) {
-          json = null;
-        } finally {
-          if (xhr.responseText) responseText = xhr.responseText;
+      // Internal helper function for Polish language.
+      function getPolishForm(c) {
+        if (c === 1) {
+          return 0;
+        } else if (Math.floor(c) !== c) {
+          return 1;
+        } else if (c % 10 >= 2 && c % 10 <= 4 && !(c % 100 > 10 && c % 100 < 20)) {
+          return 2;
+        } else {
+          return 3;
         }
-
-        if (json && json.errors) {
-          errors_from_server = json.errors;
-          if (json.errors.length === 1) message = json.errors[0].title;
-        }
-        if (!message) message = xhr.statusText || 'An error occurred while sending the request';
-
-        var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(RequestError).call(this, message));
-
-        _this.message = message;
-        _this.name = name;
-        _this.status = xhr.status;
-        if (errors_from_server) _this.errors_from_server = errors_from_server;
-        if (responseText) _this.responseText = responseText;
-        return _this;
       }
 
-      return RequestError;
-    })(Error);
-
-    const httpJSON = {
-      get(req) {
-        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.get(elem)));
-        if (typeof req === 'string') return httpJSON.get({ url: req });
-        const { url, data } = req;
-        return new Promise((resolve, reject) => {
-          let request = _base_request(resolve, reject);
-          request.open('GET', _encode_uri(url, Object.assign({}, data)));
-          request.setRequestHeader('Content-Type', 'application/json');
-          request.setRequestHeader('Accept', 'application/json');
-          if (document.querySelector('[name="csrf-token"]')) {
-            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-            if (token) request.setRequestHeader('X-CSRF-Token', token);
-          }
-          request.send();
-        });
-      },
-      post(req) {
-        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.post(elem)));
-        const { url, data } = req;
-        return new Promise((resolve, reject) => {
-          let request = _base_request(resolve, reject);
-          request.open('POST', url);
-          request.setRequestHeader('Content-Type', 'application/json');
-          request.setRequestHeader('Accept', 'application/json');
-          if (document.querySelector('[name="csrf-token"]')) {
-            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-            if (token) request.setRequestHeader('X-CSRF-Token', token);
-          }
-          request.send(JSON.stringify(data));
-        });
-      },
-      patch(req) {
-        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.patch(elem)));
-        const { url, data } = req;
-        return new Promise((resolve, reject) => {
-          let request = _base_request(resolve, reject);
-          request.open('PATCH', url);
-          request.setRequestHeader('Content-Type', 'application/json');
-          request.setRequestHeader('Accept', 'application/json');
-          if (document.querySelector('[name="csrf-token"]')) {
-            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-            if (token) request.setRequestHeader('X-CSRF-Token', token);
-          }
-          request.send(JSON.stringify(data));
-        });
-      },
-      delete(req) {
-        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.patch(elem)));
-        if (typeof req === 'string') return httpJSON.delete({ url: req });
-        const { url, data } = req;
-        return new Promise((resolve, reject) => {
-          let request = _base_request(resolve, reject);
-          request.open('DELETE', _encode_uri(url, Object.assign({}, data)));
-          if (document.querySelector('[name="csrf-token"]')) {
-            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
-            if (token) request.setRequestHeader('X-CSRF-Token', token);
-          }
-          request.send();
-        });
+      // Internal helper function for Russian and Ukranian languages.
+      function getSlavicForm(c) {
+        if (Math.floor(c) !== c) {
+          return 2;
+        } else if ((c >= 5 && c <= 20) || (c % 10 >= 5 && c % 10 <= 9) || c % 10 === 0) {
+          return 0;
+        } else if (c % 10 === 1) {
+          return 1;
+        } else if (c > 1) {
+          return 2;
+        } else {
+          return 0;
+        }
       }
-    };
 
-    function create_observable(vm, attr_name, attr_val) {
-      return vm[attr_name] = ko$1.observable().extend({
-        postable: attr_name,
-        initial_value: attr_val
-      });
-    }
+      function getSupportedLanguages() {
+        var result = [];
+        for (var language in languages) {
+          if (languages.hasOwnProperty(language)) {
+            result.push(language);
+          }
+        }
+        return result;
+      }
 
-    function parse_json_api_response(response, opts = {}) {
-      if (!response) return;
+      humanizeDuration.humanizer = humanizer;
+      humanizeDuration.getSupportedLanguages = getSupportedLanguages;
 
-      if (response.included) opts.get_included_record = _get_included(response.included);
-
-      if (response.data instanceof Array) return response.data.map(elem => _remap_with_included_records(elem, opts));else return _remap_with_included_records(response.data, opts);
-    }
-
-    function init_relationship(vm, rel_name, rel_data, client_defined_relationships = []) {
-      const client_defined_relationship = client_defined_relationships.find(r => {
-        return r.name === rel_name;
-      });
-      const obs = vm[rel_name] || (vm[rel_name] = rel_data instanceof Array ? ko$1.observableArray([]) : ko$1.observable());
-
-      if (client_defined_relationship && client_defined_relationship.allow_destroy) vm[`non_deleted_${ rel_name }`] = ko$1.computed(() => {
-        return obs().filter(obj => {
-          return obj.loading ? !obj.loading() && !obj.marked_for_deletion() : !obj.marked_for_deletion();
+      if (typeof define === "function" && define.amd) {
+        define(function() {
+          return humanizeDuration;
         });
-      });
-
-      return Promise.resolve({ rel_name, rel_data, client_defined_relationship, obs });
-    }
-    function build_relationship(vm, rel_name, rel_data, obs, { client_defined_relationship, get_included_record } = {}) {
-      let done = Promise.resolve();
-      if (rel_data instanceof Array) {
-        let records = rel_data;
-
-        if (get_included_record) records = records.map(rec => _remap_with_included_records(rec, { get_included_record }));
-
-        if (client_defined_relationship) {
-          if (client_defined_relationship.nested_attributes_accepted) obs.extend({
-            nestable: rel_name,
-            initial_length: records.length,
-            watch_for_pending_changes: true
-          });
-
-          if (client_defined_relationship.class) {
-            const klass = client_defined_relationship.class;
-
-            records = records.map(r => new klass(vm, r));
-
-            if (klass.prototype.doneLoading) done = Promise.all(records.map(r => r.doneLoading()));
-
-            if (client_defined_relationship.blank_value) obs.extend({
-              pushable: {
-                klass,
-                this_arg: vm,
-                args: [client_defined_relationship.blank_value]
-              }
-            });
-          }
-        }
-        obs(records);
-      } else if (rel_data) {
-        let remapped = _remap_with_included_records(rel_data, { get_included_record });
-        let record;
-
-        if (client_defined_relationship) {
-          if (client_defined_relationship.nested_attributes_accepted) obs.extend({
-            nestable: rel_name,
-            watch_for_pending_changes: true
-          });
-          if (client_defined_relationship.class) {
-            const klass = client_defined_relationship.class;
-            record = new klass(vm, Object.assign({}, remapped));
-
-            if (klass.prototype.doneLoading) done = record.doneLoading();
-          }
-        }
-        obs(record || remapped);
+      } else if (typeof module !== "undefined" && module.exports) {
+        module.exports = humanizeDuration;
       } else {
-        let record;
-
-        if (client_defined_relationship) {
-          if (client_defined_relationship.nested_attributes_accepted) obs.extend({
-            nestable: rel_name,
-            watch_for_pending_changes: true
-          });
-          if (client_defined_relationship.class) {
-            const klass = client_defined_relationship.class;
-            const blank_value = client_defined_relationship.blank_value || {};
-
-            record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
-
-            if (klass.prototype.doneLoading) done = record.doneLoading();
-          }
-        }
-        obs(record || {});
+        global.humanizeDuration = humanizeDuration;
       }
-      return done.then(() => obs());
-    }
-
-    function create_relationships(vm, relationships_map, { get_included_record, client_defined_relationships } = {}) {
-      return Promise.all([...relationships_map].map(_init_relationship(vm, client_defined_relationships))).then(resolutions => Promise.all(resolutions.map(_build_relationship(vm, get_included_record))));
-    }
-
-    function create_relationship(vm, rel_name, rel_data, { get_included_record, client_defined_relationships } = {}) {
-      return init_relationship(vm, rel_name, rel_data, client_defined_relationships).then(_build_relationship(vm, get_included_record));
-    }
-
-    var json_api_utils = Object.freeze({
-      RequestError: RequestError,
-      httpJSON: httpJSON,
-      create_observable: create_observable,
-      parse_json_api_response: parse_json_api_response,
-      init_relationship: init_relationship,
-      build_relationship: build_relationship,
-      create_relationships: create_relationships,
-      create_relationship: create_relationship
-    });
+    })(this);
+    return module.exports;
+    })({exports:{}});
 
     var fraction = (function (module) {
     var exports = module.exports;
@@ -1127,432 +1247,564 @@
     return module.exports;
     })({exports:{}});
 
-    var humanizeDuration = (function (module) {
-    var exports = module.exports;
-    // HumanizeDuration.js - http://git.io/j0HgmQ
+    function _get_included(included) {
+      return ({ id, type }) => included.find(v => {
+        return Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type;
+      });
+    }
 
-    (function(global) {
-      var languages = {
-        ar: {
-          y: function(c) { return ((c === 1) ? "سنة" : "سنوات"); },
-          mo: function(c) { return ((c === 1) ? "شهر" : "أشهر"); },
-          w: function(c) { return ((c === 1) ? "أسبوع" : "أسابيع"); },
-          d: function(c) { return ((c === 1) ? "يوم" : "أيام"); },
-          h: function(c) { return ((c === 1) ? "ساعة" : "ساعات"); },
-          m: function(c) { return ((c === 1) ? "دقيقة" : "دقائق"); },
-          s: function(c) { return ((c === 1) ? "ثانية" : "ثواني"); },
-          ms: function(c) { return ((c === 1) ? "جزء من الثانية" : "أجزاء من الثانية"); },
-          decimal: ","
-        },
-        ca: {
-          y: function(c) { return "any" + ((c !== 1) ? "s" : ""); },
-          mo: function(c) { return "mes" + ((c !== 1) ? "os" : ""); },
-          w: function(c) { return "setman" + ((c !== 1) ? "es" : "a"); },
-          d: function(c) { return "di" + ((c !== 1) ? "es" : "a"); },
-          h: function(c) { return "hor" + ((c !== 1) ? "es" : "a"); },
-          m: function(c) { return "minut" + ((c !== 1) ? "s" : ""); },
-          s: function(c) { return "segon" + ((c !== 1) ? "s" : ""); },
-          ms: function(c) { return "milisegon" + ((c !== 1) ? "s" : "" ); },
-          decimal: ","
-        },
-        da: {
-          y: "år",
-          mo: function(c) { return "måned" + ((c !== 1) ? "er" : ""); },
-          w: function(c) { return "uge" + ((c !== 1) ? "r" : ""); },
-          d: function(c) { return "dag" + ((c !== 1) ? "e" : ""); },
-          h: function(c) { return "time" + ((c !== 1) ? "r" : ""); },
-          m: function(c) { return "minut" + ((c !== 1) ? "ter" : ""); },
-          s: function(c) { return "sekund" + ((c !== 1) ? "er" : ""); },
-          ms: function(c) { return "millisekund" + ((c !== 1) ? "er" : ""); },
-          decimal: ","
-        },
-        de: {
-          y: function(c) { return "Jahr" + ((c !== 1) ? "e" : ""); },
-          mo: function(c) { return "Monat" + ((c !== 1) ? "e" : ""); },
-          w: function(c) { return "Woche" + ((c !== 1) ? "n" : ""); },
-          d: function(c) { return "Tag" + ((c !== 1) ? "e" : ""); },
-          h: function(c) { return "Stunde" + ((c !== 1) ? "n" : ""); },
-          m: function(c) { return "Minute" + ((c !== 1) ? "n" : ""); },
-          s: function(c) { return "Sekunde" + ((c !== 1) ? "n" : ""); },
-          ms: function(c) { return "Millisekunde" + ((c !== 1) ? "n" : ""); },
-          decimal: ","
-        },
-        en: {
-          y: function(c) { return "year" + ((c !== 1) ? "s" : ""); },
-          mo: function(c) { return "month" + ((c !== 1) ? "s" : ""); },
-          w: function(c) { return "week" + ((c !== 1) ? "s" : ""); },
-          d: function(c) { return "day" + ((c !== 1) ? "s" : ""); },
-          h: function(c) { return "hour" + ((c !== 1) ? "s" : ""); },
-          m: function(c) { return "minute" + ((c !== 1) ? "s" : ""); },
-          s: function(c) { return "second" + ((c !== 1) ? "s" : ""); },
-          ms: function(c) { return "millisecond" + ((c !== 1) ? "s" : ""); },
-          decimal: "."
-        },
-        es: {
-          y: function(c) { return "año" + ((c !== 1) ? "s" : ""); },
-          mo: function(c) { return "mes" + ((c !== 1) ? "es" : ""); },
-          w: function(c) { return "semana" + ((c !== 1) ? "s" : ""); },
-          d: function(c) { return "día" + ((c !== 1) ? "s" : ""); },
-          h: function(c) { return "hora" + ((c !== 1) ? "s" : ""); },
-          m: function(c) { return "minuto" + ((c !== 1) ? "s" : ""); },
-          s: function(c) { return "segundo" + ((c !== 1) ? "s" : ""); },
-          ms: function(c) { return "milisegundo" + ((c !== 1) ? "s" : "" ); },
-          decimal: ","
-        },
-        fr: {
-          y: function(c) { return "an" + ((c !== 1) ? "s" : ""); },
-          mo: "mois",
-          w: function(c) { return "semaine" + ((c !== 1) ? "s" : ""); },
-          d: function(c) { return "jour" + ((c !== 1) ? "s" : ""); },
-          h: function(c) { return "heure" + ((c !== 1) ? "s" : ""); },
-          m: function(c) { return "minute" + ((c !== 1) ? "s" : ""); },
-          s: function(c) { return "seconde" + ((c !== 1) ? "s" : ""); },
-          ms: function(c) { return "milliseconde" + ((c !== 1) ? "s" : ""); },
-          decimal: ","
-        },
-        gr: {
-          y: function(c) { return ((c === 1) ? "χρόνος" : "χρόνια"); },
-          mo: function(c) { return ((c === 1) ? "μήνας" : "μήνες"); },
-          w: function(c) { return ((c === 1) ? "εβδομάδα" : "εβδομάδες"); },
-          d: function(c) { return ((c === 1) ? "μέρα" : "μέρες"); },
-          h: function(c) { return ((c === 1) ? "ώρα" : "ώρες"); },
-          m: function(c) { return ((c === 1) ? "λεπτό" : "λεπτά"); },
-          s: function(c) { return ((c === 1) ? "δευτερόλεπτο" : "δευτερόλεπτα"); },
-          ms: function(c) { return ((c === 1) ? "χιλιοστό του δευτερολέπτου" : "χιλιοστά του δευτερολέπτου"); },
-          decimal: ","
-        },
-        hu: {
-          y: "év",
-          mo: "hónap",
-          w: "hét",
-          d: "nap",
-          h: "óra",
-          m: "perc",
-          s: "másodperc",
-          ms: "ezredmásodperc",
-          decimal: ","
-        },
-        it: {
-          y: function(c) { return "ann" + ((c !== 1) ? "i" : "o"); },
-          mo: function(c) { return "mes" + ((c !== 1) ? "i" : "e"); },
-          w: function(c) { return "settiman" + ((c !== 1) ? "e" : "a"); },
-          d: function(c) { return "giorn" + ((c !== 1) ? "i" : "o"); },
-          h: function(c) { return "or" + ((c !== 1) ? "e" : "a"); },
-          m: function(c) { return "minut" + ((c !== 1) ? "i" : "o"); },
-          s: function(c) { return "second" + ((c !== 1) ? "i" : "o"); },
-          ms: function(c) { return "millisecond" + ((c !== 1) ? "i" : "o" ); },
-          decimal: ","
-        },
-        ja: {
-          y: "年",
-          mo: "月",
-          w: "週",
-          d: "日",
-          h: "時間",
-          m: "分",
-          s: "秒",
-          ms: "ミリ秒",
-          decimal: "."
-        },
-        ko: {
-          y: "년",
-          mo: "개월",
-          w: "주일",
-          d: "일",
-          h: "시간",
-          m: "분",
-          s: "초",
-          ms: "밀리 초",
-          decimal: "."
-        },
-        nl: {
-          y: "jaar",
-          mo: function(c) { return (c === 1) ? "maand" : "maanden"; },
-          w: function(c) { return (c === 1) ? "week" : "weken"; },
-          d: function(c) { return (c === 1) ? "dag" : "dagen"; },
-          h: "uur",
-          m: function(c) { return (c === 1) ? "minuut" : "minuten"; },
-          s: function(c) { return (c === 1) ? "seconde" : "seconden"; },
-          ms: function(c) { return (c === 1) ? "milliseconde" : "milliseconden"; },
-          decimal: ","
-        },
-        no: {
-          y: "år",
-          mo: function(c) { return "måned" + ((c !== 1) ? "er" : ""); },
-          w: function(c) { return "uke" + ((c !== 1) ? "r" : ""); },
-          d: function(c) { return "dag" + ((c !== 1) ? "er" : ""); },
-          h: function(c) { return "time" + ((c !== 1) ? "r" : ""); },
-          m: function(c) { return "minutt" + ((c !== 1) ? "er" : ""); },
-          s: function(c) { return "sekund" + ((c !== 1) ? "er" : ""); },
-          ms: function(c) { return "millisekund" + ((c !== 1) ? "er" : ""); },
-          decimal: ","
-        },
-        pl: {
-          y: function(c) { return ["rok", "roku", "lata", "lat"][getPolishForm(c)]; },
-          mo: function(c) { return ["miesiąc", "miesiąca", "miesiące", "miesięcy"][getPolishForm(c)]; },
-          w: function(c) { return ["tydzień", "tygodnia", "tygodnie", "tygodni"][getPolishForm(c)]; },
-          d: function(c) { return ["dzień", "dnia", "dni", "dni"][getPolishForm(c)]; },
-          h: function(c) { return ["godzina", "godziny", "godziny", "godzin"][getPolishForm(c)]; },
-          m: function(c) { return ["minuta", "minuty", "minuty", "minut"][getPolishForm(c)]; },
-          s: function(c) { return ["sekunda", "sekundy", "sekundy", "sekund"][getPolishForm(c)]; },
-          ms: function(c) { return ["milisekunda", "milisekundy", "milisekundy", "milisekund"][getPolishForm(c)]; },
-          decimal: ","
-        },
-        pt: {
-          y: function(c) { return "ano" + ((c !== 1) ? "s" : ""); },
-          mo: function(c) { return (c !== 1) ? "meses" : "mês"; },
-          w: function(c) { return "semana" + ((c !== 1) ? "s" : ""); },
-          d: function(c) { return "dia" + ((c !== 1) ? "s" : ""); },
-          h: function(c) { return "hora" + ((c !== 1) ? "s" : ""); },
-          m: function(c) { return "minuto" + ((c !== 1) ? "s" : ""); },
-          s: function(c) { return "segundo" + ((c !== 1) ? "s" : ""); },
-          ms: function(c) { return "milissegundo" + ((c !== 1) ? "s" : ""); },
-          decimal: ","
-        },
-        ru: {
-          y: function(c) { return ["лет", "год", "года"][getSlavicForm(c)]; },
-          mo: function(c) { return ["месяцев", "месяц", "месяца"][getSlavicForm(c)]; },
-          w: function(c) { return ["недель", "неделя", "недели"][getSlavicForm(c)]; },
-          d: function(c) { return ["дней", "день", "дня"][getSlavicForm(c)]; },
-          h: function(c) { return ["часов", "час", "часа"][getSlavicForm(c)]; },
-          m: function(c) { return ["минут", "минута", "минуты"][getSlavicForm(c)]; },
-          s: function(c) { return ["секунд", "секунда", "секунды"][getSlavicForm(c)]; },
-          ms: function(c) { return ["миллисекунд", "миллисекунда", "миллисекунды"][getSlavicForm(c)]; },
-          decimal: ","
-        },
-        uk: {
-          y: function(c) { return ["років", "рік", "роки"][getSlavicForm(c)]; },
-          mo: function(c) { return ["місяців", "місяць", "місяці"][getSlavicForm(c)]; },
-          w: function(c) { return ["неділь", "неділя", "неділі"][getSlavicForm(c)]; },
-          d: function(c) { return ["днів", "день", "дні"][getSlavicForm(c)]; },
-          h: function(c) { return ["годин", "година", "години"][getSlavicForm(c)]; },
-          m: function(c) { return ["хвилин", "хвилина", "хвилини"][getSlavicForm(c)]; },
-          s: function(c) { return ["секунд", "секунда", "секунди"][getSlavicForm(c)]; },
-          ms: function(c) { return ["мілісекунд", "мілісекунда", "мілісекунди"][getSlavicForm(c)]; },
-          decimal: ","
-        },
-        sv: {
-          y: "år",
-          mo: function(c) { return "månad" + ((c !== 1) ? "er" : ""); },
-          w: function(c) { return "veck" + ((c !== 1) ? "or" : "a"); },
-          d: function(c) { return "dag" + ((c !== 1) ? "ar" : ""); },
-          h: function(c) { return "timm" + ((c !== 1) ? "ar" : "e"); },
-          m: function(c) { return "minut" + ((c !== 1) ? "er" : ""); },
-          s: function(c) { return "sekund" + ((c !== 1) ? "er" : ""); },
-          ms: function(c) { return "millisekund" + ((c !== 1) ? "er" : ""); },
-          decimal: ","
-        },
-        tr: {
-          y: "yıl",
-          mo: "ay",
-          w: "hafta",
-          d: "gün",
-          h: "saat",
-          m: "dakika",
-          s: "saniye",
-          ms: "milisaniye",
-          decimal: ","
-        },
-        zh_CN: {
-          y: "年",
-          mo: "个月",
-          w: "周",
-          d: "天",
-          h: "小时",
-          m: "分钟",
-          s: "秒",
-          ms: "毫秒",
-          decimal: "."
-        },
-        zh_TW: {
-          y: "年",
-          mo: "個月",
-          w: "周",
-          d: "天",
-          h: "小時",
-          m: "分鐘",
-          s: "秒",
-          ms: "毫秒",
-          decimal: "."
-        }
-      };
-
-      // You can create a humanizer, which returns a function with defaults
-      // parameters.
-      function humanizer(passedOptions) {
-        var result = function humanizer(ms, humanizerOptions) {
-          var options = extend({}, result, humanizerOptions || {});
-          return doHumanization(ms, options);
-        };
-
-        return extend(result, {
-          language: "en",
-          delimiter: ", ",
-          spacer: " ",
-          units: ["y", "mo", "w", "d", "h", "m", "s"],
-          languages: {},
-          round: false,
-          unitMeasures: {
-            y: 31557600000,
-            mo: 2629800000,
-            w: 604800000,
-            d: 86400000,
-            h: 3600000,
-            m: 60000,
-            s: 1000,
-            ms: 1
-          }
-        }, passedOptions);
-      }
-
-      // The main function is just a wrapper around a default humanizer.
-      var defaultHumanizer = humanizer({});
-      function humanizeDuration() {
-        return defaultHumanizer.apply(defaultHumanizer, arguments);
-      }
-
-      // doHumanization does the bulk of the work.
-      function doHumanization(ms, options) {
-
-        // Make sure we have a positive number.
-        // Has the nice sideffect of turning Number objects into primitives.
-        ms = Math.abs(ms);
-
-        var dictionary = options.languages[options.language] || languages[options.language];
-        if (!dictionary) {
-          throw new Error("No language " + dictionary + ".");
-        }
-
-        var result = [];
-
-        // Start at the top and keep removing units, bit by bit.
-        var unitName, unitMS, unitCount;
-        for (var i = 0, len = options.units.length; i < len; i++) {
-
-          unitName = options.units[i];
-          unitMS = options.unitMeasures[unitName];
-
-          // What's the number of full units we can fit?
-          if ((i + 1) === len) {
-            unitCount = ms / unitMS;
-            if (options.round) {
-              unitCount = Math.round(unitCount);
-            }
-          } else {
-            unitCount = Math.floor(ms / unitMS);
-          }
-
-          // Add the string.
-          if (unitCount) {
-            result.push(render(unitCount, unitName, dictionary, options));
-          }
-
-          // Do we have enough units?
-          if (options.largest && (options.largest <= result.length)) {
-            break;
-          }
-
-          // Remove what we just figured out.
-          ms -= unitCount * unitMS;
-
-        }
-
-        if (result.length) {
-          return result.join(options.delimiter);
-        } else {
-          return render(0, options.units[options.units.length - 1], dictionary, options);
-        }
-
-      }
-
-      function render(count, type, dictionary, options) {
-        var decimal;
-        if (options.decimal === void 0) {
-          decimal = dictionary.decimal;
-        } else {
-          decimal = options.decimal;
-        }
-
-        var countStr = count.toString().replace(".", decimal);
-
-        var dictionaryValue = dictionary[type];
-        var word;
-        if (typeof dictionaryValue === "function") {
-          word = dictionaryValue(count);
-        } else {
-          word = dictionaryValue;
-        }
-
-        return countStr + options.spacer + word;
-      }
-
-      function extend(destination) {
-        var source;
-        for (var i = 1; i < arguments.length; i++) {
-          source = arguments[i];
-          for (var prop in source) {
-            if (source.hasOwnProperty(prop)) {
-              destination[prop] = source[prop];
-            }
-          }
-        }
-        return destination;
-      }
-
-      // Internal helper function for Polish language.
-      function getPolishForm(c) {
-        if (c === 1) {
-          return 0;
-        } else if (Math.floor(c) !== c) {
-          return 1;
-        } else if (c % 10 >= 2 && c % 10 <= 4 && !(c % 100 > 10 && c % 100 < 20)) {
-          return 2;
-        } else {
-          return 3;
-        }
-      }
-
-      // Internal helper function for Russian and Ukranian languages.
-      function getSlavicForm(c) {
-        if (Math.floor(c) !== c) {
-          return 2;
-        } else if (c === 0 || (c >= 5 && c <= 20) || (c % 10 >= 5 && c % 10 <= 9) || (c % 10 === 0)) {
-          return 0;
-        } else if (c === 1 || c % 10 === 1) {
-          return 1;
-        } else if (c > 1) {
-          return 2;
-        } else {
-          return 0;
-        }
-      }
-
-      function getSupportedLanguages() {
-        var result = [];
-        for (var language in languages) {
-          if (languages.hasOwnProperty(language)) {
-            result.push(language);
-          }
-        }
-        return result;
-      }
-
-      humanizeDuration.humanizer = humanizer;
-      humanizeDuration.getSupportedLanguages = getSupportedLanguages;
-
-      if (typeof define === "function" && define.amd) {
-        define(function() {
-          return humanizeDuration;
+    function _build_relationship(vm, get_included_record) {
+      return ({ rel_name, rel_data, client_defined_relationship, obs }) => {
+        return build_relationship(vm, rel_name, rel_data, obs, {
+          client_defined_relationship,
+          get_included_record
         });
-      } else if (typeof module !== "undefined" && module.exports) {
-        module.exports = humanizeDuration;
-      } else {
-        global.humanizeDuration = humanizeDuration;
+      };
+    }
+
+    function _init_relationship(vm, client_defined_relationships) {
+      return ([rel_name, rel_data]) => init_relationship(vm, rel_name, rel_data, client_defined_relationships);
+    }
+
+    function _remap_with_included_records(record, { get_included_record, immybox, nested_immybox_relationships } = {}) {
+      let ret = get_included_record ? get_included_record(record) || record : record;
+
+      Object.assign(ret, ret.attributes, {
+        id: Number.parseInt(ret.id, 10),
+        type: ret.type
+      });
+
+      if (ret.relationships) {
+        let { relationships } = ret;
+        for (let relationship_name in relationships) {
+          let relationship = relationships[relationship_name];
+          let { data } = relationship;
+          let opts = {
+            get_included_record,
+            nested_immybox_relationships,
+            immybox: (nested_immybox_relationships || []).includes(relationship_name)
+          };
+          if (data instanceof Array) ret[relationship_name] = data.map(item => _remap_with_included_records(item, opts));else if (data) ret[relationship_name] = _remap_with_included_records(data, opts);else ret[relationship_name] = null;
+        }
       }
 
-    })(this);
-    return module.exports;
-    })({exports:{}});
+      immybox && Object.assign(ret, {
+        value: ret[immybox.value || 'id'],
+        text: ret[immybox.text || 'name']
+      });
+
+      return ret;
+    }
+
+    function _encode_uri(url, obj) {
+      if (Object.keys(obj).length === 0) return url;
+      let str = '';
+      for (let key in obj) {
+        if (str !== '') str += '&';
+        str += `${ key }=${ encodeURIComponent(obj[key]) }`;
+      }
+      return `${ url }?${ str }`;
+    }
+
+    function _base_request(resolve, reject) {
+      let request = new XMLHttpRequest();
+      request.onreadystatechange = function () {
+        if (this.readyState === 4) // done
+          if (this.status >= 200 && this.status < 400) try {
+            resolve(JSON.parse(this.response || 'null'));
+          } catch (e) {
+            resolve(null);
+          } else reject(this);
+      };
+      request.onerror = function () {
+        reject(this);
+      };
+      return request;
+    }
+
+    let RequestError = function (_Error) {
+      babelHelpers_inherits(RequestError, _Error);
+
+      function RequestError(xhr) {
+        babelHelpers_classCallCheck(this, RequestError);
+
+        let message, errors_from_server, json, responseText;
+        let name = 'RequestError';
+
+        try {
+          json = JSON.parse(xhr.responseText || 'null');
+        } catch (e) {
+          json = null;
+        } finally {
+          if (xhr.responseText) responseText = xhr.responseText;
+        }
+
+        if (json && json.errors) {
+          errors_from_server = json.errors;
+          if (json.errors.length === 1) message = json.errors[0].title;
+        }
+        if (!message) message = xhr.statusText || 'An error occurred while sending the request';
+
+        var _this = babelHelpers_possibleConstructorReturn(this, Object.getPrototypeOf(RequestError).call(this, message));
+
+        _this.message = message;
+        _this.name = name;
+        _this.status = xhr.status;
+        if (errors_from_server) _this.errors_from_server = errors_from_server;
+        if (responseText) _this.responseText = responseText;
+        return _this;
+      }
+
+      return RequestError;
+    }(Error);
+
+    const httpJSON = {
+      get(req) {
+        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.get(elem)));
+        if (typeof req === 'string') return httpJSON.get({ url: req });
+        const { url, data } = req;
+        return new Promise((resolve, reject) => {
+          let request = _base_request(resolve, reject);
+          request.open('GET', _encode_uri(url, Object.assign({}, data)));
+          request.setRequestHeader('Content-Type', 'application/json');
+          request.setRequestHeader('Accept', 'application/json');
+          if (document.querySelector('[name="csrf-token"]')) {
+            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+            if (token) request.setRequestHeader('X-CSRF-Token', token);
+          }
+          request.send();
+        });
+      },
+      post(req) {
+        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.post(elem)));
+        const { url, data } = req;
+        return new Promise((resolve, reject) => {
+          let request = _base_request(resolve, reject);
+          request.open('POST', url);
+          request.setRequestHeader('Content-Type', 'application/json');
+          request.setRequestHeader('Accept', 'application/json');
+          if (document.querySelector('[name="csrf-token"]')) {
+            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+            if (token) request.setRequestHeader('X-CSRF-Token', token);
+          }
+          request.send(JSON.stringify(data));
+        });
+      },
+      patch(req) {
+        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.patch(elem)));
+        const { url, data } = req;
+        return new Promise((resolve, reject) => {
+          let request = _base_request(resolve, reject);
+          request.open('PATCH', url);
+          request.setRequestHeader('Content-Type', 'application/json');
+          request.setRequestHeader('Accept', 'application/json');
+          if (document.querySelector('[name="csrf-token"]')) {
+            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+            if (token) request.setRequestHeader('X-CSRF-Token', token);
+          }
+          request.send(JSON.stringify(data));
+        });
+      },
+      delete(req) {
+        if (req instanceof Array) return Promise.all(req.map(elem => httpJSON.patch(elem)));
+        if (typeof req === 'string') return httpJSON.delete({ url: req });
+        const { url, data } = req;
+        return new Promise((resolve, reject) => {
+          let request = _base_request(resolve, reject);
+          request.open('DELETE', _encode_uri(url, Object.assign({}, data)));
+          if (document.querySelector('[name="csrf-token"]')) {
+            const token = document.querySelector('[name="csrf-token"]').getAttribute('content');
+            if (token) request.setRequestHeader('X-CSRF-Token', token);
+          }
+          request.send();
+        });
+      }
+    };
+
+    function create_observable(vm, attr_name, attr_val) {
+      return vm[attr_name] = ko$1.observable().extend({
+        postable: attr_name,
+        initial_value: attr_val
+      });
+    }
+
+    function parse_json_api_response(response, opts = {}) {
+      if (!response) return;
+
+      if (response.included) opts.get_included_record = _get_included(response.included);
+
+      if (response.data instanceof Array) return response.data.map(elem => _remap_with_included_records(elem, opts));else return _remap_with_included_records(response.data, opts);
+    }
+
+    function init_relationship(vm, rel_name, rel_data, client_defined_relationships = []) {
+      const client_defined_relationship = client_defined_relationships.find(r => {
+        return r.name === rel_name;
+      });
+      const obs = vm[rel_name] || (vm[rel_name] = rel_data instanceof Array ? ko$1.observableArray([]) : ko$1.observable());
+
+      if (client_defined_relationship && client_defined_relationship.allow_destroy) vm[`non_deleted_${ rel_name }`] = ko$1.computed(() => {
+        return obs().filter(obj => {
+          return obj.loading ? !obj.loading() && !obj.marked_for_deletion() : !obj.marked_for_deletion();
+        });
+      });
+
+      return Promise.resolve({ rel_name, rel_data, client_defined_relationship, obs });
+    }
+    function build_relationship(vm, rel_name, rel_data, obs, { client_defined_relationship, get_included_record } = {}) {
+      let done = Promise.resolve();
+      if (rel_data instanceof Array) {
+        let records = rel_data;
+
+        if (get_included_record) records = records.map(rec => _remap_with_included_records(rec, { get_included_record }));
+
+        if (client_defined_relationship) {
+          if (client_defined_relationship.nested_attributes_accepted) obs.extend({
+            nestable: rel_name,
+            initial_length: records.length,
+            watch_for_pending_changes: true
+          });
+
+          if (client_defined_relationship.class) {
+            const klass = client_defined_relationship.class;
+
+            records = records.map(r => new klass(vm, r));
+
+            if (klass.prototype.doneLoading) done = Promise.all(records.map(r => r.doneLoading()));
+
+            if (client_defined_relationship.blank_value) obs.extend({
+              pushable: {
+                klass,
+                this_arg: vm,
+                args: [client_defined_relationship.blank_value]
+              }
+            });
+          }
+        }
+        obs(records);
+      } else if (rel_data) {
+        let remapped = _remap_with_included_records(rel_data, { get_included_record });
+        let record;
+
+        if (client_defined_relationship) {
+          if (client_defined_relationship.nested_attributes_accepted) obs.extend({
+            nestable: rel_name,
+            watch_for_pending_changes: true
+          });
+          if (client_defined_relationship.class) {
+            const klass = client_defined_relationship.class;
+            record = new klass(vm, Object.assign({}, remapped));
+
+            if (klass.prototype.doneLoading) done = record.doneLoading();
+          }
+        }
+        obs(record || remapped);
+      } else {
+        let record;
+
+        if (client_defined_relationship) {
+          if (client_defined_relationship.nested_attributes_accepted) obs.extend({
+            nestable: rel_name,
+            watch_for_pending_changes: true
+          });
+          if (client_defined_relationship.class) {
+            const klass = client_defined_relationship.class;
+            const blank_value = client_defined_relationship.blank_value || {};
+
+            record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
+
+            if (klass.prototype.doneLoading) done = record.doneLoading();
+          }
+        }
+        obs(record || {});
+      }
+      return done.then(() => obs());
+    }
+
+    function create_relationships(vm, relationships_map, { get_included_record, client_defined_relationships } = {}) {
+      return Promise.all([...relationships_map].map(_init_relationship(vm, client_defined_relationships))).then(resolutions => Promise.all(resolutions.map(_build_relationship(vm, get_included_record))));
+    }
+
+    function create_relationship(vm, rel_name, rel_data, { get_included_record, client_defined_relationships } = {}) {
+      return init_relationship(vm, rel_name, rel_data, client_defined_relationships).then(_build_relationship(vm, get_included_record));
+    }
+
+var json_api_utils = Object.freeze({
+      RequestError: RequestError,
+      httpJSON: httpJSON,
+      create_observable: create_observable,
+      parse_json_api_response: parse_json_api_response,
+      init_relationship: init_relationship,
+      build_relationship: build_relationship,
+      create_relationships: create_relationships,
+      create_relationship: create_relationship
+    });
+
+    /*eslint no-unused-vars: 0, no-console: 0 */
+
+    function _get_included$1(included) {
+      return ({ id, type }) => included.find(v => Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type);
+    }
+
+    function _initKOFormVMFromJsonApiResponse(vm, response) {
+      const record = response.data;
+      const client_defined_relationships = vm.options.relationships;
+      const server_defined_relationships = record.relationships || {};
+      const server_defined_attributes = record.attributes || {};
+      const get_included_record = response.included && _get_included$1(response.included) || null;
+      const observable_attributes_blacklist = vm.options.observable_attributes_blacklist || [];
+
+      vm.id = record.id;
+      vm.id && (vm.id = Number.parseInt(vm.id, 10));
+      vm.type = record.type;
+
+      vm._url = vm.url = server_defined_attributes.url;
+      delete server_defined_attributes.url;
+
+      const attribute_names = Object.keys(server_defined_attributes);
+
+      attribute_names.forEach(attribute_name => {
+        if (observable_attributes_blacklist.includes(attribute_name)) {
+          vm[attribute_name] = server_defined_attributes[attribute_name];
+        } else {
+          vm.observables_list.push(create_observable(vm, attribute_name, server_defined_attributes[attribute_name]));
+        }
+      });
+
+      const relationship_names = Object.keys(server_defined_relationships);
+
+      return Promise.all(relationship_names.map(key => init_relationship(vm, key, server_defined_relationships[key].data, client_defined_relationships))).then(relationship_params => Promise.all(relationship_params.map(({ rel_name, rel_data, obs, client_defined_relationship }) => {
+        vm.relationships.push(obs);
+        return build_relationship(vm, rel_name, rel_data, obs, {
+          get_included_record,
+          client_defined_relationship
+        });
+      })));
+    }
+
+    function _initNestedVMs(vm, vm_map) {
+      return vm_map && Promise.all([...vm_map].map(([nested_vm_name, nested_vm]) => {
+        vm[nested_vm_name] = nested_vm;
+        nested_vm.error_message.subscribe(vm.error_message);
+        return nested_vm.doneLoading();
+      })) || Promise.resolve();
+    }
+
+    function _sendRequests(requests) {
+      return httpJSON.get(requests).catch(xhr => {
+        throw new RequestError(xhr);
+      });
+    }
+
+    let KOFormBase = function () {
+      babelHelpers_createClass(KOFormBase, [{
+        key: 'init',
+        value: function init(opts) {
+          if (this.init_begun || this.init_finalized) throw new Error('Cannot init more than once');
+
+          if (!opts.url) throw new Error('Please provide a URL');
+          this.init_begun = true;
+          const { url, request_opts, other_requests } = this.options = opts;
+          const requests = [{ url, data: Object.assign({}, request_opts) }, ...(other_requests || []).map(req => {
+            return typeof req === 'string' ? { url: req, data: {} } : {
+              url: req.url,
+              data: Object.assign({}, req.request_opts)
+            };
+          })];
+          return Promise.all([_sendRequests(requests), _initNestedVMs(this, opts.nested_vms)]).then(([[main_response, ...other_responses]]) => {
+            return _initKOFormVMFromJsonApiResponse(this, main_response).then(() => Promise.all([other_responses.length && this.handleOtherRequests(other_responses) || Promise.resolve(), this.finalizeInit()]));
+          }).then(() => delete this.init_begun);
+        }
+      }, {
+        key: 'handleOtherRequests',
+        value: function handleOtherRequests(responses) {
+          // Overload this method to handle responses
+        }
+      }, {
+        key: 'finalizeInit',
+        value: function finalizeInit() {
+          if (this.init_finalizing || this.init_finalized) throw new Error('Cannot finalize init more than once');
+
+          this.init_finalizing = true;
+          const errorable = this.observables_list.filter(obs => obs.hasError);
+          const observables_with_initial_values = this.observables_list.filter(obs => {
+            return obs.initial_value || obs.initial_length;
+          });
+          this.errors = {};
+          errorable.forEach(obs => {
+            if (obs.postable_name) this.errors[obs.postable_name] = ko$1.computed(() => {
+              return obs.hasError() && obs.validationMessage() || null;
+            });else if (obs.errorable_observables) this.errors[obs.errorable_name] = ko$1.computed(() => {
+              return obs.hasError() && obs.errors() || null;
+            });
+          });
+          this.numErrors = this.numErrors || ko$1.computed(() => {
+            return errorable.reduce((total, obs) => {
+              return total + (obs.hasError() ? obs.numErrors ? obs.numErrors() : 1 : 0);
+            }, 0);
+          });
+
+          this.is_valid = ko$1.computed(() => {
+            let is_valid = this.numErrors() === 0;
+            if (is_valid) {
+              if (this.validation_messenger) {
+                this.validation_messenger.cancel();
+                delete this.validation_messenger;
+              }
+            }
+            return is_valid;
+          }).extend({ notify: 'always' });
+
+          this.no_changes_pending = ko$1.computed(() => {
+            const relationships_pendings = this.relationships.map(obs => {
+              const c = obs.no_changes_pending;
+              const l = obs.initial_length;
+
+              return (c ? c() : true) && (l ? l() === obs().length : true);
+            });
+
+            const observable_value_pairs = observables_with_initial_values.map(obs => {
+              return obs.initial_value ? obs() === obs.initial_value() : obs().length === obs.initial_length();
+            });
+
+            return relationships_pendings.every(p => p) && observable_value_pairs.every(p => p);
+          }).extend({ notify: 'always' });
+
+          this.changes_pending = ko$1.computed(() => !this.no_changes_pending()).extend({ notify: 'always' });
+
+          if (this.options.save_after_edit) {
+            const reify_method = this.options.save_after_edit.reify_method;
+            const should_save = ko$1.computed(() => {
+              const [changes_pending, is_valid] = [this.changes_pending(), this.is_valid()];
+              return changes_pending && (this.id || is_valid);
+            }).extend({
+              rateLimit: {
+                method: 'notifyWhenChangesStop',
+                timeout: this.options.save_after_edit.rate_limit || 500
+              },
+              notify: 'always'
+            });
+
+            this.saving_locked = false;
+
+            should_save.subscribe(should => {
+              if (should && !this.saving_locked) {
+                this.save().then(record => reify_method && this[reify_method](record)).catch(err => {
+                  if (typeof err === 'string') this.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
+                    this.saving_locked = true;
+                    this.error_message(err);
+                  }
+                });
+              }
+            });
+          }
+          delete this.init_finalizing;
+          this.init_finalized = true;
+        }
+      }]);
+
+      function KOFormBase() {
+        babelHelpers_classCallCheck(this, KOFormBase);
+
+        Object.assign(this, {
+          loading: ko$1.observable(true),
+          attempted: ko$1.observable(false),
+          error_message: ko$1.observable(null),
+          observables_list: [],
+          relationships: []
+        });
+      }
+
+      babelHelpers_createClass(KOFormBase, [{
+        key: 'saveAndReload',
+        value: function saveAndReload() {
+          let action = this.id ? 'update' : 'create';
+          this.save().then(record => {
+            successNotice({ notice: `Record ${ action }d` });
+            window.location = record && record.url ? record.url : this.url;
+          }).catch(err => {
+            if (typeof err === 'string') this.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
+              console.log(err);
+              errorNotice({ notice: err.message });
+            }
+          });
+        }
+      }, {
+        key: 'save',
+        value: function save() {
+          return new Promise((resolve, reject) => {
+            this.attempted(true);
+            const numErrors = this.numErrors();
+            if (numErrors) {
+              reject(`There ${ numErrors === 1 ? 'is 1 error which prevents' : `are ${ numErrors } errors which prevent` } this form from being submitted.`);
+              return;
+            }
+
+            httpJSON[this.id ? 'patch' : 'post']({
+              url: this.url,
+              data: {
+                data: {
+                  id: this.id,
+                  type: this.type,
+                  attributes: this.serialize()
+                }
+              }
+            }).then(response => {
+              const record = parse_json_api_response(response);
+              if (record) {
+                this.id = record.id;
+                this.url = record.url;
+              }
+              resolve(record);
+            }).catch(xhr => reject(new RequestError(xhr)));
+          });
+        }
+      }, {
+        key: 'serialize',
+        value: function serialize() {
+          let json = {};
+          this.observables_list.forEach(obs => {
+            let pname = obs.postable_name;
+            let nname = obs.nestable_name;
+            let val = obs();
+
+            if (pname) json[pname] = val instanceof Date ? val.toISOString() : val;else if (nname) json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
+          });
+
+          this.relationships.forEach(obs => {
+            let nname = obs.nestable_name;
+            let val = obs();
+            if (nname) json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
+          });
+          return json;
+        }
+      }, {
+        key: 'unsetObservables',
+        value: function unsetObservables() {
+          delete this.id;
+          this.url = this._url;
+          this.observables_list.forEach(obs => obs('push' in obs ? [] : undefined));
+          this.attempted(false);
+        }
+      }, {
+        key: 'doneLoading',
+        value: function doneLoading() {
+          return this.loading() && new Promise((resolve, reject) => {
+            let e, l;
+            e = this.error_message.subscribe(err => {
+              l.dispose();
+              e.dispose();
+              reject(err);
+            });
+            l = this.loading.subscribe(() => {
+              l.dispose();
+              e.dispose();
+              this.error_message() ? reject(this.error_message()) : resolve();
+            });
+          }) || Promise.resolve();
+        }
+      }]);
+      return KOFormBase;
+    }();
 
     const extenders = {};
 
@@ -2044,6 +2296,8 @@
      * @param {Object} [opts]
      * @param {number} [opts.precision] - The number of decimals to allow when
      * enforcing numericality
+     * @param {boolean} [opts.allow_imprecision=true] - Whether or not to allow
+     * the number of decimals to be less than `opts.precision`
      * @param {string} [opts.sign] - The sign of the number to allow when enforcing
      * numericality
      * @param {(number|string)} [opts.default] - The default value to use if
@@ -2056,6 +2310,7 @@
     setupExtender('numeric', function numeric(target, opts) {
       const { precision, sign, default: default_val, allow_rational } = opts || {};
       const multiplier = precision && Math.pow(10, precision) || null;
+      const disallow_imprecision = multiplier && opts.allow_imprecision === false || false;
 
       function stripDisallowedCharacters(value) {
         if (allow_rational) {
@@ -2086,6 +2341,7 @@
           sign === 'positive' && (out = !is_rational && Math.abs(out) || out.abs());
           sign === 'negative' && (out = !is_rational && -Math.abs(out) || out.abs().mul(-1));
           is_rational && (out = out.toFraction());
+          !is_rational && disallow_imprecision && (out = out.toFixed(precision));
         }
         return out;
       }
@@ -2440,281 +2696,49 @@
       return target;
     });
 
-    /*eslint no-unused-vars: 0, no-console: 0 */
+    // The includes() method determines whether an array includes a certain element,
+    // returning true or false as appropriate.
+    //
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
+    if (!Array.prototype.includes) {
+      Array.prototype.includes = function (searchElement /*, fromIndex*/) {
+        'use strict';
 
-    function _get_included$1(included) {
-      return ({ id, type }) => included.find(v => Number.parseInt(v.id, 10) === Number.parseInt(id, 10) && v.type === type);
-    }
-
-    function _initKOFormVMFromJsonApiResponse(vm, response) {
-      const record = response.data;
-      const client_defined_relationships = vm.options.relationships;
-      const server_defined_relationships = record.relationships || {};
-      const server_defined_attributes = record.attributes || {};
-      const get_included_record = response.included && _get_included$1(response.included) || null;
-      const observable_attributes_blacklist = vm.options.observable_attributes_blacklist || [];
-
-      vm.id = record.id;
-      vm.id && (vm.id = Number.parseInt(vm.id, 10));
-      vm.type = record.type;
-
-      vm._url = vm.url = server_defined_attributes.url;
-      delete server_defined_attributes.url;
-
-      const attribute_names = Object.keys(server_defined_attributes);
-
-      attribute_names.forEach(attribute_name => {
-        if (observable_attributes_blacklist.includes(attribute_name)) {
-          vm[attribute_name] = server_defined_attributes[attribute_name];
+        var O = Object(this);
+        var len = parseInt(O.length) || 0;
+        if (len === 0) {
+          return false;
+        }
+        var n = parseInt(arguments[1]) || 0;
+        var k;
+        if (n >= 0) {
+          k = n;
         } else {
-          vm.observables_list.push(create_observable(vm, attribute_name, server_defined_attributes[attribute_name]));
-        }
-      });
-
-      const relationship_names = Object.keys(server_defined_relationships);
-
-      return Promise.all(relationship_names.map(key => init_relationship(vm, key, server_defined_relationships[key].data, client_defined_relationships))).then(relationship_params => Promise.all(relationship_params.map(({ rel_name, rel_data, obs, client_defined_relationship }) => {
-        vm.relationships.push(obs);
-        return build_relationship(vm, rel_name, rel_data, obs, {
-          get_included_record,
-          client_defined_relationship
-        });
-      })));
-    }
-
-    function _initNestedVMs(vm, vm_map) {
-      return vm_map && Promise.all([...vm_map].map(([nested_vm_name, nested_vm]) => {
-        vm[nested_vm_name] = nested_vm;
-        nested_vm.error_message.subscribe(vm.error_message);
-        return nested_vm.doneLoading();
-      })) || Promise.resolve();
-    }
-
-    function _sendRequests(requests) {
-      return httpJSON.get(requests).catch(xhr => {
-        throw new RequestError(xhr);
-      });
-    }
-
-    let KOFormBase = (function () {
-      babelHelpers.createClass(KOFormBase, [{
-        key: 'init',
-        value: function init(opts) {
-          if (this.init_begun || this.init_finalized) throw new Error('Cannot init more than once');
-
-          if (!opts.url) throw new Error('Please provide a URL');
-          this.init_begun = true;
-          const { url, request_opts, other_requests } = this.options = opts;
-          const requests = [{ url, data: Object.assign({}, request_opts) }, ...(other_requests || []).map(req => {
-            return typeof req === 'string' ? { url: req, data: {} } : {
-              url: req.url,
-              data: Object.assign({}, req.request_opts)
-            };
-          })];
-          return Promise.all([_sendRequests(requests), _initNestedVMs(this, opts.nested_vms)]).then(([[main_response, ...other_responses]]) => {
-            return _initKOFormVMFromJsonApiResponse(this, main_response).then(() => Promise.all([other_responses.length && this.handleOtherRequests(other_responses) || Promise.resolve(), this.finalizeInit()]));
-          }).then(() => delete this.init_begun);
-        }
-      }, {
-        key: 'handleOtherRequests',
-        value: function handleOtherRequests(responses) {
-          // Overload this method to handle responses
-        }
-      }, {
-        key: 'finalizeInit',
-        value: function finalizeInit() {
-          if (this.init_finalizing || this.init_finalized) throw new Error('Cannot finalize init more than once');
-
-          this.init_finalizing = true;
-          const errorable = this.observables_list.filter(obs => obs.hasError);
-          const observables_with_initial_values = this.observables_list.filter(obs => {
-            return obs.initial_value || obs.initial_length;
-          });
-          this.errors = {};
-          errorable.forEach(obs => {
-            if (obs.postable_name) this.errors[obs.postable_name] = ko$1.computed(() => {
-              return obs.hasError() && obs.validationMessage() || null;
-            });else if (obs.errorable_observables) this.errors[obs.errorable_name] = ko$1.computed(() => {
-              return obs.hasError() && obs.errors() || null;
-            });
-          });
-          this.numErrors = this.numErrors || ko$1.computed(() => {
-            return errorable.reduce((total, obs) => {
-              return total + (obs.hasError() ? obs.numErrors ? obs.numErrors() : 1 : 0);
-            }, 0);
-          });
-
-          this.is_valid = ko$1.computed(() => {
-            let is_valid = this.numErrors() === 0;
-            if (is_valid) {
-              if (this.validation_messenger) {
-                this.validation_messenger.cancel();
-                delete this.validation_messenger;
-              }
-            }
-            return is_valid;
-          }).extend({ notify: 'always' });
-
-          this.no_changes_pending = ko$1.computed(() => {
-            const relationships_pendings = this.relationships.map(obs => {
-              const c = obs.no_changes_pending;
-              const l = obs.initial_length;
-
-              return (c ? c() : true) && (l ? l() === obs().length : true);
-            });
-
-            const observable_value_pairs = observables_with_initial_values.map(obs => {
-              return obs.initial_value ? obs() === obs.initial_value() : obs().length === obs.initial_length();
-            });
-
-            return relationships_pendings.every(p => p) && observable_value_pairs.every(p => p);
-          }).extend({ notify: 'always' });
-
-          this.changes_pending = ko$1.computed(() => !this.no_changes_pending()).extend({ notify: 'always' });
-
-          if (this.options.save_after_edit) {
-            const reify_method = this.options.save_after_edit.reify_method;
-            const should_save = ko$1.computed(() => {
-              const [changes_pending, is_valid] = [this.changes_pending(), this.is_valid()];
-              return changes_pending && (this.id || is_valid);
-            }).extend({
-              rateLimit: {
-                method: 'notifyWhenChangesStop',
-                timeout: this.options.save_after_edit.rate_limit || 500
-              },
-              notify: 'always'
-            });
-
-            this.saving_locked = false;
-
-            should_save.subscribe(should => {
-              if (should && !this.saving_locked) {
-                this.save().then(record => reify_method && this[reify_method](record)).catch(err => {
-                  if (typeof err === 'string') this.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
-                    this.saving_locked = true;
-                    this.error_message(err);
-                  }
-                });
-              }
-            });
+          k = len + n;
+          if (k < 0) {
+            k = 0;
           }
-          delete this.init_finalizing;
-          this.init_finalized = true;
         }
-      }]);
-
-      function KOFormBase() {
-        babelHelpers.classCallCheck(this, KOFormBase);
-
-        Object.assign(this, {
-          loading: ko$1.observable(true),
-          attempted: ko$1.observable(false),
-          error_message: ko$1.observable(null),
-          observables_list: [],
-          relationships: []
-        });
-      }
-
-      babelHelpers.createClass(KOFormBase, [{
-        key: 'saveAndReload',
-        value: function saveAndReload() {
-          let action = this.id ? 'update' : 'create';
-          this.save().then(record => {
-            successNotice({ notice: `Record ${ action }d` });
-            window.location = record && record.url ? record.url : this.url;
-          }).catch(err => {
-            if (typeof err === 'string') this.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
-              console.log(err);
-              errorNotice({ notice: err.message });
-            }
-          });
+        var currentElement;
+        while (k < len) {
+          currentElement = O[k];
+          if (searchElement === currentElement || searchElement !== searchElement && currentElement !== currentElement) {
+            return true;
+          }
+          k++;
         }
-      }, {
-        key: 'save',
-        value: function save() {
-          return new Promise((resolve, reject) => {
-            this.attempted(true);
-            const numErrors = this.numErrors();
-            if (numErrors) {
-              reject(`There ${ numErrors === 1 ? 'is 1 error which prevents' : `are ${ numErrors } errors which prevent` } this form from being submitted.`);
-              return;
-            }
-
-            httpJSON[this.id ? 'patch' : 'post']({
-              url: this.url,
-              data: {
-                data: {
-                  id: this.id,
-                  type: this.type,
-                  attributes: this.serialize()
-                }
-              }
-            }).then(response => {
-              const record = parse_json_api_response(response);
-              if (record) {
-                this.id = record.id;
-                this.url = record.url;
-              }
-              resolve(record);
-            }).catch(xhr => reject(new RequestError(xhr)));
-          });
-        }
-      }, {
-        key: 'serialize',
-        value: function serialize() {
-          let json = {};
-          this.observables_list.forEach(obs => {
-            let pname = obs.postable_name;
-            let nname = obs.nestable_name;
-            let val = obs();
-
-            if (pname) json[pname] = val instanceof Date ? val.toISOString() : val;else if (nname) json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
-          });
-
-          this.relationships.forEach(obs => {
-            let nname = obs.nestable_name;
-            let val = obs();
-            if (nname) json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
-          });
-          return json;
-        }
-      }, {
-        key: 'unsetObservables',
-        value: function unsetObservables() {
-          delete this.id;
-          this.url = this._url;
-          this.observables_list.forEach(obs => obs('push' in obs ? [] : undefined));
-          this.attempted(false);
-        }
-      }, {
-        key: 'doneLoading',
-        value: function doneLoading() {
-          return this.loading() && new Promise((resolve, reject) => {
-            let e, l;
-            e = this.error_message.subscribe(err => {
-              l.dispose();
-              e.dispose();
-              reject(err);
-            });
-            l = this.loading.subscribe(() => {
-              l.dispose();
-              e.dispose();
-              this.error_message() ? reject(this.error_message()) : resolve();
-            });
-          }) || Promise.resolve();
-        }
-      }]);
-      return KOFormBase;
-    })();
+        return false;
+      };
+    }
 
     let extenders_assigned = false;
 
-    let KnockoutJsonApiUtils = (function () {
+    let KnockoutJsonApiUtils = function () {
       function KnockoutJsonApiUtils() {
-        babelHelpers.classCallCheck(this, KnockoutJsonApiUtils);
+        babelHelpers_classCallCheck(this, KnockoutJsonApiUtils);
       }
 
-      babelHelpers.createClass(KnockoutJsonApiUtils, null, [{
+      babelHelpers_createClass(KnockoutJsonApiUtils, null, [{
         key: 'setupExtenders',
         value: function setupExtenders() {
           if (!extenders_assigned) {
@@ -2744,7 +2768,7 @@
         }
       }]);
       return KnockoutJsonApiUtils;
-    })();
+    }();
 
     return KnockoutJsonApiUtils;
 

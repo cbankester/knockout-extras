@@ -4,21 +4,25 @@ import commonjs from 'rollup-plugin-commonjs';
 
 export default {
   entry: 'src/index.js',
-  dest: 'build/index.js',
   format: 'umd',
-  exports: 'default',
+  dest: 'build/index.js',
   moduleName: 'KnockoutJsonApiUtils',
   globals: {
     ko: 'ko',
-    moment: 'moment',
-    'fraction.js': 'Fraction',
-    'humanize-duration': 'humanizeDuration'
+    moment: 'moment'
   },
   plugins: [
-    babel(),
-    npm({jsnext: true, main: true}),
+    babel({
+      plugins: ["transform-es2015-classes", "external-helpers-2"],
+      exclude: 'node_modules/**'
+    }),
+    npm({
+      jsnext: true,
+      main: true,
+      skip: ['ko', 'moment']
+    }),
     commonjs({
-      include: 'node_modules/**/*'
+      include: 'node_modules/**/*',
     })
   ]
 };

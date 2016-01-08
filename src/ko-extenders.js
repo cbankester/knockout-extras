@@ -494,6 +494,8 @@ setupExtender('unique', (target, opts) => {
  * @param {Object} [opts]
  * @param {number} [opts.precision] - The number of decimals to allow when
  * enforcing numericality
+ * @param {boolean} [opts.allow_imprecision=true] - Whether or not to allow
+ * the number of decimals to be less than `opts.precision`
  * @param {string} [opts.sign] - The sign of the number to allow when enforcing
  * numericality
  * @param {(number|string)} [opts.default] - The default value to use if
@@ -506,6 +508,7 @@ setupExtender('unique', (target, opts) => {
 setupExtender('numeric', function numeric(target, opts) {
   const {precision, sign, default: default_val, allow_rational} = opts || {};
   const multiplier = precision && Math.pow(10, precision) || null;
+  const disallow_imprecision = multiplier && (opts.allow_imprecision === false) || false;
 
   function stripDisallowedCharacters(value) {
     if (allow_rational) {
@@ -536,6 +539,7 @@ setupExtender('numeric', function numeric(target, opts) {
       sign === 'positive' && (out = !is_rational && Math.abs(out) || out.abs());
       sign === 'negative' && (out = !is_rational && -Math.abs(out) || out.abs().mul(-1));
       is_rational && (out = out.toFraction());
+      !is_rational && disallow_imprecision && (out = out.toFixed(precision));
     }
     return out;
   }
