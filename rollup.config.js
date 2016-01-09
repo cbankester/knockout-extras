@@ -5,7 +5,7 @@ import commonjs from 'rollup-plugin-commonjs';
 export default {
   entry: 'src/index.js',
   format: 'umd',
-  dest: 'build/index.js',
+  dest: 'build/knockout-jsonapi-utils.js',
   moduleName: 'KnockoutJsonApiUtils',
   globals: {
     ko: 'ko',
