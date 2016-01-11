@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ko'), require('moment')) :
-    typeof define === 'function' && define.amd ? define(['ko', 'moment'], factory) :
-    (global.KnockoutJsonApiUtils = factory(global.ko,global.moment));
-}(this, function (ko$1,moment) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('knockout'), require('moment')) :
+    typeof define === 'function' && define.amd ? define(['knockout', 'moment'], factory) :
+    (global.KnockoutJsonApiUtils = factory(global.knockout,global.moment));
+}(this, function (knockout,moment) { 'use strict';
 
     moment = 'default' in moment ? moment['default'] : moment;
 
@@ -1422,7 +1422,7 @@
     };
 
     function create_observable(vm, attr_name, attr_val) {
-      return vm[attr_name] = ko$1.observable().extend({
+      return vm[attr_name] = knockout.observable().extend({
         postable: attr_name,
         initial_value: attr_val
       });
@@ -1440,9 +1440,9 @@
       const client_defined_relationship = client_defined_relationships.find(r => {
         return r.name === rel_name;
       });
-      const obs = vm[rel_name] || (vm[rel_name] = rel_data instanceof Array ? ko$1.observableArray([]) : ko$1.observable());
+      const obs = vm[rel_name] || (vm[rel_name] = rel_data instanceof Array ? knockout.observableArray([]) : knockout.observable());
 
-      if (client_defined_relationship && client_defined_relationship.allow_destroy) vm[`non_deleted_${ rel_name }`] = ko$1.computed(() => {
+      if (client_defined_relationship && client_defined_relationship.allow_destroy) vm[`non_deleted_${ rel_name }`] = knockout.computed(() => {
         return obs().filter(obj => {
           return obj.loading ? !obj.loading() && !obj.marked_for_deletion() : !obj.marked_for_deletion();
         });
@@ -1631,19 +1631,19 @@ var json_api_utils = Object.freeze({
           });
           this.errors = {};
           errorable.forEach(obs => {
-            if (obs.postable_name) this.errors[obs.postable_name] = ko$1.computed(() => {
+            if (obs.postable_name) this.errors[obs.postable_name] = knockout.computed(() => {
               return obs.hasError() && obs.validationMessage() || null;
-            });else if (obs.errorable_observables) this.errors[obs.errorable_name] = ko$1.computed(() => {
+            });else if (obs.errorable_observables) this.errors[obs.errorable_name] = knockout.computed(() => {
               return obs.hasError() && obs.errors() || null;
             });
           });
-          this.numErrors = this.numErrors || ko$1.computed(() => {
+          this.numErrors = this.numErrors || knockout.computed(() => {
             return errorable.reduce((total, obs) => {
               return total + (obs.hasError() ? obs.numErrors ? obs.numErrors() : 1 : 0);
             }, 0);
           });
 
-          this.is_valid = ko$1.computed(() => {
+          this.is_valid = knockout.computed(() => {
             let is_valid = this.numErrors() === 0;
             if (is_valid) {
               if (this.validation_messenger) {
@@ -1654,7 +1654,7 @@ var json_api_utils = Object.freeze({
             return is_valid;
           }).extend({ notify: 'always' });
 
-          this.no_changes_pending = ko$1.computed(() => {
+          this.no_changes_pending = knockout.computed(() => {
             const relationships_pendings = this.relationships.map(obs => {
               const c = obs.no_changes_pending;
               const l = obs.initial_length;
@@ -1669,11 +1669,11 @@ var json_api_utils = Object.freeze({
             return relationships_pendings.every(p => p) && observable_value_pairs.every(p => p);
           }).extend({ notify: 'always' });
 
-          this.changes_pending = ko$1.computed(() => !this.no_changes_pending()).extend({ notify: 'always' });
+          this.changes_pending = knockout.computed(() => !this.no_changes_pending()).extend({ notify: 'always' });
 
           if (this.options.save_after_edit) {
             const reify_method = this.options.save_after_edit.reify_method;
-            const should_save = ko$1.computed(() => {
+            const should_save = knockout.computed(() => {
               const [changes_pending, is_valid] = [this.changes_pending(), this.is_valid()];
               return changes_pending && (this.id || is_valid);
             }).extend({
@@ -1706,9 +1706,9 @@ var json_api_utils = Object.freeze({
         babelHelpers_classCallCheck(this, KOFormBase);
 
         Object.assign(this, {
-          loading: ko$1.observable(true),
-          attempted: ko$1.observable(false),
-          error_message: ko$1.observable(null),
+          loading: knockout.observable(true),
+          attempted: knockout.observable(false),
+          error_message: knockout.observable(null),
           observables_list: [],
           relationships: []
         });
@@ -1883,7 +1883,7 @@ var json_api_utils = Object.freeze({
     */
 
     function computedSanitizeProxy(target, sanitize_fn) {
-      const result = ko$1.pureComputed({
+      const result = knockout.pureComputed({
         read: target,
         write(new_val) {
           if (new_val) {
@@ -1943,7 +1943,7 @@ var json_api_utils = Object.freeze({
     */
 
     function typeObservableFunction(type) {
-      return { type, observable: ko$1.observable() };
+      return { type, observable: knockout.observable() };
     }
 
     /**
@@ -1966,14 +1966,14 @@ var json_api_utils = Object.freeze({
     function setupValidationObservables(target) {
       if (target.validationMessage) return typeObservableFunction;
       setupObservableDisposables(target);
-      target.errors = ko$1.observableArray([]);
+      target.errors = knockout.observableArray([]);
 
       // hasError: true if one of the validations on this observable fails
-      target.hasError = ko$1.computed(() => target.errors().some(({ observable: o }) => o()));
+      target.hasError = knockout.computed(() => target.errors().some(({ observable: o }) => o()));
       target.disposables.push(target.hasError);
 
       // validationMessage: the message from the first failing validation
-      target.validationMessage = ko$1.computed(() => {
+      target.validationMessage = knockout.computed(() => {
         const first_invalid = target.errors().find(({ observable: o }) => o());
         return first_invalid && first_invalid.observable();
       });
@@ -2002,7 +2002,7 @@ var json_api_utils = Object.freeze({
       // so we can track when the sanitizer is being called repeatedly
       let [sanitize_count, first_pass_unsanitized_value] = [0, null];
 
-      const initial_value_observable = ko$1.observable().extend({ notify: 'always' });
+      const initial_value_observable = knockout.observable().extend({ notify: 'always' });
 
       function sanitizeAndInitializeTarget(new_val) {
         // pass val through target's sanitizer, if it exists.
@@ -2049,7 +2049,7 @@ var json_api_utils = Object.freeze({
         }
       }
 
-      target.initial_value = ko$1.computed({
+      target.initial_value = knockout.computed({
         read: initial_value_observable,
         write(new_val) {
           initial_value_observable(new_val);
@@ -2084,7 +2084,7 @@ var json_api_utils = Object.freeze({
     */
 
     setupExtender('initial_length', (target, initial_length) => {
-      target.initial_length = ko$1.observable(initial_length);
+      target.initial_length = knockout.observable(initial_length);
       return target;
     });
 
@@ -2281,7 +2281,7 @@ var json_api_utils = Object.freeze({
         }
       }
 
-      const mapped_array = ko$1.computed(() => ko$1.unwrap(uniq_in).map(obj => ko$1.unwrap(obj[attribute_name])));
+      const mapped_array = knockout.computed(() => knockout.unwrap(uniq_in).map(obj => knockout.unwrap(obj[attribute_name])));
 
       const computed_subscriber = mapped_array.subscribe(validate);
 
@@ -2577,11 +2577,11 @@ var json_api_utils = Object.freeze({
     setupExtender('watch_for_pending_changes', target => {
       setupObservableDisposables(target);
       if ('push' in target) {
-        target.no_changes_pending = ko$1.computed(() => {
+        target.no_changes_pending = knockout.computed(() => {
           return target().every(r => r.loading && r.loading() || r.no_changes_pending());
         }).extend({ notify: 'always' });
       } else {
-        target.no_changes_pending = ko$1.computed(() => {
+        target.no_changes_pending = knockout.computed(() => {
           const obj = target();
           if (obj && !obj.loading()) {
             return obj.no_changes_pending();
@@ -2681,9 +2681,9 @@ var json_api_utils = Object.freeze({
 
     setupExtender('track_focus', (target, opts) => {
       const { track_has_had } = opts || {};
-      target.has_focus = ko$1.observable(false);
+      target.has_focus = knockout.observable(false);
       if (track_has_had) {
-        target.has_had_focus = ko$1.observable(false);
+        target.has_had_focus = knockout.observable(false);
         const s = target.has_focus.subscribe(has_focus => {
           if (!has_focus) {
             // just blurred out of input

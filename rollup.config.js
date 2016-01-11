@@ -3,26 +3,26 @@ import npm from 'rollup-plugin-npm';
 import commonjs from 'rollup-plugin-commonjs';
 
 export default {
-  entry: 'src/index.js',
-  format: 'umd',
-  dest: 'build/knockout-jsonapi-utils.js',
-  moduleName: 'KnockoutJsonApiUtils',
-  globals: {
-    ko: 'ko',
-    moment: 'moment'
-  },
-  plugins: [
+    entry: 'src/index.js'
+  , format: 'umd'
+  , dest: 'build/knockout-jsonapi-utils.js'
+  , moduleName: 'KnockoutJsonApiUtils'
+  , globals: {
+      ko: 'knockout'
+    , moment: 'moment'
+  }
+  , plugins: [
     babel({
-      plugins: ["transform-es2015-classes", "external-helpers-2"],
-      exclude: 'node_modules/**'
+        plugins: ["transform-es2015-classes", "external-helpers-2"]
+      , exclude: 'node_modules/**'
     }),
     npm({
-      jsnext: true,
-      main: true,
-      skip: ['ko', 'moment']
+        jsnext: true
+      , main: true
+      , skip: ['knockout', 'moment']
     }),
     commonjs({
-      include: 'node_modules/**/*',
+      include: 'node_modules/**/*'
     })
   ]
 };

@@ -1,4 +1,4 @@
-import {observable, observableArray, computed} from 'ko';
+import {observable, observableArray, computed} from 'knockout';
 
 import * as json_api_utils from './json-api-utils';
 

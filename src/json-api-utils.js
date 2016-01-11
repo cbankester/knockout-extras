@@ -1,4 +1,4 @@
-import {observable, observableArray, computed} from 'ko';
+import {observable, observableArray, computed} from 'knockout';
 
 function _get_included(included){
   return ({id, type}) => included.find(v => {

@@ -1,4 +1,4 @@
-import {observable, observableArray, computed, pureComputed, unwrap} from 'ko';
+import {observable, observableArray, computed, pureComputed, unwrap} from 'knockout';
 import Fraction from 'fraction.js';
 import humanizeDuration from 'humanize-duration';
 import moment from 'moment';
