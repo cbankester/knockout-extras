@@ -13,7 +13,7 @@ export default {
   }
   , plugins: [
     babel({
-        plugins: ["transform-es2015-classes", "external-helpers-2"]
+        presets: ["es2015-rollup"]
       , exclude: 'node_modules/**'
     }),
     npm({
