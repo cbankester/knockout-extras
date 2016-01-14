@@ -1852,12 +1852,13 @@ var json_api_utils = Object.freeze({
           if (this.options.save_after_edit) {
             (function () {
               var reify_method = _this2.options.save_after_edit.reify_method;
+              var only_when_valid = Boolean(_this2.options.save_after_edit.only_when_valid);
               var should_save = knockout.computed(function () {
                 var changes_pending = _this2.changes_pending();
 
                 var is_valid = _this2.is_valid();
 
-                return changes_pending && (_this2.id || is_valid);
+                return changes_pending && (_this2.id && !only_when_valid || is_valid);
               }).extend({
                 rateLimit: {
                   method: 'notifyWhenChangesStop',

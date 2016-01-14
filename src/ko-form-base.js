@@ -161,9 +161,10 @@ export default class KOFormBase {
 
     if (this.options.save_after_edit) {
       const reify_method = this.options.save_after_edit.reify_method;
+      const only_when_valid = Boolean(this.options.save_after_edit.only_when_valid);
       const should_save = computed(() => {
         const [changes_pending, is_valid] = [this.changes_pending(), this.is_valid()];
-        return changes_pending && (this.id || is_valid);
+        return changes_pending && ((this.id && !only_when_valid) || is_valid);
       }).extend({
         rateLimit: {
           method: 'notifyWhenChangesStop',
