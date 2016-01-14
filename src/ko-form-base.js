@@ -4,6 +4,8 @@ import * as json_api_utils from './json-api-utils';
 
 /*eslint no-unused-vars: 0, no-console: 0 */
 
+function noOp() {}
+
 function _get_included(included){
   return ({id, type}) => included.find(v => (
     Number.parseInt(v.id, 10) === Number.parseInt(id, 10)
@@ -138,16 +140,7 @@ export default class KOFormBase {
       }), 0);
     });
 
-    this.is_valid = computed(() => {
-      let is_valid = this.numErrors() === 0;
-      if (is_valid) {
-        if (this.validation_messenger) {
-          this.validation_messenger.cancel();
-          delete this.validation_messenger;
-        }
-      }
-      return is_valid;
-    }).extend({notify: 'always'});
+    this.is_valid = computed(() => !this.numErrors()).extend({notify: 'always'});
 
     this.no_changes_pending = computed(() => {
       const relationships_pendings = this.relationships.map(obs => {
@@ -187,7 +180,7 @@ export default class KOFormBase {
           .then(record => reify_method && this[reify_method](record))
           .catch(err => {
             if (typeof err === 'string')
-              this.validation_messenger = errorNotice({notice: err, id: 'validation'});
+              (this.options.on_validation_error || noOp)(err);
             else {
               this.saving_locked = true;
               this.error_message(err);
@@ -218,11 +211,9 @@ export default class KOFormBase {
       window.location = record && record.url ? record.url : this.url;
     }).catch(err => {
       if (typeof err === 'string')
-        this.validation_messenger = errorNotice({notice: err, id: 'validation'});
-      else if (err instanceof Error) {
-        console.log(err);
-        errorNotice({notice: err.message});
-      }
+        (this.options.on_validation_error || noOp)(err);
+      else if (err instanceof Error)
+        (this.options.on_error || noOp)(err);
     });
   }
 

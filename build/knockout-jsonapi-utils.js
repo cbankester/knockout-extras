@@ -1674,6 +1674,8 @@ var json_api_utils = Object.freeze({
 
     /*eslint no-unused-vars: 0, no-console: 0 */
 
+    function noOp() {}
+
     function _get_included$1(included) {
       return function (_ref) {
         var id = _ref.id;
@@ -1821,14 +1823,7 @@ var json_api_utils = Object.freeze({
           });
 
           this.is_valid = knockout.computed(function () {
-            var is_valid = _this2.numErrors() === 0;
-            if (is_valid) {
-              if (_this2.validation_messenger) {
-                _this2.validation_messenger.cancel();
-                delete _this2.validation_messenger;
-              }
-            }
-            return is_valid;
+            return !_this2.numErrors();
           }).extend({ notify: 'always' });
 
           this.no_changes_pending = knockout.computed(function () {
@@ -1878,7 +1873,7 @@ var json_api_utils = Object.freeze({
                   _this2.save().then(function (record) {
                     return reify_method && _this2[reify_method](record);
                   }).catch(function (err) {
-                    if (typeof err === 'string') _this2.validation_messenger = errorNotice({ notice: err, id: 'validation' });else {
+                    if (typeof err === 'string') (_this2.options.on_validation_error || noOp)(err);else {
                       _this2.saving_locked = true;
                       _this2.error_message(err);
                     }
@@ -1914,10 +1909,7 @@ var json_api_utils = Object.freeze({
             successNotice({ notice: 'Record ' + action + 'd' });
             window.location = record && record.url ? record.url : _this3.url;
           }).catch(function (err) {
-            if (typeof err === 'string') _this3.validation_messenger = errorNotice({ notice: err, id: 'validation' });else if (err instanceof Error) {
-              console.log(err);
-              errorNotice({ notice: err.message });
-            }
+            if (typeof err === 'string') (_this3.options.on_validation_error || noOp)(err);else if (err instanceof Error) (_this3.options.on_error || noOp)(err);
           });
         }
       }, {
