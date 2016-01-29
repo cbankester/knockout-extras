@@ -1,8 +1,6 @@
-import {observable, observableArray, computed} from 'knockout';
+import ko from 'knockout';
 
 import * as json_api_utils from './json-api-utils';
-
-/*eslint no-unused-vars: 0, no-console: 0 */
 
 function noOp() {}
 
@@ -110,7 +108,7 @@ export default class KOFormBase {
     .then(() => delete this.init_begun);
   }
 
-  handleOtherRequests(responses) {
+  handleOtherRequests(_responses) {
     // Overload this method to handle responses
   }
 
@@ -126,23 +124,23 @@ export default class KOFormBase {
     this.errors = {};
     errorable.forEach(obs => {
       if (obs.postable_name)
-        this.errors[obs.postable_name] = computed(() => {
+        this.errors[obs.postable_name] = ko.computed(() => {
           return obs.hasError() && obs.validationMessage() || null;
         });
       else if (obs.errorable_observables)
-        this.errors[obs.errorable_name] = computed(() => {
+        this.errors[obs.errorable_name] = ko.computed(() => {
           return obs.hasError() && obs.errors() || null;
         });
     });
-    this.numErrors = this.numErrors || computed(() => {
+    this.numErrors = this.numErrors || ko.computed(() => {
       return errorable.reduce(((total, obs) => {
         return total + (obs.hasError() ? (obs.numErrors ? obs.numErrors() : 1) : 0);
       }), 0);
     });
 
-    this.is_valid = computed(() => !this.numErrors()).extend({notify: 'always'});
+    this.is_valid = ko.computed(() => !this.numErrors()).extend({notify: 'always'});
 
-    this.no_changes_pending = computed(() => {
+    this.no_changes_pending = ko.computed(() => {
       const relationships_pendings = this.relationships.map(obs => {
         const c = obs.no_changes_pending;
         const l = obs.initial_length;
@@ -157,12 +155,12 @@ export default class KOFormBase {
       return relationships_pendings.every(p => p) && observable_value_pairs.every(p => p);
     }).extend({notify: 'always'});
 
-    this.changes_pending = computed(() => !this.no_changes_pending()).extend({notify: 'always'});
+    this.changes_pending = ko.computed(() => !this.no_changes_pending()).extend({notify: 'always'});
 
     if (this.options.save_after_edit) {
       const reify_method = this.options.save_after_edit.reify_method;
       const only_when_valid = Boolean(this.options.save_after_edit.only_when_valid);
-      const should_save = computed(() => {
+      const should_save = ko.computed(() => {
         const [changes_pending, is_valid] = [this.changes_pending(), this.is_valid()];
         return changes_pending && ((this.id && !only_when_valid) || is_valid);
       }).extend({
@@ -196,19 +194,17 @@ export default class KOFormBase {
 
   constructor() {
     Object.assign(this, {
-      loading:          observable(true),
-      attempted:        observable(false),
-      error_message:    observable(null),
+      loading:          ko.observable(true),
+      attempted:        ko.observable(false),
+      error_message:    ko.observable(null),
       observables_list: [],
       relationships:    []
     });
   }
 
   saveAndReload() {
-    let action = this.id ? 'update' : 'create';
     this.save()
     .then(record => {
-      successNotice({notice: `Record ${action}d`});
       window.location = record && record.url ? record.url : this.url;
     }).catch(err => {
       if (typeof err === 'string')
@@ -260,14 +256,14 @@ export default class KOFormBase {
       if (pname)
         json[pname] = val instanceof Date ? val.toISOString() : val;
       else if (nname)
-        json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
+        json[nname] = obs.initial_length ? val.map(v => v.serialize()) : val.serialize();
     });
 
     this.relationships.forEach(obs => {
       let nname = obs.nestable_name;
       let val   = obs();
       if (nname)
-        json[nname] = obs.initial_length ? val.map(_serialize) : val.serialize();
+        json[nname] = obs.initial_length ? val.map(v => v.serialize()) : val.serialize();
     });
     return json;
   }

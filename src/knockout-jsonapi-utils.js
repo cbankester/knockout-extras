@@ -4,6 +4,7 @@ import extenders from './ko-extenders';
 import KOFormBase from './ko-form-base';
 import Fraction from 'fraction.js';
 import humanizeDuration from 'humanize-duration';
+import ko from 'knockout';
 
 let extenders_assigned = false;
 
@@ -26,4 +27,4 @@ export default class KnockoutJsonApiUtils {
   static get humanizeDuration(){
     return humanizeDuration;
   }
-}
+};

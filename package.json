@@ -1,10 +1,11 @@
 {
   "name": "knockout-jsonapi-utils",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "A collection of Knockout.js utils for various tasks related to JSON API standard",
   "main": "build/knockout-jsonapi-utils.js",
   "scripts": {
-    "compile": "rollup -c"
+    "lint": "eslint src",
+    "compile": "webpack"
   },
   "repository": {
     "type": "git",
@@ -20,12 +21,11 @@
   },
   "homepage": "https://github.com/cmbankester/knockout-jsonapi-utils#readme",
   "devDependencies": {
-    "babel-preset-es2015-rollup": "^1.0.0",
+    "babel-loader": "^6.2.1",
+    "babel-preset-es2015": "^6.3.13",
+    "eslint": "^1.10.3",
     "fraction.js": "3.x",
     "humanize-duration": "3.x",
-    "rollup": "0.x",
-    "rollup-plugin-babel": "2.x",
-    "rollup-plugin-commonjs": "1.x",
-    "rollup-plugin-npm": "1.x"
+    "webpack": "^1.12.12"
   }
 }

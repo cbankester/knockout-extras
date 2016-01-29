@@ -1,19 +1,6 @@
 {
   "ecmaFeatures": {
-    "arrowFunctions": true,
-    "blockBindings": true,
-    "classes": true,
-    "defaultParams": true,
-    "destructuring": true,
-    "forOf": true,
-    "generators": true,
-    "modules": true,
-    "objectLiteralShorthandMethods": true,
-    "objectLiteralShorthandProperties": true,
-    "restParams": true,
-    "spread": true,
-    "superInFunctions": true,
-    "templateStrings": true
+    "modules": true
   },
   "rules": {
     "indent": [
@@ -31,19 +18,18 @@
     "semi": [
       2,
       "always"
+    ],
+    "no-unused-vars": [
+      2, {
+        "args": "all",
+        "argsIgnorePattern": "^_" // any function argument prefixed with '_' is allowed to be unused
+      }
     ]
   },
   "env": {
     "es6": true,
-    "browser": true,
-    "jquery": true
+    "browser": true
   },
-  "globals": {
-    "ko": true,
-    "json_api_utils": true,
-    "errorNotice": true,
-    "successNotice": true,
-    "_serialize": true
-  },
+  "globals": { },
   "extends": "eslint:recommended"
 }
