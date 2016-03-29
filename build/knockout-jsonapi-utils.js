@@ -56,11 +56,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	__webpack_require__(1);
 
@@ -135,7 +135,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}();
 
 	exports.default = KnockoutJsonApiUtils;
-	;
 
 /***/ },
 /* 1 */
@@ -184,12 +183,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	exports.httpJSON = exports.RequestError = undefined;
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 	exports.create_observable = create_observable;
 	exports.parse_json_api_response = parse_json_api_response;
 	exports.init_relationship = init_relationship;
@@ -317,10 +317,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  function RequestError(xhr) {
 	    _classCallCheck(this, RequestError);
 
-	    var message = undefined,
-	        errors_from_server = undefined,
-	        json = undefined,
-	        responseText = undefined;
+	    var message = void 0,
+	        errors_from_server = void 0,
+	        json = void 0,
+	        responseText = void 0;
 	    var name = 'RequestError';
 
 	    try {
@@ -510,7 +510,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    obs(records);
 	  } else if (rel_data) {
 	    var remapped = _remap_with_included_records(rel_data, { get_included_record: get_included_record });
-	    var record = undefined;
+	    var record = void 0;
 
 	    if (client_defined_relationship) {
 	      if (client_defined_relationship.nested_attributes_accepted) obs.extend({
@@ -518,15 +518,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        watch_for_pending_changes: true
 	      });
 	      if (client_defined_relationship.class) {
-	        var klass = client_defined_relationship.class;
-	        record = new klass(vm, Object.assign({}, remapped));
+	        var _klass = client_defined_relationship.class;
+	        record = new _klass(vm, Object.assign({}, remapped));
 
-	        if (klass.prototype.doneLoading) done = record.doneLoading();
+	        if (_klass.prototype.doneLoading) done = record.doneLoading();
 	      }
 	    }
 	    obs(record || remapped);
 	  } else {
-	    var record = undefined;
+	    var _record = void 0;
 
 	    if (client_defined_relationship) {
 	      if (client_defined_relationship.nested_attributes_accepted) obs.extend({
@@ -534,15 +534,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        watch_for_pending_changes: true
 	      });
 	      if (client_defined_relationship.class) {
-	        var klass = client_defined_relationship.class;
+	        var _klass2 = client_defined_relationship.class;
 	        var blank_value = client_defined_relationship.blank_value || {};
 
-	        record = new klass(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
+	        _record = new _klass2(vm, Object.assign({}, typeof blank_value === 'function' ? blank_value.call(vm) : blank_value));
 
-	        if (klass.prototype.doneLoading) done = record.doneLoading();
+	        if (_klass2.prototype.doneLoading) done = _record.doneLoading();
 	      }
 	    }
-	    obs(record || {});
+	    obs(_record || {});
 	  }
 	  return done.then(function () {
 	    return obs();
@@ -581,11 +581,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _knockout = __webpack_require__(3);
 
@@ -817,6 +817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var sanitize_count = 0;
 	  var first_pass_unsanitized_value = null;
 
+
 	  var initial_value_observable = (0, _knockout.observable)().extend({ notify: 'always' });
 
 	  function sanitizeAndInitializeTarget(new_val) {
@@ -957,8 +958,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	setupExtender('required', function (target, opts) {
 	  var validation_obj = setupValidationObservables(target)('required');
-	  var message = undefined,
-	      enabled = undefined;
+	  var message = void 0,
+	      enabled = void 0;
 
 	  if (typeof opts === 'string' || !opts) {
 	    message = opts;
@@ -1228,7 +1229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var millis = 0;
 	  if (str.match(/[^\d\.]/)) {
 	    // string contains non-number characters
-	    var tmp = undefined;
+	    var tmp = void 0;
 	    var years = (tmp = str.match(/((\d*\.)?\d+)\s*y/i)) && tmp[1] || 0;
 	    var months = (tmp = str.match(/((\d*\.)?\d+)\s*mo/i)) && tmp[1] || 0;
 	    var weeks = (tmp = str.match(/((\d*\.)?\d+)\s*w/i)) && tmp[1] || 0;
@@ -1328,7 +1329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  var delimiter = _ref6.delimiter;
 	  var round = _ref6.round;
 
-	  var sanitized_units = undefined;
+	  var sanitized_units = void 0;
 	  if (units) {
 	    sanitized_units = units.map(function (u) {
 	      switch (u.slice(0, 2)) {
@@ -1468,7 +1469,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 	/**
-	 * Adds an `addNew` method to `target`.
+	 * Adds an `addNew` method to `target`. `addNew` returns a promise, which
+	 * resolves with the new record instances after the instance has been added to
+	 * `target`.
 	 * @name ko.extenders.pushable
 	 * @param {ko.observable} target
 	 * @param {Object} opts
@@ -1480,39 +1483,66 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Array} [opts.args] - The arguments to pass to `klass` when
 	 * instanciating. Any elements of `opts.args` passing `typeof arg === function`
 	 * will be called with `this_arg` as the scope
+	 * @param {Boolean|String} [opts.set_inverse_of] - Whether or not to add a
+	 * reference to `target` on instances of `opts.klass`. If `true`, the reference
+	 * will be set on the key "inverse_of"; if String, the reference will be set on
+	 * the key String
 	 * @return {ko.observable} The extended target
 	*/
 
+	function _createInstance(klass, this_arg, args) {
+	  return new (Function.prototype.bind.apply(klass, [null].concat([this_arg], _toConsumableArray(args.map(function (arg) {
+	    return typeof arg === 'function' ? arg.call(this_arg) : arg;
+	  })))))();
+	}
+
+	function _pushAndResolve(target, record, resolver) {
+	  if ('doneLoading' in record) {
+	    record.doneLoading().then(function () {
+	      target.push(record);
+	      resolver(record);
+	    });
+	  } else {
+	    target.push(record);
+	    resolver(record);
+	  }
+	}
+
 	setupExtender('pushable', function (target, opts) {
-	  var _ref8 = opts || {};
-
-	  var klass = _ref8.klass;
-	  var this_arg = _ref8.this_arg;
-
-	  var args = opts.args || [];
-	  if (!klass) {
-	    throw new Error('Cannot define addNew method without knowing the class to instanciate');
-	  }
-	  if (!this_arg) {
-	    throw new Error('Cannot define addNew method without knowing first parameter to instanciate klass with');
-	  }
 	  if ('push' in target) {
-	    target.addNew = function addNew() {
-	      return new Promise(function (resolve) {
-	        var record = new (Function.prototype.bind.apply(klass, [null].concat([this_arg], _toConsumableArray(args.map(function (arg) {
-	          return typeof arg === 'function' ? arg.call(this_arg) : arg;
-	        })))))();
-	        if ('doneLoading' in record) {
-	          record.doneLoading().then(function () {
-	            target.push(record);
-	            resolve();
+	    (function () {
+	      var _ref8 = opts || {};
+
+	      var klass = _ref8.klass;
+	      var this_arg = _ref8.this_arg;
+	      var set_inverse_of = _ref8.set_inverse_of;
+
+	      var args = opts.args || [];
+	      if (!klass) {
+	        throw new Error('Cannot define addNew method without knowing the class to instanciate');
+	      }
+	      if (!this_arg) {
+	        throw new Error('Cannot define addNew method without knowing first parameter to instanciate klass with');
+	      }
+	      if (set_inverse_of) {
+	        (function () {
+	          var inverse_name = typeof set_inverse_of === 'string' ? set_inverse_of : 'inverse_of';
+	          target.addNew = function addNew() {
+	            return new Promise(function (resolve) {
+	              var record = _createInstance(klass, this_arg, args);
+	              record[inverse_name] = target;
+	              _pushAndResolve(target, record, resolve);
+	            });
+	          };
+	        })();
+	      } else {
+	        target.addNew = function addNew() {
+	          return new Promise(function (resolve) {
+	            return _pushAndResolve(target, _createInstance(klass, this_arg, args), resolve);
 	          });
-	        } else {
-	          target.push(record);
-	          resolve();
-	        }
-	      });
-	    };
+	        };
+	      }
+	    })();
 	  }
 	  return target;
 	});
@@ -1553,6 +1583,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  target.has_focus = (0, _knockout.observable)(false);
 	  if (track_has_had) {
 	    (function () {
+	      setupObservableDisposables(target);
 	      target.has_had_focus = (0, _knockout.observable)(false);
 	      var s = target.has_focus.subscribe(function (has_focus) {
 	        if (!has_focus) {
@@ -1574,7 +1605,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/**
-	 * @license Fraction.js v3.0.0 09/09/2015
+	 * @license Fraction.js v3.3.0 09/09/2015
 	 * http://www.xarg.org/2014/03/precise-calculations-in-javascript/
 	 *
 	 * Copyright (c) 2015, Robert Eisele (robert@xarg.org)
@@ -1584,7 +1615,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 *
-	 * This class offers the possebility to calculate fractions.
+	 * This class offers the possibility to calculate fractions.
 	 * You can pass a fraction in different formats. Either as array, as double, as string or as an integer.
 	 *
 	 * Array/Object form
@@ -1599,7 +1630,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * String form
 	 * 123.456 - a simple double
-	 * 123/456 - A string fraction
+	 * 123/456 - a string fraction
 	 * 123.'456' - a double with repeating decimal places
 	 * 123.(456) - synonym
 	 * 123.45'6' - a double with repeating last place
@@ -1614,701 +1645,742 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	(function(root) {
 
-	    "use strict";
-	    
-	    // Maximum search depth for cyclic rational numbers. 2000 should be more than enough. 
-	    // Example: 1/7 = 0.(142857) has 6 repeating decimal places.
-	    // When number gets reduced, long cycles will not be detected and toString() only gets the first 10 digits
-	    var MAX_CYCLE_LEN = 2000;
+	  "use strict";
 
-	    // Parsed data to avoid calling "new" all the time
-	    var P = {
-	        "s": 1,
-	        "n": 0,
-	        "d": 1
-	    };
+	  // Maximum search depth for cyclic rational numbers. 2000 should be more than enough. 
+	  // Example: 1/7 = 0.(142857) has 6 repeating decimal places.
+	  // If MAX_CYCLE_LEN gets reduced, long cycles will not be detected and toString() only gets the first 10 digits
+	  var MAX_CYCLE_LEN = 2000;
 
-	    function assign(n, s) {
+	  // Parsed data to avoid calling "new" all the time
+	  var P = {
+	    "s": 1,
+	    "n": 0,
+	    "d": 1
+	  };
 
-	        if (isNaN(n = parseInt(n, 10))) {
-	            thorwInvalidParam();
+	  function assign(n, s) {
+
+	    if (isNaN(n = parseInt(n, 10))) {
+	      throwInvalidParam();
+	    }
+	    return n * s;
+	  }
+
+	  function throwInvalidParam() {
+	    throw "Invalid Param";
+	  }
+
+	  var parse = function(p1, p2) {
+
+	    var n = 0, d = 1, s = 1;
+	    var v = 0, w = 0, x = 0, y = 1, z = 1;
+
+	    var A = 0, B = 1;
+	    var C = 1, D = 1;
+
+	    var N = 10000000;
+	    var M;
+
+	    if (p1 === undefined || p1 === null) {
+	      /* void */
+	    } else if (p2 !== undefined) {
+	      n = p1;
+	      d = p2;
+	      s = n * d;
+	    } else
+	      switch (typeof p1) {
+
+	        case "object":
+	        {
+	          if ("d" in p1 && "n" in p1) {
+	            n = p1["n"];
+	            d = p1["d"];
+	            if ("s" in p1)
+	              n*= p1["s"];
+	          } else if (0 in p1) {
+	            n = p1[0];
+	            if (1 in p1)
+	              d = p1[1];
+	          } else {
+	            throwInvalidParam();
+	          }
+	          s = n * d;
+	          break;
 	        }
-	        return n * s;
-	    }
+	        case "number":
+	        {
+	          if (p1 < 0) {
+	            s = p1;
+	            p1 = -p1;
+	          }
 
-	    function thorwInvalidParam() {
-	        throw "Invalid Param";
-	    }
-
-	    var parse = function(p1, p2) {
-
-	        var n = 0, d = 1, s = 1;
-	        var v = 0, w = 0, x = 0, y = 1, z = 1;
-
-	        var A = 0, B = 1;
-	        var C = 1, D = 1;
-
-	        var N = 10000000;
-	        var M;
-
-	        if (p1 === undefined || p1 === null) {
-	            /* void */
-	        } else if (p2 !== undefined) {
+	          if (p1 % 1 === 0) {
 	            n = p1;
-	            d = p2;
-	            s = n * d;
-	        } else
-	            switch (typeof p1) {
+	          } else if (p1 > 0) { // check for != 0, scale would become NaN (log(0)), which converges really slow
 
-	                case "object":
-	                {
-	                    if ("d" in p1 && "n" in p1) {
-	                        n = p1["n"];
-	                        d = p1["d"];
-	                        if ("s" in p1)
-	                            n*= p1["s"];
-	                    } else if (0 in p1) {
-	                        n = p1[0];
-	                        if (1 in p1)
-	                            d = p1[1];
-	                    } else {
-	                        thorwInvalidParam();
-	                    }
-	                    s = n * d;
-	                    break;
-	                }
-	                case "number":
-	                {
-	                    if (p1 < 0) {
-	                        s = p1;
-	                        p1 = -p1;
-	                    }
-
-	                    if (p1 % 1 === 0) {
-	                        n = p1;
-	                    } else if (p1 > 0) { // check for != 0, scale would become NaN (log(0)), which converges really slow
-
-	                        if (p1 >= 1) {
-	                            z = Math.pow(10, Math.floor(1 + Math.log(p1) / Math.LN10));
-	                            p1/= z;
-	                        }
-
-	                        // Using Farey Sequences
-	                        // http://www.johndcook.com/blog/2010/10/20/best-rational-approximation/
-
-	                        while (B <= N && D <= N) {
-	                            M = (A + C) / (B + D);
-
-	                            if (p1 === M) {
-	                                if (B + D <= N) {
-	                                    n = A + C;
-	                                    d = B + D;
-	                                } else if (D > B) {
-	                                    n = C;
-	                                    d = D;
-	                                } else {
-	                                    n = A;
-	                                    d = B;
-	                                }
-	                                break;
-
-	                            } else {
-
-	                                if (p1 > M) {
-	                                    A+= C;
-	                                    B+= D;
-	                                } else {
-	                                    C+= A;
-	                                    D+= B;
-	                                }
-
-	                                if (B > N) {
-	                                    n = C;
-	                                    d = D;
-	                                } else {
-	                                    n = A;
-	                                    d = B;
-	                                }
-	                            }
-	                        }
-	                        n*= z;
-	                    }
-	                    break;
-	                }
-	                case "string":
-	                {
-	                    B = p1.match(/\d+|./g);
-
-	                    if (B[A] === '-') {// Check for minus sign at the beginning
-	                        s = -1;
-	                        A++;
-	                    } else if (B[A] === '+') {// Check for plus sign at the beginning
-	                        A++;
-	                    }
-
-	                    if (B.length === A + 1) { // Check if it's just a simple number "1234"
-	                        w = assign(B[A++], s);
-	                    } else if (B[A + 1] === '.' || B[A] === '.') { // Check if it's a decimal number
-
-	                        if (B[A] !== '.') { // Handle 0.5 and .5
-	                            v = assign(B[A++], s);
-	                        }
-	                        A++;
-
-	                        // Check for decimal places
-	                        if (A + 1 === B.length || B[A + 1] === '(' && B[A + 3] === ')' || B[A + 1] === "'" && B[A + 3] === "'") {
-	                            w = assign(B[A], s);
-	                            y = Math.pow(10, B[A].length);
-	                            A++;
-	                        }
-
-	                        // Check for repeating places
-	                        if (B[A] === '(' && B[A + 2] === ')' || B[A] === "'" && B[A + 2] === "'") {
-	                            x = assign(B[A + 1], s);
-	                            z = Math.pow(10, B[A + 1].length) - 1;
-	                            A+= 3;
-	                        }
-
-	                    } else if (B[A + 1] === '/' || B[A + 1] === ':') { // Check for a simple fraction "123/456" or "123:456"
-	                        w = assign(B[A], s);
-	                        y = assign(B[A + 2], 1);
-	                        A+= 3;
-	                    } else if (B[A + 3] === '/' && B[A + 1] === ' ') { // Check for a complex fraction "123 1/2"
-	                        v = assign(B[A], s);
-	                        w = assign(B[A + 2], s);
-	                        y = assign(B[A + 4], 1);
-	                        A+= 5;
-	                    }
-
-	                    if (B.length <= A) { // Check for more tokens on the stack
-	                        s = /* void */
-	                        n = x + z * (v * y + w);
-	                        d = y * z;
-	                        break;
-	                    }
-
-	                    /* Fall through on error */
-	                }
-	                default:
-	                    thorwInvalidParam();
+	            if (p1 >= 1) {
+	              z = Math.pow(10, Math.floor(1 + Math.log(p1) / Math.LN10));
+	              p1/= z;
 	            }
 
-	        if (!d) {
-	            throw "DIV/0";
-	        }
+	            // Using Farey Sequences
+	            // http://www.johndcook.com/blog/2010/10/20/best-rational-approximation/
 
-	        P["s"] = s < 0 ? -1 : 1;
-	        P["n"] = Math.abs(n);
-	        P["d"] = Math.abs(d);
-	    };
+	            while (B <= N && D <= N) {
+	              M = (A + C) / (B + D);
 
-	    var modpow = function(b, e, m) {
+	              if (p1 === M) {
+	                if (B + D <= N) {
+	                  n = A + C;
+	                  d = B + D;
+	                } else if (D > B) {
+	                  n = C;
+	                  d = D;
+	                } else {
+	                  n = A;
+	                  d = B;
+	                }
+	                break;
 
-	        for (var r = 1; e > 0; b = (b * b) % m, e >>= 1) {
+	              } else {
 
-	            if (e & 1) {
-	                r = (r * b) % m;
+	                if (p1 > M) {
+	                  A+= C;
+	                  B+= D;
+	                } else {
+	                  C+= A;
+	                  D+= B;
+	                }
+
+	                if (B > N) {
+	                  n = C;
+	                  d = D;
+	                } else {
+	                  n = A;
+	                  d = B;
+	                }
+	              }
 	            }
+	            n*= z;
+	          } else if (isNaN(p1) || isNaN(p2)) {
+	            d = n = NaN;
+	          }
+	          break;
 	        }
-	        return r;
-	    };
+	        case "string":
+	        {
+	          B = p1.match(/\d+|./g);
 
-	    var cycleLen = function(n, d) {
+	          if (B[A] === '-') {// Check for minus sign at the beginning
+	            s = -1;
+	            A++;
+	          } else if (B[A] === '+') {// Check for plus sign at the beginning
+	            A++;
+	          }
 
-	        for (; d % 2 === 0; 
+	          if (B.length === A + 1) { // Check if it's just a simple number "1234"
+	            w = assign(B[A++], s);
+	          } else if (B[A + 1] === '.' || B[A] === '.') { // Check if it's a decimal number
+
+	            if (B[A] !== '.') { // Handle 0.5 and .5
+	              v = assign(B[A++], s);
+	            }
+	            A++;
+
+	            // Check for decimal places
+	            if (A + 1 === B.length || B[A + 1] === '(' && B[A + 3] === ')' || B[A + 1] === "'" && B[A + 3] === "'") {
+	              w = assign(B[A], s);
+	              y = Math.pow(10, B[A].length);
+	              A++;
+	            }
+
+	            // Check for repeating places
+	            if (B[A] === '(' && B[A + 2] === ')' || B[A] === "'" && B[A + 2] === "'") {
+	              x = assign(B[A + 1], s);
+	              z = Math.pow(10, B[A + 1].length) - 1;
+	              A+= 3;
+	            }
+
+	          } else if (B[A + 1] === '/' || B[A + 1] === ':') { // Check for a simple fraction "123/456" or "123:456"
+	            w = assign(B[A], s);
+	            y = assign(B[A + 2], 1);
+	            A+= 3;
+	          } else if (B[A + 3] === '/' && B[A + 1] === ' ') { // Check for a complex fraction "123 1/2"
+	            v = assign(B[A], s);
+	            w = assign(B[A + 2], s);
+	            y = assign(B[A + 4], 1);
+	            A+= 5;
+	          }
+
+	          if (B.length <= A) { // Check for more tokens on the stack
+	            d = y * z;
+	            s = /* void */
+	                    n = x + d * v + z * w;
+	            break;
+	          }
+
+	          /* Fall through on error */
+	        }
+	        default:
+	          throwInvalidParam();
+	      }
+
+	    if (d === 0) {
+	      throw "DIV/0";
+	    }
+
+	    P["s"] = s < 0 ? -1 : 1;
+	    P["n"] = Math.abs(n);
+	    P["d"] = Math.abs(d);
+	  };
+
+	  var modpow = function(b, e, m) {
+
+	    for (var r = 1; e > 0; b = (b * b) % m, e >>= 1) {
+
+	      if (e & 1) {
+	        r = (r * b) % m;
+	      }
+	    }
+	    return r;
+	  };
+
+	  var cycleLen = function(n, d) {
+
+	    for (; d % 2 === 0;
 	            d/= 2) {}
 
-	        for (; d % 5 === 0; 
+	    for (; d % 5 === 0;
 	            d/= 5) {}
-	        
-	        if (d === 1) // Catch non-cyclic numbers
-	            return 0;
-	            
-	        // If we would like to compute really large numbers quicker, we could make use of Fermat's little theorem:
-	        // 10^(d-1) % d == 1
-	        // However, we don't need such large numbers and MAX_CYCLE_LEN should be the capstone, 
-	        // as we want to translate the numbers to strings.
 
-	        var rem = 10 % d;
+	    if (d === 1) // Catch non-cyclic numbers
+	      return 0;
 
-	        for (var t = 1; rem !== 1; t++) {
-	            rem = rem * 10 % d;
+	    // If we would like to compute really large numbers quicker, we could make use of Fermat's little theorem:
+	    // 10^(d-1) % d == 1
+	    // However, we don't need such large numbers and MAX_CYCLE_LEN should be the capstone, 
+	    // as we want to translate the numbers to strings.
 
-	            if (t > MAX_CYCLE_LEN)
-	                return 0; // Returning 0 here means that we don't print it as a cyclic number. It's likely that the answer is `d-1`
-	        }
+	    var rem = 10 % d;
+
+	    for (var t = 1; rem !== 1; t++) {
+	      rem = rem * 10 % d;
+
+	      if (t > MAX_CYCLE_LEN)
+	        return 0; // Returning 0 here means that we don't print it as a cyclic number. It's likely that the answer is `d-1`
+	    }
+	    return t;
+	  };
+
+	  var cycleStart = function(n, d, len) {
+
+	    var rem1 = 1;
+	    var rem2 = modpow(10, len, d);
+
+	    for (var t = 0; t < 300; t++) { // s < ~log10(Number.MAX_VALUE)
+	      // Solve 10^s == 10^(s+t) (mod d)
+
+	      if (rem1 === rem2)
 	        return t;
-	    };
 
-	    var cycleStart = function(n, d, len) {
+	      rem1 = rem1 * 10 % d;
+	      rem2 = rem2 * 10 % d;
+	    }
+	    return 0;
+	  };
 
-	        var rem1 = 1;
-	        var rem2 = modpow(10, len, d);
-	        
-	        for (var t = 0; t < 300; t++) { // s < ~log10(Number.MAX_VALUE)
-	            // Solve 10^s == 10^(s+t) (mod d)
+	  var gcd = function(a, b) {
 
-	            if (rem1 === rem2)
-	                return t;
+	    if (!a) return b;
+	    if (!b) return a;
 
-	            rem1 = rem1 * 10 % d;
-	            rem2 = rem2 * 10 % d;
-	        }
-	        return 0;
-	    };
+	    while (1) {
+	      a%= b;
+	      if (!a) return b;
+	      b%= a;
+	      if (!b) return a;
+	    }
+	  };
 
-	    var gcd = function(a, b) {
+	  /**
+	   * Module constructor
+	   *
+	   * @constructor
+	   * @param {number|Fraction} a
+	   * @param {number=} b
+	   */
+	  function Fraction(a, b) {
 
-	        if (!a) return b;
-	        if (!b) return a;
-
-	        while (1) {
-	            a%= b;
-	            if (!a) return b;
-	            b%= a;
-	            if (!b) return a;
-	        }
-	    };
-
-	    /**
-	     * Module constructor
-	     *
-	     * @constructor
-	     * @param {number|Fraction} a
-	     * @param {number=} b
-	     */
-	    function Fraction(a, b) {
-
-	        if (!(this instanceof Fraction)) {
-	            return new Fraction(a, b);
-	        }
-
-	        parse(a, b);
-
-	        if (Fraction['REDUCE']) {
-	            a = gcd(P["d"], P["n"]); // Abuse a
-	        } else {
-	            a = 1;
-	        }
-
-	        this["s"] = P["s"];
-	        this["n"] = P["n"] / a;
-	        this["d"] = P["d"] / a;
+	    if (!(this instanceof Fraction)) {
+	      return new Fraction(a, b);
 	    }
 
-	    /**
-	     * Boolean global variable to be able to disable automatic reduction of the fraction
-	     *
-	     */
-	    Fraction['REDUCE'] = 1;
+	    parse(a, b);
 
-	    Fraction.prototype = {
-
-	        "s": 1,
-	        "n": 0,
-	        "d": 1,
-
-	        /**
-	         * Calculates the absolute value
-	         *
-	         * Ex: new Fraction(-4).abs() => 4
-	         **/
-	        "abs": function() {
-
-	            return new Fraction(this["n"], this["d"]);
-	        },
-
-	        /**
-	         * Inverts the sign of the current fraction
-	         *
-	         * Ex: new Fraction(-4).neg() => 4
-	         **/
-	        "neg": function() {
-
-	            return new Fraction(-this["s"] * this["n"], this["d"]);
-	        },
-
-	        /**
-	         * Adds two rational numbers
-	         *
-	         * Ex: new Fraction({n: 2, d: 3}).add("14.9") => 467 / 30
-	         **/
-	        "add": function(a, b) {
-
-	            parse(a, b);
-	            return new Fraction(
-	                    this["s"] * this["n"] * P["d"] + P["s"] * this["d"] * P["n"],
-	                    this["d"] * P["d"]
-	                    );
-	        },
-
-	        /**
-	         * Subtracts two rational numbers
-	         *
-	         * Ex: new Fraction({n: 2, d: 3}).add("14.9") => -427 / 30
-	         **/
-	        "sub": function(a, b) {
-
-	            parse(a, b);
-	            return new Fraction(
-	                    this["s"] * this["n"] * P["d"] - P["s"] * this["d"] * P["n"],
-	                    this["d"] * P["d"]
-	                    );
-	        },
-
-	        /**
-	         * Multiplies two rational numbers
-	         *
-	         * Ex: new Fraction("-17.(345)").mul(3) => 5776 / 111
-	         **/
-	        "mul": function(a, b) {
-
-	            parse(a, b);
-	            return new Fraction(
-	                    this["s"] * P["s"] * this["n"] * P["n"],
-	                    this["d"] * P["d"]
-	                    );
-	        },
-
-	        /**
-	         * Divides two rational numbers
-	         *
-	         * Ex: new Fraction("-17.(345)").inverse().div(3)
-	         **/
-	        "div": function(a, b) {
-
-	            parse(a, b);
-	            return new Fraction(
-	                    this["s"] * P["s"] * this["n"] * P["d"],
-	                    this["d"] * P["n"]
-	                    );
-	        },
-
-	        /**
-	         * Clones the actual object
-	         *
-	         * Ex: new Fraction("-17.(345)").clone()
-	         **/
-	        "clone": function() {
-	            return new Fraction(this);
-	        },
-
-	        /**
-	         * Calculates the modulo of two rational numbers - a more precise fmod
-	         *
-	         * Ex: new Fraction('4.(3)').mod([7, 8]) => (13/3) % (7/8) = (5/6)
-	         **/
-	        "mod": function(a, b) {
-
-	            if (a === undefined) {
-	                return new Fraction(this["s"] * this["n"] % this["d"], 1);
-	            }
-
-	            parse(a, b);
-	            if (0 === (P["n"] * this["d"])) {
-	                Fraction(0, 0); // Throw div/0
-	            }
-
-	            /*
-	             * First silly attempt, kinda slow
-	             *
-	             return that["sub"]({
-	             "n": num["n"] * Math.floor((this.n / this.d) / (num.n / num.d)),
-	             "d": num["d"],
-	             "s": this["s"]
-	             });*/
-
-	            /*
-	             * New attempt: a1 / b1 = a2 / b2 * q + r
-	             * => b2 * a1 = a2 * b1 * q + b1 * b2 * r
-	             * => (b2 * a1 % a2 * b1) / (b1 * b2)
-	             */
-	            return new Fraction(
-	                    (this["s"] * P["d"] * this["n"]) % (P["n"] * this["d"]),
-	                    P["d"] * this["d"]
-	                    );
-	        },
-
-	        /**
-	         * Calculates the fractional gcd of two rational numbers
-	         *
-	         * Ex: new Fraction(5,8).gcd(3,7) => 1/56
-	         */
-	        "gcd": function(a, b) {
-
-	            parse(a, b);
-
-	            // gcd(a / b, c / d) = gcd(a, c) / lcm(b, d)
-
-	            return new Fraction(gcd(P["n"], this["n"]), P["d"] * this["d"] / gcd(P["d"], this["d"]));
-	        },
-
-	        /**
-	         * Calculates the fractional lcm of two rational numbers
-	         *
-	         * Ex: new Fraction(5,8).lcm(3,7) => 15
-	         */
-	        "lcm": function(a, b) {
-
-	            parse(a, b);
-
-	            // lcm(a / b, c / d) = lcm(a, c) / gcd(b, d)
-
-	            return new Fraction(P["n"] * this["n"] / gcd(P["n"], this["n"]), gcd(P["d"], this["d"]));
-	        },
-
-	        /**
-	         * Calculates the ceil of a rational number
-	         *
-	         * Ex: new Fraction('4.(3)').ceil() => (5 / 1)
-	         **/
-	        "ceil": function() {
-
-	            return new Fraction(Math.ceil(this["s"] * this["n"] / this["d"]), 1);
-	        },
-
-	        /**
-	         * Calculates the floor of a rational number
-	         *
-	         * Ex: new Fraction('4.(3)').floor() => (4 / 1)
-	         **/
-	        "floor": function() {
-
-	            return new Fraction(Math.floor(this["s"] * this["n"] / this["d"]), 1);
-	        },
-
-	        /**
-	         * Rounds a rational numbers
-	         *
-	         * Ex: new Fraction('4.(3)').round() => (4 / 1)
-	         **/
-	        "round": function() {
-
-	            return new Fraction(Math.round(this["s"] * this["n"] / this["d"]), 1);
-	        },
-
-	        /**
-	         * Gets the inverse of the fraction, means numerator and denumerator are exchanged
-	         *
-	         * Ex: new Fraction([-3, 4]).inverse() => -4 / 3
-	         **/
-	        "inverse": function() {
-
-	            return new Fraction(this["s"] * this["d"], this["n"]);
-	        },
-
-	        /**
-	         * Calculates the fraction to some integer exponent
-	         *
-	         * Ex: new Fraction(-1,2).pow(-3) => -8
-	         */
-	        "pow": function(m) {
-
-	            var d = this["d"];
-	            var n = this["n"];
-	            if (m < 0) {
-	                this["d"] = Math.pow(n, -m);
-	                this["n"] = Math.pow(d, -m);
-	            } else {
-	                this["d"] = Math.pow(d, m);
-	                this["n"] = Math.pow(n, m);
-	            }
-
-	            if (0 === (m % 2)) {
-	                this["s"] = 1;
-	            }
-	            return this;
-	        },
-
-	        /**
-	         * Check if two rational numbers are the same
-	         *
-	         * Ex: new Fraction(19.6).equals([98, 5]);
-	         **/
-	        "equals": function(a, b) {
-
-	            parse(a, b);
-	            return this["s"] * this["n"] * P["d"] === P["s"] * P["n"] * this["d"]; // Same as compare() === 0
-	        },
-
-	        /**
-	         * Check if two rational numbers are the same
-	         *
-	         * Ex: new Fraction(19.6).equals([98, 5]);
-	         **/
-	        "compare": function(a, b) {
-
-	            parse(a, b);
-	            var t = (this["s"] * this["n"] * P["d"] - P["s"] * P["n"] * this["d"]);
-	            return (0 < t) - (t < 0);
-	        },
-
-	        /**
-	         * Check if two rational numbers are divisible
-	         *
-	         * Ex: new Fraction(19.6).divisible(1.5);
-	         */
-	        "divisible": function(a, b) {
-
-	            parse(a, b);
-	            return !!(P["n"] * this["d"]) && !((this["n"] * P["d"]) % (P["n"] * this["d"]));
-	        },
-
-	        /**
-	         * Returns a decimal representation of the fraction
-	         *
-	         * Ex: new Fraction("100.'91823'").valueOf() => 100.91823918239183
-	         **/
-	        'valueOf': function() {
-
-	            return this["s"] * this["n"] / this["d"];
-	        },
-
-	        /**
-	         * Returns a string-fraction representation of a Fraction object
-	         *
-	         * Ex: new Fraction("1.'3'").toFraction() => "4 1/3"
-	         **/
-	        'toFraction': function(excludeWhole) {
-
-	            var whole, str = "";
-	            var n = this["n"];
-	            var d = this["d"];
-	            if (this["s"] < 0) {
-	                str+= '-';
-	            }
-
-	            if (d === 1) {
-	                str+= n;
-	            } else {
-
-	                if (excludeWhole && (whole = Math.floor(n / d)) > 0) {
-	                    str+= whole;
-	                    str+= " ";
-	                    n %= d;
-	                }
-
-	                str+= n;
-	                str+= '/';
-	                str+= d;
-	            }
-	            return str;
-	        },
-
-	        /**
-	         * Returns a latex representation of a Fraction object
-	         *
-	         * Ex: new Fraction("1.'3'").toLatex() => "\frac{4}{3}"
-	         **/
-	        'toLatex': function(excludeWhole) {
-
-	            var whole, str = "";
-	            var n = this["n"];
-	            var d = this["d"];
-	            if (this["s"] < 0) {
-	                str+= '-';
-	            }
-
-	            if (d === 1) {
-	                str+= n;
-	            } else {
-	                
-	                if (excludeWhole && (whole = Math.floor(n / d)) > 0) {		
-	                    str+= whole;		
-	                    n %= d;		
-	                }
-
-	                str+= "\\frac{";
-	                str+= n;
-	                str+= '}{';
-	                str+= d;
-	                str+= '}';
-	            }
-	            return str;
-	        },
-
-	        /**
-	         * Creates a string representation of a fraction with all digits
-	         *
-	         * Ex: new Fraction("100.'91823'").toString() => "100.(91823)"
-	         **/
-	        'toString': function() {
-
-	            var g;
-	            var N = this["n"];
-	            var D = this["d"];
-
-	            if (!Fraction['REDUCE']) {
-	                g = gcd(N, D);
-	                N/= g;
-	                D/= g;
-	            }
-
-	            var p = String(N).split(""); // Numerator chars
-	            var t = 0; // Tmp var
-
-	            var ret = [~this["s"] ? "" : "-", "", ""]; // Return array, [0] is zero sign, [1] before comma, [2] after
-	            var zeros = ""; // Collection variable for zeros
-
-	            var cycLen = cycleLen(N, D); // Cycle length
-	            var cycOff = cycleStart(N, D, cycLen); // Cycle start
-
-	            var j = -1;
-	            var n = 1; // str index
-
-	            // rough estimate to fill zeros
-	            var length = 10 + cycLen + cycOff + p.length; // 10 = decimal places when no repitation
-
-	            for (var i = 0; i < length; i++, t*= 10) {
-
-	                if (i < p.length) {
-	                    t+= Number(p[i]);
-	                } else {
-	                    n = 2;
-	                    j++; // Start now => after comma
-	                }
-
-	                if (cycLen > 0) { // If we have a repeating part
-	                    if (j === cycOff) {
-	                        ret[n]+= zeros + "(";
-	                        zeros = "";
-	                    } else if (j === cycLen + cycOff) {
-	                        ret[n]+= zeros + ")";
-	                        break;
-	                    }
-	                }
-
-	                if (t >= D) {
-	                    ret[n]+= zeros + ((t / D) | 0); // Flush zeros, Add current digit
-	                    zeros = "";
-	                    t = t % D;
-	                } else if (n > 1) { // Add zeros to the zero buffer
-	                    zeros+= "0";
-	                } else if (ret[n]) { // If before comma, add zero only if already something was added
-	                    ret[n]+= "0";
-	                }
-	            }
-
-	            // If it's empty, it's a leading zero only
-	            ret[0]+= ret[1] || "0";
-
-	            // If there is something after the comma, add the comma sign
-	            if (ret[2]) {
-	                return ret[0] + "." + ret[2];
-	            }
-	            return ret[0];
-	        }
-	    };
-
-	    if ("function" === "function" && __webpack_require__(7)["amd"]) {
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
-	            return Fraction;
-	        }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    } else if (true) {
-	        module["exports"] = Fraction;
+	    if (Fraction['REDUCE']) {
+	      a = gcd(P["d"], P["n"]); // Abuse a
 	    } else {
-	        root['Fraction'] = Fraction;
+	      a = 1;
 	    }
+
+	    this["s"] = P["s"];
+	    this["n"] = P["n"] / a;
+	    this["d"] = P["d"] / a;
+	  }
+
+	  /**
+	   * Boolean global variable to be able to disable automatic reduction of the fraction
+	   *
+	   */
+	  Fraction['REDUCE'] = 1;
+
+	  Fraction.prototype = {
+
+	    "s": 1,
+	    "n": 0,
+	    "d": 1,
+
+	    /**
+	     * Calculates the absolute value
+	     *
+	     * Ex: new Fraction(-4).abs() => 4
+	     **/
+	    "abs": function() {
+
+	      return new Fraction(this["n"], this["d"]);
+	    },
+
+	    /**
+	     * Inverts the sign of the current fraction
+	     *
+	     * Ex: new Fraction(-4).neg() => 4
+	     **/
+	    "neg": function() {
+
+	      return new Fraction(-this["s"] * this["n"], this["d"]);
+	    },
+
+	    /**
+	     * Adds two rational numbers
+	     *
+	     * Ex: new Fraction({n: 2, d: 3}).add("14.9") => 467 / 30
+	     **/
+	    "add": function(a, b) {
+
+	      parse(a, b);
+	      return new Fraction(
+	              this["s"] * this["n"] * P["d"] + P["s"] * this["d"] * P["n"],
+	              this["d"] * P["d"]
+	              );
+	    },
+
+	    /**
+	     * Subtracts two rational numbers
+	     *
+	     * Ex: new Fraction({n: 2, d: 3}).add("14.9") => -427 / 30
+	     **/
+	    "sub": function(a, b) {
+
+	      parse(a, b);
+	      return new Fraction(
+	              this["s"] * this["n"] * P["d"] - P["s"] * this["d"] * P["n"],
+	              this["d"] * P["d"]
+	              );
+	    },
+
+	    /**
+	     * Multiplies two rational numbers
+	     *
+	     * Ex: new Fraction("-17.(345)").mul(3) => 5776 / 111
+	     **/
+	    "mul": function(a, b) {
+
+	      parse(a, b);
+	      return new Fraction(
+	              this["s"] * P["s"] * this["n"] * P["n"],
+	              this["d"] * P["d"]
+	              );
+	    },
+
+	    /**
+	     * Divides two rational numbers
+	     *
+	     * Ex: new Fraction("-17.(345)").inverse().div(3)
+	     **/
+	    "div": function(a, b) {
+
+	      parse(a, b);
+	      return new Fraction(
+	              this["s"] * P["s"] * this["n"] * P["d"],
+	              this["d"] * P["n"]
+	              );
+	    },
+
+	    /**
+	     * Clones the actual object
+	     *
+	     * Ex: new Fraction("-17.(345)").clone()
+	     **/
+	    "clone": function() {
+	      return new Fraction(this);
+	    },
+
+	    /**
+	     * Calculates the modulo of two rational numbers - a more precise fmod
+	     *
+	     * Ex: new Fraction('4.(3)').mod([7, 8]) => (13/3) % (7/8) = (5/6)
+	     **/
+	    "mod": function(a, b) {
+
+	      if (isNaN(this['n']) || isNaN(this['d'])) {
+	        return new Fraction(NaN);
+	      }
+
+	      if (a === undefined) {
+	        return new Fraction(this["s"] * this["n"] % this["d"], 1);
+	      }
+
+	      parse(a, b);
+	      if (0 === P["n"] && 0 === this["d"]) {
+	        Fraction(0, 0); // Throw div/0
+	      }
+
+	      /*
+	       * First silly attempt, kinda slow
+	       *
+	       return that["sub"]({
+	       "n": num["n"] * Math.floor((this.n / this.d) / (num.n / num.d)),
+	       "d": num["d"],
+	       "s": this["s"]
+	       });*/
+
+	      /*
+	       * New attempt: a1 / b1 = a2 / b2 * q + r
+	       * => b2 * a1 = a2 * b1 * q + b1 * b2 * r
+	       * => (b2 * a1 % a2 * b1) / (b1 * b2)
+	       */
+	      return new Fraction(
+	              (this["s"] * P["d"] * this["n"]) % (P["n"] * this["d"]),
+	              P["d"] * this["d"]
+	              );
+	    },
+
+	    /**
+	     * Calculates the fractional gcd of two rational numbers
+	     *
+	     * Ex: new Fraction(5,8).gcd(3,7) => 1/56
+	     */
+	    "gcd": function(a, b) {
+
+	      parse(a, b);
+
+	      // gcd(a / b, c / d) = gcd(a, c) / lcm(b, d)
+
+	      return new Fraction(gcd(P["n"], this["n"]), P["d"] * this["d"] / gcd(P["d"], this["d"]));
+	    },
+
+	    /**
+	     * Calculates the fractional lcm of two rational numbers
+	     *
+	     * Ex: new Fraction(5,8).lcm(3,7) => 15
+	     */
+	    "lcm": function(a, b) {
+
+	      parse(a, b);
+
+	      // lcm(a / b, c / d) = lcm(a, c) / gcd(b, d)
+
+	      if (P["n"] === 0 && this["n"] === 0) {
+	        return new Fraction;
+	      }
+	      return new Fraction(P["n"] * this["n"] / gcd(P["n"], this["n"]), gcd(P["d"], this["d"]));
+	    },
+
+	    /**
+	     * Calculates the ceil of a rational number
+	     *
+	     * Ex: new Fraction('4.(3)').ceil() => (5 / 1)
+	     **/
+	    "ceil": function(places) {
+
+	      places = Math.pow(10, places || 0);
+
+	      if (isNaN(this["n"]) || isNaN(this["d"])) {
+	        return new Fraction(NaN);
+	      }
+	      return new Fraction(Math.ceil(places * this["s"] * this["n"] / this["d"]), places);
+	    },
+
+	    /**
+	     * Calculates the floor of a rational number
+	     *
+	     * Ex: new Fraction('4.(3)').floor() => (4 / 1)
+	     **/
+	    "floor": function(places) {
+
+	      places = Math.pow(10, places || 0);
+
+	      if (isNaN(this["n"]) || isNaN(this["d"])) {
+	        return new Fraction(NaN);
+	      }
+	      return new Fraction(Math.floor(places * this["s"] * this["n"] / this["d"]), places);
+	    },
+
+	    /**
+	     * Rounds a rational numbers
+	     *
+	     * Ex: new Fraction('4.(3)').round() => (4 / 1)
+	     **/
+	    "round": function(places) {
+
+	      places = Math.pow(10, places || 0);
+
+	      if (isNaN(this["n"]) || isNaN(this["d"])) {
+	        return new Fraction(NaN);
+	      }
+	      return new Fraction(Math.round(places * this["s"] * this["n"] / this["d"]), places);
+	    },
+
+	    /**
+	     * Gets the inverse of the fraction, means numerator and denumerator are exchanged
+	     *
+	     * Ex: new Fraction([-3, 4]).inverse() => -4 / 3
+	     **/
+	    "inverse": function() {
+
+	      return new Fraction(this["s"] * this["d"], this["n"]);
+	    },
+
+	    /**
+	     * Calculates the fraction to some integer exponent
+	     *
+	     * Ex: new Fraction(-1,2).pow(-3) => -8
+	     */
+	    "pow": function(m) {
+
+	      if (m < 0) {
+	        return new Fraction(Math.pow(this['s'] * this["d"],-m), Math.pow(this["n"],-m));
+	      } else {
+	        return new Fraction(Math.pow(this['s'] * this["n"], m), Math.pow(this["d"], m));
+	      }
+	    },
+
+	    /**
+	     * Check if two rational numbers are the same
+	     *
+	     * Ex: new Fraction(19.6).equals([98, 5]);
+	     **/
+	    "equals": function(a, b) {
+
+	      parse(a, b);
+	      return this["s"] * this["n"] * P["d"] === P["s"] * P["n"] * this["d"]; // Same as compare() === 0
+	    },
+
+	    /**
+	     * Check if two rational numbers are the same
+	     *
+	     * Ex: new Fraction(19.6).equals([98, 5]);
+	     **/
+	    "compare": function(a, b) {
+
+	      parse(a, b);
+	      var t = (this["s"] * this["n"] * P["d"] - P["s"] * P["n"] * this["d"]);
+	      return (0 < t) - (t < 0);
+	    },
+
+	    /**
+	     * Check if two rational numbers are divisible
+	     *
+	     * Ex: new Fraction(19.6).divisible(1.5);
+	     */
+	    "divisible": function(a, b) {
+
+	      parse(a, b);
+	      return !(!(P["n"] * this["d"]) || ((this["n"] * P["d"]) % (P["n"] * this["d"])));
+	    },
+
+	    /**
+	     * Returns a decimal representation of the fraction
+	     *
+	     * Ex: new Fraction("100.'91823'").valueOf() => 100.91823918239183
+	     **/
+	    'valueOf': function() {
+
+	      return this["s"] * this["n"] / this["d"];
+	    },
+
+	    /**
+	     * Returns a string-fraction representation of a Fraction object
+	     *
+	     * Ex: new Fraction("1.'3'").toFraction() => "4 1/3"
+	     **/
+	    'toFraction': function(excludeWhole) {
+
+	      var whole, str = "";
+	      var n = this["n"];
+	      var d = this["d"];
+	      if (this["s"] < 0) {
+	        str+= '-';
+	      }
+
+	      if (d === 1) {
+	        str+= n;
+	      } else {
+
+	        if (excludeWhole && (whole = Math.floor(n / d)) > 0) {
+	          str+= whole;
+	          str+= " ";
+	          n%= d;
+	        }
+
+	        str+= n;
+	        str+= '/';
+	        str+= d;
+	      }
+	      return str;
+	    },
+
+	    /**
+	     * Returns a latex representation of a Fraction object
+	     *
+	     * Ex: new Fraction("1.'3'").toLatex() => "\frac{4}{3}"
+	     **/
+	    'toLatex': function(excludeWhole) {
+
+	      var whole, str = "";
+	      var n = this["n"];
+	      var d = this["d"];
+	      if (this["s"] < 0) {
+	        str+= '-';
+	      }
+
+	      if (d === 1) {
+	        str+= n;
+	      } else {
+
+	        if (excludeWhole && (whole = Math.floor(n / d)) > 0) {
+	          str+= whole;
+	          n%= d;
+	        }
+
+	        str+= "\\frac{";
+	        str+= n;
+	        str+= '}{';
+	        str+= d;
+	        str+= '}';
+	      }
+	      return str;
+	    },
+
+	    /**
+	     * Returns an array of continued fraction elements
+	     * 
+	     * Ex: new Fraction("7/8").toContinued() => [0,1,7]
+	     */
+	    'toContinued': function() {
+
+	      var t;
+	      var a = this['n'];
+	      var b = this['d'];
+	      var res = [];
+
+	      do {
+	        res.push(Math.floor(a / b));
+	        t = a % b;
+	        a = b;
+	        b = t;
+	      } while (a !== 1);
+
+	      return res;
+	    },
+
+	    /**
+	     * Creates a string representation of a fraction with all digits
+	     *
+	     * Ex: new Fraction("100.'91823'").toString() => "100.(91823)"
+	     **/
+	    'toString': function() {
+
+	      var g;
+	      var N = this["n"];
+	      var D = this["d"];
+
+	      if (isNaN(N) || isNaN(D)) {
+	        return "NaN";
+	      }
+
+	      if (!Fraction['REDUCE']) {
+	        g = gcd(N, D);
+	        N/= g;
+	        D/= g;
+	      }
+
+	      var p = String(N).split(""); // Numerator chars
+	      var t = 0; // Tmp var
+
+	      var ret = [~this["s"] ? "" : "-", "", ""]; // Return array, [0] is zero sign, [1] before comma, [2] after
+	      var zeros = ""; // Collection variable for zeros
+
+	      var cycLen = cycleLen(N, D); // Cycle length
+	      var cycOff = cycleStart(N, D, cycLen); // Cycle start
+
+	      var j = -1;
+	      var n = 1; // str index
+
+	      // rough estimate to fill zeros
+	      var length = 10 + cycLen + cycOff + p.length; // 10 = decimal places when no repitation
+
+	      for (var i = 0; i < length; i++, t*= 10) {
+
+	        if (i < p.length) {
+	          t+= Number(p[i]);
+	        } else {
+	          n = 2;
+	          j++; // Start now => after comma
+	        }
+
+	        if (cycLen > 0) { // If we have a repeating part
+	          if (j === cycOff) {
+	            ret[n]+= zeros + "(";
+	            zeros = "";
+	          } else if (j === cycLen + cycOff) {
+	            ret[n]+= zeros + ")";
+	            break;
+	          }
+	        }
+
+	        if (t >= D) {
+	          ret[n]+= zeros + ((t / D) | 0); // Flush zeros, Add current digit
+	          zeros = "";
+	          t = t % D;
+	        } else if (n > 1) { // Add zeros to the zero buffer
+	          zeros+= "0";
+	        } else if (ret[n]) { // If before comma, add zero only if already something was added
+	          ret[n]+= "0";
+	        }
+	      }
+
+	      // If it's empty, it's a leading zero only
+	      ret[0]+= ret[1] || "0";
+
+	      // If there is something after the comma, add the comma sign
+	      if (ret[2]) {
+	        return ret[0] + "." + ret[2];
+	      }
+	      return ret[0];
+	    }
+	  };
+
+	  if ("function" === "function" && __webpack_require__(7)["amd"]) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function() {
+	      return Fraction;
+	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (true) {
+	    module["exports"] = Fraction;
+	  } else {
+	    root['Fraction'] = Fraction;
+	  }
 
 	})(this);
 
@@ -2343,276 +2415,309 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;// HumanizeDuration.js - http://git.io/j0HgmQ
 
-	(function(global) {
+	;(function () {
 	  var languages = {
 	    ar: {
-	      y: function(c) { return c === 1 ? "سنة" : "سنوات"; },
-	      mo: function(c) { return c === 1 ? "شهر" : "أشهر"; },
-	      w: function(c) { return c === 1 ? "أسبوع" : "أسابيع"; },
-	      d: function(c) { return c === 1 ? "يوم" : "أيام"; },
-	      h: function(c) { return c === 1 ? "ساعة" : "ساعات"; },
-	      m: function(c) { return c === 1 ? "دقيقة" : "دقائق"; },
-	      s: function(c) { return c === 1 ? "ثانية" : "ثواني"; },
-	      ms: function(c) { return c === 1 ? "جزء من الثانية" : "أجزاء من الثانية"; },
-	      decimal: ","
+	      y: function (c) { return c === 1 ? 'سنة' : 'سنوات' },
+	      mo: function (c) { return c === 1 ? 'شهر' : 'أشهر' },
+	      w: function (c) { return c === 1 ? 'أسبوع' : 'أسابيع' },
+	      d: function (c) { return c === 1 ? 'يوم' : 'أيام' },
+	      h: function (c) { return c === 1 ? 'ساعة' : 'ساعات' },
+	      m: function (c) { return c === 1 ? 'دقيقة' : 'دقائق' },
+	      s: function (c) { return c === 1 ? 'ثانية' : 'ثواني' },
+	      ms: function (c) { return c === 1 ? 'جزء من الثانية' : 'أجزاء من الثانية' },
+	      decimal: ','
 	    },
 	    ca: {
-	      y: function(c) { return "any" + (c !== 1 ? "s" : ""); },
-	      mo: function(c) { return "mes" + (c !== 1 ? "os" : ""); },
-	      w: function(c) { return "setman" + (c !== 1 ? "es" : "a"); },
-	      d: function(c) { return "di" + (c !== 1 ? "es" : "a"); },
-	      h: function(c) { return "hor" + (c !== 1 ? "es" : "a"); },
-	      m: function(c) { return "minut" + (c !== 1 ? "s" : ""); },
-	      s: function(c) { return "segon" + (c !== 1 ? "s" : ""); },
-	      ms: function(c) { return "milisegon" + (c !== 1 ? "s" : ""); },
-	      decimal: ","
+	      y: function (c) { return 'any' + (c !== 1 ? 's' : '') },
+	      mo: function (c) { return 'mes' + (c !== 1 ? 'os' : '') },
+	      w: function (c) { return 'setman' + (c !== 1 ? 'es' : 'a') },
+	      d: function (c) { return 'di' + (c !== 1 ? 'es' : 'a') },
+	      h: function (c) { return 'hor' + (c !== 1 ? 'es' : 'a') },
+	      m: function (c) { return 'minut' + (c !== 1 ? 's' : '') },
+	      s: function (c) { return 'segon' + (c !== 1 ? 's' : '') },
+	      ms: function (c) { return 'milisegon' + (c !== 1 ? 's' : '') },
+	      decimal: ','
 	    },
 	    cs: {
-	      y: function(c) { return ["rok", "roku", "roky", "let"][getCzechForm(c)]; },
-	      mo: function(c) { return ["měsíc", "měsíce", "měsíce", "měsíců"][getCzechForm(c)]; },
-	      w: function(c) { return ["týden", "týdne", "týdny", "týdnů"][getCzechForm(c)]; },
-	      d: function(c) { return ["den", "dne", "dny", "dní"][getCzechForm(c)]; },
-	      h: function(c) { return ["hodina", "hodiny", "hodiny", "hodin"][getCzechForm(c)]; },
-	      m: function(c) { return ["minuta", "minuty", "minuty", "minut"][getCzechForm(c)]; },
-	      s: function(c) { return ["sekunda", "sekundy", "sekundy", "sekund"][getCzechForm(c)]; },
-	      ms: function(c) { return ["milisekunda", "milisekundy", "milisekundy", "milisekund"][getCzechForm(c)]; },
-	      decimal: ","
+	      y: function (c) { return ['rok', 'roku', 'roky', 'let'][getCzechForm(c)] },
+	      mo: function (c) { return ['měsíc', 'měsíce', 'měsíce', 'měsíců'][getCzechForm(c)] },
+	      w: function (c) { return ['týden', 'týdne', 'týdny', 'týdnů'][getCzechForm(c)] },
+	      d: function (c) { return ['den', 'dne', 'dny', 'dní'][getCzechForm(c)] },
+	      h: function (c) { return ['hodina', 'hodiny', 'hodiny', 'hodin'][getCzechForm(c)] },
+	      m: function (c) { return ['minuta', 'minuty', 'minuty', 'minut'][getCzechForm(c)] },
+	      s: function (c) { return ['sekunda', 'sekundy', 'sekundy', 'sekund'][getCzechForm(c)] },
+	      ms: function (c) { return ['milisekunda', 'milisekundy', 'milisekundy', 'milisekund'][getCzechForm(c)] },
+	      decimal: ','
 	    },
 	    da: {
-	      y: "år",
-	      mo: function(c) { return "måned" + (c !== 1 ? "er" : ""); },
-	      w: function(c) { return "uge" + (c !== 1 ? "r" : ""); },
-	      d: function(c) { return "dag" + (c !== 1 ? "e" : ""); },
-	      h: function(c) { return "time" + (c !== 1 ? "r" : ""); },
-	      m: function(c) { return "minut" + (c !== 1 ? "ter" : ""); },
-	      s: function(c) { return "sekund" + (c !== 1 ? "er" : ""); },
-	      ms: function(c) { return "millisekund" + (c !== 1 ? "er" : ""); },
-	      decimal: ","
+	      y: 'år',
+	      mo: function (c) { return 'måned' + (c !== 1 ? 'er' : '') },
+	      w: function (c) { return 'uge' + (c !== 1 ? 'r' : '') },
+	      d: function (c) { return 'dag' + (c !== 1 ? 'e' : '') },
+	      h: function (c) { return 'time' + (c !== 1 ? 'r' : '') },
+	      m: function (c) { return 'minut' + (c !== 1 ? 'ter' : '') },
+	      s: function (c) { return 'sekund' + (c !== 1 ? 'er' : '') },
+	      ms: function (c) { return 'millisekund' + (c !== 1 ? 'er' : '') },
+	      decimal: ','
 	    },
 	    de: {
-	      y: function(c) { return "Jahr" + (c !== 1 ? "e" : ""); },
-	      mo: function(c) { return "Monat" + (c !== 1 ? "e" : ""); },
-	      w: function(c) { return "Woche" + (c !== 1 ? "n" : ""); },
-	      d: function(c) { return "Tag" + (c !== 1 ? "e" : ""); },
-	      h: function(c) { return "Stunde" + (c !== 1 ? "n" : ""); },
-	      m: function(c) { return "Minute" + (c !== 1 ? "n" : ""); },
-	      s: function(c) { return "Sekunde" + (c !== 1 ? "n" : ""); },
-	      ms: function(c) { return "Millisekunde" + (c !== 1 ? "n" : ""); },
-	      decimal: ","
+	      y: function (c) { return 'Jahr' + (c !== 1 ? 'e' : '') },
+	      mo: function (c) { return 'Monat' + (c !== 1 ? 'e' : '') },
+	      w: function (c) { return 'Woche' + (c !== 1 ? 'n' : '') },
+	      d: function (c) { return 'Tag' + (c !== 1 ? 'e' : '') },
+	      h: function (c) { return 'Stunde' + (c !== 1 ? 'n' : '') },
+	      m: function (c) { return 'Minute' + (c !== 1 ? 'n' : '') },
+	      s: function (c) { return 'Sekunde' + (c !== 1 ? 'n' : '') },
+	      ms: function (c) { return 'Millisekunde' + (c !== 1 ? 'n' : '') },
+	      decimal: ','
 	    },
 	    en: {
-	      y: function(c) { return "year" + (c !== 1 ? "s" : ""); },
-	      mo: function(c) { return "month" + (c !== 1 ? "s" : ""); },
-	      w: function(c) { return "week" + (c !== 1 ? "s" : ""); },
-	      d: function(c) { return "day" + (c !== 1 ? "s" : ""); },
-	      h: function(c) { return "hour" + (c !== 1 ? "s" : ""); },
-	      m: function(c) { return "minute" + (c !== 1 ? "s" : ""); },
-	      s: function(c) { return "second" + (c !== 1 ? "s" : ""); },
-	      ms: function(c) { return "millisecond" + (c !== 1 ? "s" : ""); },
-	      decimal: "."
+	      y: function (c) { return 'year' + (c !== 1 ? 's' : '') },
+	      mo: function (c) { return 'month' + (c !== 1 ? 's' : '') },
+	      w: function (c) { return 'week' + (c !== 1 ? 's' : '') },
+	      d: function (c) { return 'day' + (c !== 1 ? 's' : '') },
+	      h: function (c) { return 'hour' + (c !== 1 ? 's' : '') },
+	      m: function (c) { return 'minute' + (c !== 1 ? 's' : '') },
+	      s: function (c) { return 'second' + (c !== 1 ? 's' : '') },
+	      ms: function (c) { return 'millisecond' + (c !== 1 ? 's' : '') },
+	      decimal: '.'
 	    },
 	    es: {
-	      y: function(c) { return "año" + (c !== 1 ? "s" : ""); },
-	      mo: function(c) { return "mes" + (c !== 1 ? "es" : ""); },
-	      w: function(c) { return "semana" + (c !== 1 ? "s" : ""); },
-	      d: function(c) { return "día" + (c !== 1 ? "s" : ""); },
-	      h: function(c) { return "hora" + (c !== 1 ? "s" : ""); },
-	      m: function(c) { return "minuto" + (c !== 1 ? "s" : ""); },
-	      s: function(c) { return "segundo" + (c !== 1 ? "s" : ""); },
-	      ms: function(c) { return "milisegundo" + (c !== 1 ? "s" : ""); },
-	      decimal: ","
+	      y: function (c) { return 'año' + (c !== 1 ? 's' : '') },
+	      mo: function (c) { return 'mes' + (c !== 1 ? 'es' : '') },
+	      w: function (c) { return 'semana' + (c !== 1 ? 's' : '') },
+	      d: function (c) { return 'día' + (c !== 1 ? 's' : '') },
+	      h: function (c) { return 'hora' + (c !== 1 ? 's' : '') },
+	      m: function (c) { return 'minuto' + (c !== 1 ? 's' : '') },
+	      s: function (c) { return 'segundo' + (c !== 1 ? 's' : '') },
+	      ms: function (c) { return 'milisegundo' + (c !== 1 ? 's' : '') },
+	      decimal: ','
+	    },
+	    fi: {
+	      y: function (c) { return c === 1 ? 'vuosi' : 'vuotta' },
+	      mo: function (c) { return c === 1 ? 'kuukausi' : 'kuukautta' },
+	      w: function (c) { return 'viikko' + (c !== 1 ? 'a' : '') },
+	      d: function (c) { return 'päivä' + (c !== 1 ? 'ä' : '') },
+	      h: function (c) { return 'tunti' + (c !== 1 ? 'a' : '') },
+	      m: function (c) { return 'minuutti' + (c !== 1 ? 'a' : '') },
+	      s: function (c) { return 'sekunti' + (c !== 1 ? 'a' : '') },
+	      ms: function (c) { return 'millisekunti' + (c !== 1 ? 'a' : '') },
+	      decimal: ','
 	    },
 	    fr: {
-	      y: function(c) { return "an" + (c !== 1 ? "s" : ""); },
-	      mo: "mois",
-	      w: function(c) { return "semaine" + (c !== 1 ? "s" : ""); },
-	      d: function(c) { return "jour" + (c !== 1 ? "s" : ""); },
-	      h: function(c) { return "heure" + (c !== 1 ? "s" : ""); },
-	      m: function(c) { return "minute" + (c !== 1 ? "s" : ""); },
-	      s: function(c) { return "seconde" + (c !== 1 ? "s" : ""); },
-	      ms: function(c) { return "milliseconde" + (c !== 1 ? "s" : ""); },
-	      decimal: ","
+	      y: function (c) { return 'an' + (c !== 1 ? 's' : '') },
+	      mo: 'mois',
+	      w: function (c) { return 'semaine' + (c !== 1 ? 's' : '') },
+	      d: function (c) { return 'jour' + (c !== 1 ? 's' : '') },
+	      h: function (c) { return 'heure' + (c !== 1 ? 's' : '') },
+	      m: function (c) { return 'minute' + (c !== 1 ? 's' : '') },
+	      s: function (c) { return 'seconde' + (c !== 1 ? 's' : '') },
+	      ms: function (c) { return 'milliseconde' + (c !== 1 ? 's' : '') },
+	      decimal: ','
 	    },
 	    gr: {
-	      y: function(c) { return c === 1 ? "χρόνος" : "χρόνια"; },
-	      mo: function(c) { return c === 1 ? "μήνας" : "μήνες"; },
-	      w: function(c) { return c === 1 ? "εβδομάδα" : "εβδομάδες"; },
-	      d: function(c) { return c === 1 ? "μέρα" : "μέρες"; },
-	      h: function(c) { return c === 1 ? "ώρα" : "ώρες"; },
-	      m: function(c) { return c === 1 ? "λεπτό" : "λεπτά"; },
-	      s: function(c) { return c === 1 ? "δευτερόλεπτο" : "δευτερόλεπτα"; },
-	      ms: function(c) { return c === 1 ? "χιλιοστό του δευτερολέπτου" : "χιλιοστά του δευτερολέπτου"; },
-	      decimal: ","
+	      y: function (c) { return c === 1 ? 'χρόνος' : 'χρόνια' },
+	      mo: function (c) { return c === 1 ? 'μήνας' : 'μήνες' },
+	      w: function (c) { return c === 1 ? 'εβδομάδα' : 'εβδομάδες' },
+	      d: function (c) { return c === 1 ? 'μέρα' : 'μέρες' },
+	      h: function (c) { return c === 1 ? 'ώρα' : 'ώρες' },
+	      m: function (c) { return c === 1 ? 'λεπτό' : 'λεπτά' },
+	      s: function (c) { return c === 1 ? 'δευτερόλεπτο' : 'δευτερόλεπτα' },
+	      ms: function (c) { return c === 1 ? 'χιλιοστό του δευτερολέπτου' : 'χιλιοστά του δευτερολέπτου' },
+	      decimal: ','
 	    },
 	    hu: {
-	      y: "év",
-	      mo: "hónap",
-	      w: "hét",
-	      d: "nap",
-	      h: "óra",
-	      m: "perc",
-	      s: "másodperc",
-	      ms: "ezredmásodperc",
-	      decimal: ","
+	      y: 'év',
+	      mo: 'hónap',
+	      w: 'hét',
+	      d: 'nap',
+	      h: 'óra',
+	      m: 'perc',
+	      s: 'másodperc',
+	      ms: 'ezredmásodperc',
+	      decimal: ','
 	    },
 	    it: {
-	      y: function(c) { return "ann" + (c !== 1 ? "i" : "o"); },
-	      mo: function(c) { return "mes" + (c !== 1 ? "i" : "e"); },
-	      w: function(c) { return "settiman" + (c !== 1 ? "e" : "a"); },
-	      d: function(c) { return "giorn" + (c !== 1 ? "i" : "o"); },
-	      h: function(c) { return "or" + (c !== 1 ? "e" : "a"); },
-	      m: function(c) { return "minut" + (c !== 1 ? "i" : "o"); },
-	      s: function(c) { return "second" + (c !== 1 ? "i" : "o"); },
-	      ms: function(c) { return "millisecond" + (c !== 1 ? "i" : "o"); },
-	      decimal: ","
+	      y: function (c) { return 'ann' + (c !== 1 ? 'i' : 'o') },
+	      mo: function (c) { return 'mes' + (c !== 1 ? 'i' : 'e') },
+	      w: function (c) { return 'settiman' + (c !== 1 ? 'e' : 'a') },
+	      d: function (c) { return 'giorn' + (c !== 1 ? 'i' : 'o') },
+	      h: function (c) { return 'or' + (c !== 1 ? 'e' : 'a') },
+	      m: function (c) { return 'minut' + (c !== 1 ? 'i' : 'o') },
+	      s: function (c) { return 'second' + (c !== 1 ? 'i' : 'o') },
+	      ms: function (c) { return 'millisecond' + (c !== 1 ? 'i' : 'o') },
+	      decimal: ','
 	    },
 	    ja: {
-	      y: "年",
-	      mo: "月",
-	      w: "週",
-	      d: "日",
-	      h: "時間",
-	      m: "分",
-	      s: "秒",
-	      ms: "ミリ秒",
-	      decimal: "."
+	      y: '年',
+	      mo: '月',
+	      w: '週',
+	      d: '日',
+	      h: '時間',
+	      m: '分',
+	      s: '秒',
+	      ms: 'ミリ秒',
+	      decimal: '.'
 	    },
 	    ko: {
-	      y: "년",
-	      mo: "개월",
-	      w: "주일",
-	      d: "일",
-	      h: "시간",
-	      m: "분",
-	      s: "초",
-	      ms: "밀리 초",
-	      decimal: "."
+	      y: '년',
+	      mo: '개월',
+	      w: '주일',
+	      d: '일',
+	      h: '시간',
+	      m: '분',
+	      s: '초',
+	      ms: '밀리 초',
+	      decimal: '.'
+	    },
+	    lt: {
+	      y: function (c) { return ((c % 10 === 0) || (c % 100 >= 10 && c % 100 <= 20)) ? 'metų' : 'metai' },
+	      mo: function (c) { return ['mėnuo', 'mėnesiai', 'mėnesių'][getLithuanianForm(c)] },
+	      w: function (c) { return ['savaitė', 'savaitės', 'savaičių'][getLithuanianForm(c)] },
+	      d: function (c) { return ['diena', 'dienos', 'dienų'][getLithuanianForm(c)] },
+	      h: function (c) { return ['valanda', 'valandos', 'valandų'][getLithuanianForm(c)] },
+	      m: function (c) { return ['minutė', 'minutės', 'minučių'][getLithuanianForm(c)] },
+	      s: function (c) { return ['sekundė', 'sekundės', 'sekundžių'][getLithuanianForm(c)] },
+	      ms: function (c) { return ['milisekundė', 'milisekundės', 'milisekundžių'][getLithuanianForm(c)] },
+	      decimal: ','
 	    },
 	    nl: {
-	      y: "jaar",
-	      mo: function(c) { return c === 1 ? "maand" : "maanden"; },
-	      w: function(c) { return c === 1 ? "week" : "weken"; },
-	      d: function(c) { return c === 1 ? "dag" : "dagen"; },
-	      h: "uur",
-	      m: function(c) { return c === 1 ? "minuut" : "minuten"; },
-	      s: function(c) { return c === 1 ? "seconde" : "seconden"; },
-	      ms: function(c) { return c === 1 ? "milliseconde" : "milliseconden"; },
-	      decimal: ","
+	      y: 'jaar',
+	      mo: function (c) { return c === 1 ? 'maand' : 'maanden' },
+	      w: function (c) { return c === 1 ? 'week' : 'weken' },
+	      d: function (c) { return c === 1 ? 'dag' : 'dagen' },
+	      h: 'uur',
+	      m: function (c) { return c === 1 ? 'minuut' : 'minuten' },
+	      s: function (c) { return c === 1 ? 'seconde' : 'seconden' },
+	      ms: function (c) { return c === 1 ? 'milliseconde' : 'milliseconden' },
+	      decimal: ','
 	    },
 	    no: {
-	      y: "år",
-	      mo: function(c) { return "måned" + (c !== 1 ? "er" : ""); },
-	      w: function(c) { return "uke" + (c !== 1 ? "r" : ""); },
-	      d: function(c) { return "dag" + (c !== 1 ? "er" : ""); },
-	      h: function(c) { return "time" + (c !== 1 ? "r" : ""); },
-	      m: function(c) { return "minutt" + (c !== 1 ? "er" : ""); },
-	      s: function(c) { return "sekund" + (c !== 1 ? "er" : ""); },
-	      ms: function(c) { return "millisekund" + (c !== 1 ? "er" : ""); },
-	      decimal: ","
+	      y: 'år',
+	      mo: function (c) { return 'måned' + (c !== 1 ? 'er' : '') },
+	      w: function (c) { return 'uke' + (c !== 1 ? 'r' : '') },
+	      d: function (c) { return 'dag' + (c !== 1 ? 'er' : '') },
+	      h: function (c) { return 'time' + (c !== 1 ? 'r' : '') },
+	      m: function (c) { return 'minutt' + (c !== 1 ? 'er' : '') },
+	      s: function (c) { return 'sekund' + (c !== 1 ? 'er' : '') },
+	      ms: function (c) { return 'millisekund' + (c !== 1 ? 'er' : '') },
+	      decimal: ','
 	    },
 	    pl: {
-	      y: function(c) { return ["rok", "roku", "lata", "lat"][getPolishForm(c)]; },
-	      mo: function(c) { return ["miesiąc", "miesiąca", "miesiące", "miesięcy"][getPolishForm(c)]; },
-	      w: function(c) { return ["tydzień", "tygodnia", "tygodnie", "tygodni"][getPolishForm(c)]; },
-	      d: function(c) { return ["dzień", "dnia", "dni", "dni"][getPolishForm(c)]; },
-	      h: function(c) { return ["godzina", "godziny", "godziny", "godzin"][getPolishForm(c)]; },
-	      m: function(c) { return ["minuta", "minuty", "minuty", "minut"][getPolishForm(c)]; },
-	      s: function(c) { return ["sekunda", "sekundy", "sekundy", "sekund"][getPolishForm(c)]; },
-	      ms: function(c) { return ["milisekunda", "milisekundy", "milisekundy", "milisekund"][getPolishForm(c)]; },
-	      decimal: ","
+	      y: function (c) { return ['rok', 'roku', 'lata', 'lat'][getPolishForm(c)] },
+	      mo: function (c) { return ['miesiąc', 'miesiąca', 'miesiące', 'miesięcy'][getPolishForm(c)] },
+	      w: function (c) { return ['tydzień', 'tygodnia', 'tygodnie', 'tygodni'][getPolishForm(c)] },
+	      d: function (c) { return ['dzień', 'dnia', 'dni', 'dni'][getPolishForm(c)] },
+	      h: function (c) { return ['godzina', 'godziny', 'godziny', 'godzin'][getPolishForm(c)] },
+	      m: function (c) { return ['minuta', 'minuty', 'minuty', 'minut'][getPolishForm(c)] },
+	      s: function (c) { return ['sekunda', 'sekundy', 'sekundy', 'sekund'][getPolishForm(c)] },
+	      ms: function (c) { return ['milisekunda', 'milisekundy', 'milisekundy', 'milisekund'][getPolishForm(c)] },
+	      decimal: ','
 	    },
 	    pt: {
-	      y: function(c) { return "ano" + (c !== 1 ? "s" : ""); },
-	      mo: function(c) { return c !== 1 ? "meses" : "mês"; },
-	      w: function(c) { return "semana" + (c !== 1 ? "s" : ""); },
-	      d: function(c) { return "dia" + (c !== 1 ? "s" : ""); },
-	      h: function(c) { return "hora" + (c !== 1 ? "s" : ""); },
-	      m: function(c) { return "minuto" + (c !== 1 ? "s" : ""); },
-	      s: function(c) { return "segundo" + (c !== 1 ? "s" : ""); },
-	      ms: function(c) { return "milissegundo" + (c !== 1 ? "s" : ""); },
-	      decimal: ","
+	      y: function (c) { return 'ano' + (c !== 1 ? 's' : '') },
+	      mo: function (c) { return c !== 1 ? 'meses' : 'mês' },
+	      w: function (c) { return 'semana' + (c !== 1 ? 's' : '') },
+	      d: function (c) { return 'dia' + (c !== 1 ? 's' : '') },
+	      h: function (c) { return 'hora' + (c !== 1 ? 's' : '') },
+	      m: function (c) { return 'minuto' + (c !== 1 ? 's' : '') },
+	      s: function (c) { return 'segundo' + (c !== 1 ? 's' : '') },
+	      ms: function (c) { return 'milissegundo' + (c !== 1 ? 's' : '') },
+	      decimal: ','
 	    },
 	    ru: {
-	      y: function(c) { return ["лет", "год", "года"][getSlavicForm(c)]; },
-	      mo: function(c) { return ["месяцев", "месяц", "месяца"][getSlavicForm(c)]; },
-	      w: function(c) { return ["недель", "неделя", "недели"][getSlavicForm(c)]; },
-	      d: function(c) { return ["дней", "день", "дня"][getSlavicForm(c)]; },
-	      h: function(c) { return ["часов", "час", "часа"][getSlavicForm(c)]; },
-	      m: function(c) { return ["минут", "минута", "минуты"][getSlavicForm(c)]; },
-	      s: function(c) { return ["секунд", "секунда", "секунды"][getSlavicForm(c)]; },
-	      ms: function(c) { return ["миллисекунд", "миллисекунда", "миллисекунды"][getSlavicForm(c)]; },
-	      decimal: ","
+	      y: function (c) { return ['лет', 'год', 'года'][getSlavicForm(c)] },
+	      mo: function (c) { return ['месяцев', 'месяц', 'месяца'][getSlavicForm(c)] },
+	      w: function (c) { return ['недель', 'неделя', 'недели'][getSlavicForm(c)] },
+	      d: function (c) { return ['дней', 'день', 'дня'][getSlavicForm(c)] },
+	      h: function (c) { return ['часов', 'час', 'часа'][getSlavicForm(c)] },
+	      m: function (c) { return ['минут', 'минута', 'минуты'][getSlavicForm(c)] },
+	      s: function (c) { return ['секунд', 'секунда', 'секунды'][getSlavicForm(c)] },
+	      ms: function (c) { return ['миллисекунд', 'миллисекунда', 'миллисекунды'][getSlavicForm(c)] },
+	      decimal: ','
 	    },
 	    uk: {
-	      y: function(c) { return ["років", "рік", "роки"][getSlavicForm(c)]; },
-	      mo: function(c) { return ["місяців", "місяць", "місяці"][getSlavicForm(c)]; },
-	      w: function(c) { return ["неділь", "неділя", "неділі"][getSlavicForm(c)]; },
-	      d: function(c) { return ["днів", "день", "дні"][getSlavicForm(c)]; },
-	      h: function(c) { return ["годин", "година", "години"][getSlavicForm(c)]; },
-	      m: function(c) { return ["хвилин", "хвилина", "хвилини"][getSlavicForm(c)]; },
-	      s: function(c) { return ["секунд", "секунда", "секунди"][getSlavicForm(c)]; },
-	      ms: function(c) { return ["мілісекунд", "мілісекунда", "мілісекунди"][getSlavicForm(c)]; },
-	      decimal: ","
+	      y: function (c) { return ['років', 'рік', 'роки'][getSlavicForm(c)] },
+	      mo: function (c) { return ['місяців', 'місяць', 'місяці'][getSlavicForm(c)] },
+	      w: function (c) { return ['неділь', 'неділя', 'неділі'][getSlavicForm(c)] },
+	      d: function (c) { return ['днів', 'день', 'дні'][getSlavicForm(c)] },
+	      h: function (c) { return ['годин', 'година', 'години'][getSlavicForm(c)] },
+	      m: function (c) { return ['хвилин', 'хвилина', 'хвилини'][getSlavicForm(c)] },
+	      s: function (c) { return ['секунд', 'секунда', 'секунди'][getSlavicForm(c)] },
+	      ms: function (c) { return ['мілісекунд', 'мілісекунда', 'мілісекунди'][getSlavicForm(c)] },
+	      decimal: ','
 	    },
 	    sv: {
-	      y: "år",
-	      mo: function(c) { return "månad" + (c !== 1 ? "er" : ""); },
-	      w: function(c) { return "veck" + (c !== 1 ? "or" : "a"); },
-	      d: function(c) { return "dag" + (c !== 1 ? "ar" : ""); },
-	      h: function(c) { return "timm" + (c !== 1 ? "ar" : "e"); },
-	      m: function(c) { return "minut" + (c !== 1 ? "er" : ""); },
-	      s: function(c) { return "sekund" + (c !== 1 ? "er" : ""); },
-	      ms: function(c) { return "millisekund" + (c !== 1 ? "er" : ""); },
-	      decimal: ","
+	      y: 'år',
+	      mo: function (c) { return 'månad' + (c !== 1 ? 'er' : '') },
+	      w: function (c) { return 'veck' + (c !== 1 ? 'or' : 'a') },
+	      d: function (c) { return 'dag' + (c !== 1 ? 'ar' : '') },
+	      h: function (c) { return 'timm' + (c !== 1 ? 'ar' : 'e') },
+	      m: function (c) { return 'minut' + (c !== 1 ? 'er' : '') },
+	      s: function (c) { return 'sekund' + (c !== 1 ? 'er' : '') },
+	      ms: function (c) { return 'millisekund' + (c !== 1 ? 'er' : '') },
+	      decimal: ','
 	    },
 	    tr: {
-	      y: "yıl",
-	      mo: "ay",
-	      w: "hafta",
-	      d: "gün",
-	      h: "saat",
-	      m: "dakika",
-	      s: "saniye",
-	      ms: "milisaniye",
-	      decimal: ","
+	      y: 'yıl',
+	      mo: 'ay',
+	      w: 'hafta',
+	      d: 'gün',
+	      h: 'saat',
+	      m: 'dakika',
+	      s: 'saniye',
+	      ms: 'milisaniye',
+	      decimal: ','
+	    },
+	    vi: {
+	      y: 'năm',
+	      mo: 'tháng',
+	      w: 'tuần',
+	      d: 'ngày',
+	      h: 'giờ',
+	      m: 'phút',
+	      s: 'giây',
+	      ms: 'mili giây',
+	      decimal: ','
 	    },
 	    zh_CN: {
-	      y: "年",
-	      mo: "个月",
-	      w: "周",
-	      d: "天",
-	      h: "小时",
-	      m: "分钟",
-	      s: "秒",
-	      ms: "毫秒",
-	      decimal: "."
+	      y: '年',
+	      mo: '个月',
+	      w: '周',
+	      d: '天',
+	      h: '小时',
+	      m: '分钟',
+	      s: '秒',
+	      ms: '毫秒',
+	      decimal: '.'
 	    },
 	    zh_TW: {
-	      y: "年",
-	      mo: "個月",
-	      w: "周",
-	      d: "天",
-	      h: "小時",
-	      m: "分鐘",
-	      s: "秒",
-	      ms: "毫秒",
-	      decimal: "."
+	      y: '年',
+	      mo: '個月',
+	      w: '周',
+	      d: '天',
+	      h: '小時',
+	      m: '分鐘',
+	      s: '秒',
+	      ms: '毫秒',
+	      decimal: '.'
 	    }
-	  };
+	  }
 
 	  // You can create a humanizer, which returns a function with defaults
 	  // parameters.
-	  function humanizer(passedOptions) {
-	    var result = function humanizer(ms, humanizerOptions) {
-	      var options = extend({}, result, humanizerOptions || {});
-	      return doHumanization(ms, options);
-	    };
+	  function humanizer (passedOptions) {
+	    var result = function humanizer (ms, humanizerOptions) {
+	      var options = extend({}, result, humanizerOptions || {})
+	      return doHumanization(ms, options)
+	    }
 
 	    return extend(result, {
-	      language: "en",
-	      delimiter: ", ",
-	      spacer: " ",
-	      units: ["y", "mo", "w", "d", "h", "m", "s"],
+	      language: 'en',
+	      delimiter: ', ',
+	      spacer: ' ',
+	      units: ['y', 'mo', 'w', 'd', 'h', 'm', 's'],
 	      languages: {},
 	      round: false,
 	      unitMeasures: {
@@ -2625,167 +2730,193 @@ return /******/ (function(modules) { // webpackBootstrap
 	        s: 1000,
 	        ms: 1
 	      }
-	    }, passedOptions);
+	    }, passedOptions)
 	  }
 
 	  // The main function is just a wrapper around a default humanizer.
-	  var defaultHumanizer = humanizer({});
-	  function humanizeDuration() {
-	    return defaultHumanizer.apply(defaultHumanizer, arguments);
-	  }
+	  var humanizeDuration = humanizer({})
 
 	  // doHumanization does the bulk of the work.
-	  function doHumanization(ms, options) {
+	  function doHumanization (ms, options) {
+	    var i, len, piece
 
 	    // Make sure we have a positive number.
 	    // Has the nice sideffect of turning Number objects into primitives.
-	    ms = Math.abs(ms);
+	    ms = Math.abs(ms)
 
-	    var dictionary = options.languages[options.language] || languages[options.language];
+	    var dictionary = options.languages[options.language] || languages[options.language]
 	    if (!dictionary) {
-	      throw new Error("No language " + dictionary + ".");
+	      throw new Error('No language ' + dictionary + '.')
 	    }
 
-	    var result = [];
+	    var pieces = []
 
 	    // Start at the top and keep removing units, bit by bit.
-	    var unitName, unitMS, unitCount;
-	    for (var i = 0, len = options.units.length; i < len; i++) {
-
-	      unitName = options.units[i];
-	      unitMS = options.unitMeasures[unitName];
+	    var unitName, unitMS, unitCount
+	    for (i = 0, len = options.units.length; i < len; i++) {
+	      unitName = options.units[i]
+	      unitMS = options.unitMeasures[unitName]
 
 	      // What's the number of full units we can fit?
 	      if (i + 1 === len) {
-	        unitCount = ms / unitMS;
-	        if (options.round) {
-	          unitCount = Math.round(unitCount);
-	        }
+	        unitCount = ms / unitMS
 	      } else {
-	        unitCount = Math.floor(ms / unitMS);
+	        unitCount = Math.floor(ms / unitMS)
 	      }
 
 	      // Add the string.
-	      if (unitCount) {
-	        result.push(render(unitCount, unitName, dictionary, options));
-	      }
-
-	      // Do we have enough units?
-	      if (options.largest && options.largest <= result.length) {
-	        break;
-	      }
+	      pieces.push({
+	        unitCount: unitCount,
+	        unitName: unitName
+	      })
 
 	      // Remove what we just figured out.
-	      ms -= unitCount * unitMS;
-
+	      ms -= unitCount * unitMS
 	    }
 
-	    if (result.length) {
-	      return result.join(options.delimiter);
-	    } else {
-	      return render(0, options.units[options.units.length - 1], dictionary, options);
-	    }
+	    if (options.round) {
+	      var ratioToLargerUnit, previousPiece
+	      for (i = pieces.length - 1; i >= 0; i--) {
+	        piece = pieces[i]
+	        piece.unitCount = Math.round(piece.unitCount)
 
-	  }
+	        if (i === 0) { break }
 
-	  function render(count, type, dictionary, options) {
-	    var decimal;
-	    if (options.decimal === void 0) {
-	      decimal = dictionary.decimal;
-	    } else {
-	      decimal = options.decimal;
-	    }
+	        previousPiece = pieces[i - 1]
 
-	    var countStr = count.toString().replace(".", decimal);
-
-	    var dictionaryValue = dictionary[type];
-	    var word;
-	    if (typeof dictionaryValue === "function") {
-	      word = dictionaryValue(count);
-	    } else {
-	      word = dictionaryValue;
-	    }
-
-	    return countStr + options.spacer + word;
-	  }
-
-	  function extend(destination) {
-	    var source;
-	    for (var i = 1; i < arguments.length; i++) {
-	      source = arguments[i];
-	      for (var prop in source) {
-	        if (source.hasOwnProperty(prop)) {
-	          destination[prop] = source[prop];
+	        ratioToLargerUnit = options.unitMeasures[previousPiece.unitName] / options.unitMeasures[piece.unitName]
+	        if ((piece.unitCount % ratioToLargerUnit) === 0 || (options.largest && ((options.largest - 1) < i))) {
+	          previousPiece.unitCount += piece.unitCount / ratioToLargerUnit
+	          piece.unitCount = 0
 	        }
 	      }
 	    }
-	    return destination;
+
+	    var result = []
+	    for (i = 0, pieces.length; i < len; i++) {
+	      piece = pieces[i]
+	      if (piece.unitCount) {
+	        result.push(render(piece.unitCount, piece.unitName, dictionary, options))
+	      }
+
+	      if (result.length === options.largest) { break }
+	    }
+
+	    if (result.length) {
+	      return result.join(options.delimiter)
+	    } else {
+	      return render(0, options.units[options.units.length - 1], dictionary, options)
+	    }
+	  }
+
+	  function render (count, type, dictionary, options) {
+	    var decimal
+	    if (options.decimal === void 0) {
+	      decimal = dictionary.decimal
+	    } else {
+	      decimal = options.decimal
+	    }
+
+	    var countStr = count.toString().replace('.', decimal)
+
+	    var dictionaryValue = dictionary[type]
+	    var word
+	    if (typeof dictionaryValue === 'function') {
+	      word = dictionaryValue(count)
+	    } else {
+	      word = dictionaryValue
+	    }
+
+	    return countStr + options.spacer + word
+	  }
+
+	  function extend (destination) {
+	    var source
+	    for (var i = 1; i < arguments.length; i++) {
+	      source = arguments[i]
+	      for (var prop in source) {
+	        if (source.hasOwnProperty(prop)) {
+	          destination[prop] = source[prop]
+	        }
+	      }
+	    }
+	    return destination
 	  }
 
 	  // Internal helper function for Czech language.
-	  function getCzechForm(c) {
+	  function getCzechForm (c) {
 	    if (c === 1) {
-	      return 0;
+	      return 0
 	    } else if (Math.floor(c) !== c) {
-	      return 1;
+	      return 1
 	    } else if (c % 10 >= 2 && c % 10 <= 4 && c % 100 < 10) {
-	      return 2;
+	      return 2
 	    } else {
-	      return 3;
+	      return 3
 	    }
 	  }
 
 	  // Internal helper function for Polish language.
-	  function getPolishForm(c) {
+	  function getPolishForm (c) {
 	    if (c === 1) {
-	      return 0;
+	      return 0
 	    } else if (Math.floor(c) !== c) {
-	      return 1;
+	      return 1
 	    } else if (c % 10 >= 2 && c % 10 <= 4 && !(c % 100 > 10 && c % 100 < 20)) {
-	      return 2;
+	      return 2
 	    } else {
-	      return 3;
+	      return 3
 	    }
 	  }
 
 	  // Internal helper function for Russian and Ukranian languages.
-	  function getSlavicForm(c) {
+	  function getSlavicForm (c) {
 	    if (Math.floor(c) !== c) {
-	      return 2;
+	      return 2
 	    } else if ((c >= 5 && c <= 20) || (c % 10 >= 5 && c % 10 <= 9) || c % 10 === 0) {
-	      return 0;
+	      return 0
 	    } else if (c % 10 === 1) {
-	      return 1;
+	      return 1
 	    } else if (c > 1) {
-	      return 2;
+	      return 2
 	    } else {
-	      return 0;
+	      return 0
 	    }
 	  }
 
-	  function getSupportedLanguages() {
-	    var result = [];
+	  // Internal helper function for Lithuanian language.
+	  function getLithuanianForm (c) {
+	    if (c === 1 || (c % 10 === 1 && c % 100 > 20)) {
+	      return 0
+	    } else if (Math.floor(c) !== c || (c % 10 >= 2 && c % 100 > 20) || (c % 10 >= 2 && c % 100 < 10)) {
+	      return 1
+	    } else {
+	      return 2
+	    }
+	  }
+
+	  humanizeDuration.getSupportedLanguages = function getSupportedLanguages () {
+	    var result = []
 	    for (var language in languages) {
 	      if (languages.hasOwnProperty(language)) {
-	        result.push(language);
+	        result.push(language)
 	      }
 	    }
-	    return result;
+	    return result
 	  }
 
-	  humanizeDuration.humanizer = humanizer;
-	  humanizeDuration.getSupportedLanguages = getSupportedLanguages;
+	  humanizeDuration.humanizer = humanizer
 
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
-	      return humanizeDuration;
-	    }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if (typeof module !== "undefined" && module.exports) {
-	    module.exports = humanizeDuration;
+	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	      return humanizeDuration
+	    }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+	  } else if (typeof module !== 'undefined' && module.exports) {
+	    module.exports = humanizeDuration
 	  } else {
-	    global.humanizeDuration = humanizeDuration;
+	    this.humanizeDuration = humanizeDuration
 	  }
-	})(this);
+	})();  // eslint-disable-line semi
 
 
 /***/ },
@@ -2800,13 +2931,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _knockout = __webpack_require__(3);
 
@@ -3136,8 +3267,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var _this5 = this;
 
 	      return this.loading() && new Promise(function (resolve, reject) {
-	        var e = undefined,
-	            l = undefined;
+	        var e = void 0,
+	            l = void 0;
 	        e = _this5.error_message.subscribe(function (err) {
 	          l.dispose();
 	          e.dispose();

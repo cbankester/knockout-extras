@@ -806,7 +806,9 @@ setupExtender('noUnset', (target, val) => {
 });
 
 /**
- * Adds an `addNew` method to `target`.
+ * Adds an `addNew` method to `target`. `addNew` returns a promise, which
+ * resolves with the new record instances after the instance has been added to
+ * `target`.
  * @name ko.extenders.pushable
  * @param {ko.observable} target
  * @param {Object} opts
@@ -818,33 +820,60 @@ setupExtender('noUnset', (target, val) => {
  * @param {Array} [opts.args] - The arguments to pass to `klass` when
  * instanciating. Any elements of `opts.args` passing `typeof arg === function`
  * will be called with `this_arg` as the scope
+ * @param {Boolean|String} [opts.set_inverse_of] - Whether or not to add a
+ * reference to `target` on instances of `opts.klass`. If `true`, the reference
+ * will be set on the key "inverse_of"; if String, the reference will be set on
+ * the key String
  * @return {ko.observable} The extended target
 */
 
+function _createInstance(klass, this_arg, args) {
+  return new klass(
+    this_arg,
+    ...(args.map(arg => typeof arg === 'function' ? arg.call(this_arg) : arg))
+  );
+}
+
+function _pushAndResolve(target, record, resolver) {
+  if ('doneLoading' in record) {
+    record.doneLoading().then(() => {
+      target.push(record);
+      resolver(record);
+    });
+  } else {
+    target.push(record);
+    resolver(record);
+  }
+}
+
 setupExtender('pushable', (target, opts) => {
-  const {klass, this_arg} = opts || {};
-  const args = opts.args || [];
-  if (!klass) {
-    throw new Error('Cannot define addNew method without knowing the class to instanciate');
-  }
-  if (!this_arg) {
-    throw new Error('Cannot define addNew method without knowing first parameter to instanciate klass with');
-  }
   if ('push' in target) {
-    target.addNew = function addNew() {
-      return new Promise(resolve => {
-        const record = new klass(this_arg, ...(args.map(arg => typeof arg === 'function' ? arg.call(this_arg) : arg)));
-        if ('doneLoading' in record) {
-          record.doneLoading().then(() => {
-            target.push(record);
-            resolve();
-          });
-        } else {
-          target.push(record);
-          resolve();
-        }
-      });
-    };
+    const {klass, this_arg, set_inverse_of} = opts || {};
+    const args = opts.args || [];
+    if (!klass) {
+      throw new Error('Cannot define addNew method without knowing the class to instanciate');
+    }
+    if (!this_arg) {
+      throw new Error('Cannot define addNew method without knowing first parameter to instanciate klass with');
+    }
+    if (set_inverse_of) {
+      const inverse_name = (typeof set_inverse_of === 'string') ? set_inverse_of : 'inverse_of';
+      target.addNew = function addNew() {
+        return new Promise(resolve => {
+          const record = _createInstance(klass, this_arg, args);
+          record[inverse_name] = target;
+          _pushAndResolve(target, record, resolve);
+        });
+      };
+    } else {
+      target.addNew = function addNew() {
+        return new Promise(resolve => _pushAndResolve(
+          target,
+          _createInstance(klass, this_arg, args),
+          resolve)
+        );
+      };
+    }
   }
   return target;
 });
@@ -881,6 +910,7 @@ setupExtender('track_focus', (target, opts) => {
   const {track_has_had} = opts || {};
   target.has_focus = observable(false);
   if (track_has_had) {
+    setupObservableDisposables(target);
     target.has_had_focus = observable(false);
     const s = target.has_focus.subscribe(has_focus => {
       if (!has_focus) { // just blurred out of input

@@ -27,4 +27,4 @@ export default class KnockoutJsonApiUtils {
   static get humanizeDuration(){
     return humanizeDuration;
   }
-};
+}
